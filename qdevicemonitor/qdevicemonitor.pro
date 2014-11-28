@@ -17,4 +17,5 @@ SOURCES += main.cpp\
 
 HEADERS  += MainWindow.h
 
-FORMS    += MainWindow.ui
+FORMS    += MainWindow.ui \
+    DeviceWidget.ui
