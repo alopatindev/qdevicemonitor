@@ -13,9 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        MainWindow.cpp
+        MainWindow.cpp \
+    DeviceAdapter.cpp \
+    AndroidDevice.cpp
 
-HEADERS  += MainWindow.h
+HEADERS  += MainWindow.h \
+    IDevice.h \
+    DeviceAdapter.h \
+    AndroidDevice.h
 
 FORMS    += MainWindow.ui \
     DeviceWidget.ui
+
+QMAKE_CXXFLAGS += -std=c++11
