@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "DeviceAdapter.h"
+
 #include <QMainWindow>
 #include <QSharedPointer>
 
@@ -11,6 +13,8 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+    DeviceAdapter m_deviceAdapter;
 
 public:
     explicit MainWindow(QWidget* parent = 0);

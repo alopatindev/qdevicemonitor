@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     DeviceAdapter.cpp \
-    AndroidDevice.cpp
+    AndroidDevice.cpp \
+    BaseDevice.cpp
 
 HEADERS  += MainWindow.h \
-    IDevice.h \
     DeviceAdapter.h \
-    AndroidDevice.h
+    AndroidDevice.h \
+    BaseDevice.h \
+    DataTypes.h
 
 FORMS    += MainWindow.ui \
     DeviceWidget.ui
