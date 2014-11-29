@@ -28,7 +28,7 @@ void DeviceAdapter::updateDevicesMap()
             // TODO
             break;
         case DeviceType::Android:
-            AndroidDevice::addNewDevicesOfThisType(m_devicesMap);
+            AndroidDevice::addNewDevicesOfThisType(parent(), m_devicesMap);
             break;
         case DeviceType::IOS:
             // TODO
@@ -36,5 +36,10 @@ void DeviceAdapter::updateDevicesMap()
         default:
             break;
         }
+    }
+
+    for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
+    {
+        (*it)->update();
     }
 }

@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ui_MainWindow.h"
 #include "DeviceAdapter.h"
 
 #include <QMainWindow>

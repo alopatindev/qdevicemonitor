@@ -2,19 +2,24 @@
 #define ANDROIDDEVICE_H
 
 #include "BaseDevice.h"
+#include <QProcess>
 
 using namespace DataTypes;
 
 class AndroidDevice : public BaseDevice
 {
-public:
-    AndroidDevice(const QString& id, DeviceType type, const QString& humanReadableName, const QString& humanReadableDescription);
+    QProcess deviceInfoProcess;
 
-    static void addNewDevicesOfThisType(DevicesMap& map);
+public:
+    AndroidDevice(QObject* parent, const QString& id, DeviceType type, const QString& humanReadableName, const QString& humanReadableDescription);
+    virtual void update();
+
+    static void addNewDevicesOfThisType(QObject* parent, DevicesMap& map);
     virtual qint64 readData(char* data, qint64 maxlen);
 
 private:
     virtual qint64 writeData(const char* data, qint64 len);
+    void updateDeviceModel();
 };
 
 #endif // ANDROIDDEVICE_H

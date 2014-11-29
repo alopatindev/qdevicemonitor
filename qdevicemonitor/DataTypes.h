@@ -1,7 +1,6 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
-//#include "BaseDevice.h"
 class BaseDevice;
 
 #include <QMap>
@@ -20,6 +19,6 @@ namespace DataTypes
     };
 
     typedef QMap<QString, QSharedPointer<BaseDevice>> DevicesMap;
-};
+}
 
 #endif // DATATYPES_H

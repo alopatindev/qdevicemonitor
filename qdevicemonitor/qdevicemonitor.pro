@@ -16,13 +16,15 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     DeviceAdapter.cpp \
     AndroidDevice.cpp \
-    BaseDevice.cpp
+    BaseDevice.cpp \
+    DeviceWidget.cpp
 
 HEADERS  += MainWindow.h \
     DeviceAdapter.h \
     AndroidDevice.h \
     BaseDevice.h \
-    DataTypes.h
+    DataTypes.h \
+    DeviceWidget.h
 
 FORMS    += MainWindow.ui \
     DeviceWidget.ui
