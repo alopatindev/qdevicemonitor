@@ -2,6 +2,7 @@
 #define BASEDEVICE_H
 
 #include "DeviceAdapter.h"
+#include "DeviceWidget.h"
 #include "DataTypes.h"
 
 #include <QIODevice>
@@ -38,6 +39,7 @@ protected:
     QString m_humanReadableDescription;
     bool m_online;
     QPointer<QTabWidget> m_tabWidget;
+    QPointer<DeviceWidget> m_deviceWidget;
     int m_tabIndex;
 };
 

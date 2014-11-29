@@ -12,6 +12,8 @@ class DeviceAdapter : public QObject
 {
     Q_OBJECT
 
+    static const int UPDATE_FREQUENCY = 100;
+
 private:
     DataTypes::DevicesMap m_devicesMap;
     QTimer m_updateTimer;

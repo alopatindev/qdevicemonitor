@@ -9,6 +9,20 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription)
 {
     updateDeviceModel();
+    startLogger();
+}
+
+AndroidDevice::~AndroidDevice()
+{
+    if (m_deviceInfoProcess.state() != QProcess::NotRunning)
+    {
+        m_deviceInfoProcess.close();
+    }
+
+    if (m_deviceLogProcess.state() != QProcess::NotRunning)
+    {
+        m_deviceLogProcess.close();
+    }
 }
 
 void AndroidDevice::updateDeviceModel()
@@ -19,22 +33,47 @@ void AndroidDevice::updateDeviceModel()
     args.append("shell");
     args.append("getprop");
     args.append("ro.product.model");
-    deviceInfoProcess.start("adb", args);
-    deviceInfoProcess.setReadChannel(QProcess::StandardOutput);
+    m_deviceInfoProcess.start("adb", args);
+    m_deviceInfoProcess.setReadChannel(QProcess::StandardOutput);
+}
+
+void AndroidDevice::startLogger()
+{
+    QStringList args;
+    args.append("-s");
+    args.append(m_id);
+    args.append("logcat");
+    args.append("*:v");
+    m_deviceLogProcess.start("adb", args);
+    m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
 }
 
 void AndroidDevice::update()
 {
-    if (deviceInfoProcess.state() == QProcess::NotRunning && deviceInfoProcess.canReadLine())
+    if (m_deviceInfoProcess.state() == QProcess::NotRunning && m_deviceInfoProcess.canReadLine())
     {
         QString streamString;
         QTextStream stream;
-        QString model = deviceInfoProcess.readLine().trimmed();
+        QString model = m_deviceInfoProcess.readLine().trimmed();
+        m_deviceInfoProcess.close();
         qDebug() << "model of" << m_id << "is" << model;
         if (!model.isEmpty())
         {
             m_humanReadableName = model;
             updateTabWidget();
+        }
+    }
+
+    if (m_deviceLogProcess.state() == QProcess::Running && m_deviceLogProcess.canReadLine())
+    {
+        QString streamString;
+        QTextStream stream;
+        stream.setString(&streamString, QIODevice::ReadOnly | QIODevice::Text);
+        stream << m_deviceLogProcess.readAll();
+        while (!stream.atEnd())
+        {
+            QString line = stream.readLine();
+            m_deviceWidget->getTextEdit().append(line);
         }
     }
 }
@@ -48,7 +87,7 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
         {
             QString streamString;
             QTextStream stream;
-            stream.setString(&streamString, QIODevice::ReadWrite | QIODevice::Append | QIODevice::Text);
+            stream.setString(&streamString, QIODevice::ReadOnly | QIODevice::Text);
             stream << process.readAll();
             while (!stream.atEnd())
             {

@@ -14,15 +14,16 @@ class DeviceWidget;
 class DeviceWidget : public QWidget
 {
     Q_OBJECT
+
+    QSharedPointer<Ui::DeviceWidget> ui;
 public:
     explicit DeviceWidget(QPointer<QWidget> parent = 0);
+    QTextEdit& getTextEdit() const { return *(ui->textEdit); }
 
 signals:
 
 public slots:
 
-private:
-    QSharedPointer<Ui::DeviceWidget> ui;
 };
 
 #endif // DEVICEWIDGET_H

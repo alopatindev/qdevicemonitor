@@ -8,7 +8,7 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
 {
     update();
     connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-    m_updateTimer.start(1000);
+    m_updateTimer.start(UPDATE_FREQUENCY);
 }
 
 void DeviceAdapter::update()

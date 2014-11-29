@@ -8,11 +8,13 @@ using namespace DataTypes;
 
 class AndroidDevice : public BaseDevice
 {
-    QProcess deviceInfoProcess;
+    QProcess m_deviceInfoProcess;
+    QProcess m_deviceLogProcess;
 
 public:
     AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                   const QString& humanReadableName, const QString& humanReadableDescription);
+    ~AndroidDevice();
     virtual void update();
 
     static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map);
@@ -21,6 +23,7 @@ public:
 private:
     virtual qint64 writeData(const char* data, qint64 len);
     void updateDeviceModel();
+    void startLogger();
 };
 
 #endif // ANDROIDDEVICE_H
