@@ -17,7 +17,7 @@ class BaseDevice : public QIODevice
     Q_OBJECT
 
 public:
-    BaseDevice(QObject* parent, const QString& id, DeviceType type, const QString& humanReadableName, const QString& humanReadableDescription);
+    BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type, const QString& humanReadableName, const QString& humanReadableDescription);
     void updateTabWidget();
     virtual void update() = 0;
 

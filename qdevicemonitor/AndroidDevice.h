@@ -11,10 +11,11 @@ class AndroidDevice : public BaseDevice
     QProcess deviceInfoProcess;
 
 public:
-    AndroidDevice(QObject* parent, const QString& id, DeviceType type, const QString& humanReadableName, const QString& humanReadableDescription);
+    AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+                  const QString& humanReadableName, const QString& humanReadableDescription);
     virtual void update();
 
-    static void addNewDevicesOfThisType(QObject* parent, DevicesMap& map);
+    static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map);
     virtual qint64 readData(char* data, qint64 maxlen);
 
 private:

@@ -4,7 +4,8 @@
 
 using namespace DataTypes;
 
-AndroidDevice::AndroidDevice(QObject* parent, const QString& id, DeviceType type, const QString& humanReadableName, const QString& humanReadableDescription)
+AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+                             const QString& humanReadableName, const QString& humanReadableDescription)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription)
 {
     updateDeviceModel();
@@ -30,12 +31,15 @@ void AndroidDevice::update()
         QTextStream stream;
         QString model = deviceInfoProcess.readLine().trimmed();
         qDebug() << "model of" << m_id << "is" << model;
-        m_humanReadableName = model;
-        updateTabWidget();
+        if (!model.isEmpty())
+        {
+            m_humanReadableName = model;
+            updateTabWidget();
+        }
     }
 }
 
-void AndroidDevice::addNewDevicesOfThisType(QObject* parent, DevicesMap& map)
+void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map)
 {
     static QProcess process;
     if (process.state() == QProcess::NotRunning)
@@ -61,7 +65,7 @@ void AndroidDevice::addNewDevicesOfThisType(QObject* parent, DevicesMap& map)
                         if (it == map.end())
                         {
                             map[deviceId] = QSharedPointer<BaseDevice>(
-                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr("Unknown Android"), deviceStatus)
+                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr("Android"), deviceStatus)
                             );
                         }
                         else

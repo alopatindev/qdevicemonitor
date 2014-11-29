@@ -5,6 +5,7 @@
 #include "DeviceAdapter.h"
 
 #include <QMainWindow>
+#include <QPointer>
 #include <QSharedPointer>
 
 namespace Ui {
@@ -18,7 +19,7 @@ class MainWindow : public QMainWindow
     DeviceAdapter m_deviceAdapter;
 
 public:
-    explicit MainWindow(QWidget* parent = 0);
+    explicit MainWindow(QPointer<QWidget> parent = 0);
     ~MainWindow();
 
 private:

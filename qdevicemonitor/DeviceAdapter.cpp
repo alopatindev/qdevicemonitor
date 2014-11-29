@@ -3,7 +3,7 @@
 
 using namespace DataTypes;
 
-DeviceAdapter::DeviceAdapter(QObject* parent)
+DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     : QObject(parent)
 {
     update();
@@ -28,7 +28,7 @@ void DeviceAdapter::updateDevicesMap()
             // TODO
             break;
         case DeviceType::Android:
-            AndroidDevice::addNewDevicesOfThisType(parent(), m_devicesMap);
+            AndroidDevice::addNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap);
             break;
         case DeviceType::IOS:
             // TODO

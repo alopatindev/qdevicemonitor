@@ -4,6 +4,8 @@
 #include "DataTypes.h"
 
 #include <QObject>
+#include <QPointer>
+#include <QTabWidget>
 #include <QTimer>
 
 class DeviceAdapter : public QObject
@@ -15,7 +17,7 @@ private:
     QTimer m_updateTimer;
 
 public:
-    explicit DeviceAdapter(QObject* parent = 0);
+    explicit DeviceAdapter(QPointer<QTabWidget> parent = 0);
 
 signals:
 

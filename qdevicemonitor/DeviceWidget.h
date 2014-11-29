@@ -3,6 +3,7 @@
 
 #include "ui_DeviceWidget.h"
 
+#include <QPointer>
 #include <QSharedPointer>
 #include <QWidget>
 
@@ -14,7 +15,7 @@ class DeviceWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DeviceWidget(QWidget *parent = 0);
+    explicit DeviceWidget(QPointer<QWidget> parent = 0);
 
 signals:
 

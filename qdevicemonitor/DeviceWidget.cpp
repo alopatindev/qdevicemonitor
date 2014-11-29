@@ -1,6 +1,6 @@
 #include "DeviceWidget.h"
 
-DeviceWidget::DeviceWidget(QWidget *parent)
+DeviceWidget::DeviceWidget(QPointer<QWidget> parent)
     : QWidget(parent)
     , ui(new Ui::DeviceWidget)
 {
