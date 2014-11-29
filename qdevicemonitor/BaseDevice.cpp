@@ -5,17 +5,19 @@
 using namespace DataTypes;
 
 BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
-                       const QString& humanReadableName, const QString& humanReadableDescription)
-    : m_id(id)
+                       const QString& humanReadableName, const QString& humanReadableDescription,
+                       QPointer<DeviceAdapter> deviceAdapter)
+    : QObject(parent)
+    , m_id(id)
     , m_type(type)
     , m_humanReadableName(humanReadableName)
     , m_humanReadableDescription(humanReadableDescription)
     , m_online(false)
     , m_tabWidget(parent)
     , m_tabIndex(-1)
+    , m_deviceAdapter(deviceAdapter)
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
-    setParent(parent);
 
     m_deviceWidget = new DeviceWidget(static_cast<QTabWidget*>(m_tabWidget));
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget, humanReadableName);

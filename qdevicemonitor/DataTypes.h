@@ -15,10 +15,22 @@ namespace DataTypes
         Android,
         IOS,
 
-        End
+        DeviceTypeEnd
     };
 
     typedef QMap<QString, QSharedPointer<BaseDevice>> DevicesMap;
+
+    enum Verbosity
+    {
+        Verbose,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Fatal,
+
+        VerbosityEnd
+    };
 }
 
 #endif // DATATYPES_H

@@ -7,6 +7,7 @@
 #include <QPointer>
 #include <QTabWidget>
 #include <QTimer>
+#include <QSettings>
 
 class DeviceAdapter : public QObject
 {
@@ -18,8 +19,17 @@ private:
     DataTypes::DevicesMap m_devicesMap;
     QTimer m_updateTimer;
 
+    int m_visibleLines;
+    QString m_font;
+    QString m_fontSize;
+    bool m_darkTheme;
+    int m_autoRemoveFilesHours;
+
 public:
     explicit DeviceAdapter(QPointer<QTabWidget> parent = 0);
+    void start();
+    void loadSettings(const QSettings& s);
+    void saveSettings(QSettings& s);
 
 signals:
 

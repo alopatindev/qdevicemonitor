@@ -22,6 +22,12 @@ public:
     explicit MainWindow(QPointer<QWidget> parent = 0);
     ~MainWindow();
 
+    void loadSettings();
+    void saveSettings();
+
+public slots:
+    void on_actionSettings_triggered();
+
 private:
     QSharedPointer<Ui::MainWindow> ui;
 };

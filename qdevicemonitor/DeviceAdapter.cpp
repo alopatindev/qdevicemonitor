@@ -6,6 +6,10 @@ using namespace DataTypes;
 DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     : QObject(parent)
 {
+}
+
+void DeviceAdapter::start()
+{
     update();
     connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
     m_updateTimer.start(UPDATE_FREQUENCY);
@@ -18,7 +22,7 @@ void DeviceAdapter::update()
 
 void DeviceAdapter::updateDevicesMap()
 {
-    for (int t = 0; t != static_cast<int>(DeviceType::End); ++t)
+    for (int t = 0; t != static_cast<int>(DeviceType::DeviceTypeEnd); ++t)
     {
         DeviceType type = static_cast<DeviceType>(t);
 
@@ -28,7 +32,7 @@ void DeviceAdapter::updateDevicesMap()
             // TODO
             break;
         case DeviceType::Android:
-            AndroidDevice::addNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap);
+            AndroidDevice::addNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
             break;
         case DeviceType::IOS:
             // TODO
@@ -42,4 +46,46 @@ void DeviceAdapter::updateDevicesMap()
     {
         (*it)->update();
     }
+}
+
+void DeviceAdapter::loadSettings(const QSettings& s)
+{
+    QVariant visibleLines = s.value("visibleLines");
+    if (visibleLines.isValid())
+    {
+        m_visibleLines = visibleLines.toInt();
+    }
+
+    QVariant font = s.value("font");
+    if (font.isValid())
+    {
+        m_font = font.toString();
+    }
+
+    QVariant fontSize = s.value("fontSize");
+    if (fontSize.isValid())
+    {
+        m_fontSize = fontSize.toInt();
+    }
+
+    QVariant darkTheme = s.value("darkTheme");
+    if (darkTheme.isValid())
+    {
+        m_darkTheme = darkTheme.toBool();
+    }
+
+    QVariant autoRemoveFilesHours = s.value("autoRemoveFilesHours");
+    if (autoRemoveFilesHours.isValid())
+    {
+        m_autoRemoveFilesHours = autoRemoveFilesHours.toInt();
+    }
+}
+
+void DeviceAdapter::saveSettings(QSettings& s)
+{
+    s.setValue("visibleLines", m_visibleLines);
+    s.setValue("font", m_font);
+    s.setValue("fontSize", m_fontSize);
+    s.setValue("darkTheme", m_darkTheme);
+    s.setValue("autoRemoveFilesHours", m_autoRemoveFilesHours);
 }

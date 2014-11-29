@@ -17,16 +17,19 @@ SOURCES += main.cpp\
     DeviceAdapter.cpp \
     AndroidDevice.cpp \
     BaseDevice.cpp \
-    DeviceWidget.cpp
+    DeviceWidget.cpp \
+    SettingsDialog.cpp
 
 HEADERS  += MainWindow.h \
     DeviceAdapter.h \
     AndroidDevice.h \
     BaseDevice.h \
     DataTypes.h \
-    DeviceWidget.h
+    DeviceWidget.h \
+    SettingsDialog.h
 
 FORMS    += MainWindow.ui \
-    DeviceWidget.ui
+    DeviceWidget.ui \
+    SettingsDialog.ui
 
 QMAKE_CXXFLAGS += -std=c++11

@@ -12,16 +12,15 @@ class AndroidDevice : public BaseDevice
     QProcess m_deviceLogProcess;
 
 public:
-    AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
-                  const QString& humanReadableName, const QString& humanReadableDescription);
+    explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+                           const QString& humanReadableName, const QString& humanReadableDescription,
+                           QPointer<DeviceAdapter> deviceAdapter);
     ~AndroidDevice();
     virtual void update();
 
-    static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map);
-    virtual qint64 readData(char* data, qint64 maxlen);
+    static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
 
 private:
-    virtual qint64 writeData(const char* data, qint64 len);
     void updateDeviceModel();
     void startLogger();
 };

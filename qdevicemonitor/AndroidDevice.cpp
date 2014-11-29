@@ -4,9 +4,11 @@
 
 using namespace DataTypes;
 
+static QProcess s_devicesListProcess;
+
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
-                             const QString& humanReadableName, const QString& humanReadableDescription)
-    : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription)
+                             const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
+    : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
 {
     updateDeviceModel();
     startLogger();
@@ -14,15 +16,10 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
 
 AndroidDevice::~AndroidDevice()
 {
-    if (m_deviceInfoProcess.state() != QProcess::NotRunning)
-    {
-        m_deviceInfoProcess.close();
-    }
-
-    if (m_deviceLogProcess.state() != QProcess::NotRunning)
-    {
-        m_deviceLogProcess.close();
-    }
+    qDebug() << "~AndroidDevice";
+    m_deviceInfoProcess.close();
+    m_deviceLogProcess.close();
+    s_devicesListProcess.close();
 }
 
 void AndroidDevice::updateDeviceModel()
@@ -54,9 +51,10 @@ void AndroidDevice::update()
     {
         QString streamString;
         QTextStream stream;
+        stream.setCodec("UTF-8");
         QString model = m_deviceInfoProcess.readLine().trimmed();
         m_deviceInfoProcess.close();
-        qDebug() << "model of" << m_id << "is" << model;
+        //qDebug() << "model of" << m_id << "is" << model;
         if (!model.isEmpty())
         {
             m_humanReadableName = model;
@@ -68,27 +66,30 @@ void AndroidDevice::update()
     {
         QString streamString;
         QTextStream stream;
+        stream.setCodec("UTF-8");
         stream.setString(&streamString, QIODevice::ReadOnly | QIODevice::Text);
         stream << m_deviceLogProcess.readAll();
         while (!stream.atEnd())
         {
             QString line = stream.readLine();
+            //m_deviceLogFile << line;
             m_deviceWidget->getTextEdit().append(line);
         }
     }
 }
 
-void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map)
+void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
-    static QProcess process;
-    if (process.state() == QProcess::NotRunning)
+    static QProcess s_devicesListProcess;
+    if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
-        if (process.canReadLine())
+        if (s_devicesListProcess.canReadLine())
         {
             QString streamString;
             QTextStream stream;
+            stream.setCodec("UTF-8");
             stream.setString(&streamString, QIODevice::ReadOnly | QIODevice::Text);
-            stream << process.readAll();
+            stream << s_devicesListProcess.readAll();
             while (!stream.atEnd())
             {
                 QString line = stream.readLine();
@@ -99,12 +100,12 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
                     {
                         QString deviceId = lineSplit[0];
                         QString deviceStatus = lineSplit[1];
-                        qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
+                        //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
                         auto it = map.find(deviceId);
                         if (it == map.end())
                         {
                             map[deviceId] = QSharedPointer<BaseDevice>(
-                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr("Android"), deviceStatus)
+                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr("Android"), deviceStatus, deviceAdapter)
                             );
                         }
                         else
@@ -115,22 +116,12 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
                     }
                 }
             }
-            process.close();
+            s_devicesListProcess.close();
         }
 
         QStringList args;
         args.append("devices");
-        process.start("adb", args);
-        process.setReadChannel(QProcess::StandardOutput);
+        s_devicesListProcess.start("adb", args);
+        s_devicesListProcess.setReadChannel(QProcess::StandardOutput);
     }
-}
-
-qint64 AndroidDevice::readData(char* data, qint64 maxlen)
-{
-    return 0;
-}
-
-qint64 AndroidDevice::writeData(const char* data, qint64 len)
-{
-    return 0;
 }

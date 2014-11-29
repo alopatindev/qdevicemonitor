@@ -1,11 +1,10 @@
 #ifndef BASEDEVICE_H
 #define BASEDEVICE_H
 
-#include "DeviceAdapter.h"
 #include "DeviceWidget.h"
+#include "DeviceAdapter.h"
 #include "DataTypes.h"
 
-#include <QIODevice>
 #include <QPointer>
 #include <QProcess>
 #include <QString>
@@ -13,12 +12,14 @@
 
 using namespace DataTypes;
 
-class BaseDevice : public QIODevice
+class BaseDevice : public QObject
 {
     Q_OBJECT
 
 public:
-    BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type, const QString& humanReadableName, const QString& humanReadableDescription);
+    explicit BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+                        const QString& humanReadableName, const QString& humanReadableDescription,
+                        QPointer<DeviceAdapter> deviceAdapter);
     void updateTabWidget();
     virtual void update() = 0;
 
@@ -41,6 +42,7 @@ protected:
     QPointer<QTabWidget> m_tabWidget;
     QPointer<DeviceWidget> m_deviceWidget;
     int m_tabIndex;
+    QPointer<DeviceAdapter> m_deviceAdapter;
 };
 
 #endif // BASEDEVICE_H
