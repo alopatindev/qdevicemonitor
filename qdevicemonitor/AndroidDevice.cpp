@@ -1,5 +1,6 @@
 #include "AndroidDevice.h"
 #include "Utils.h"
+#include "ThemeColors.h"
 
 #include <QDebug>
 #include <QRegExp>
@@ -125,9 +126,30 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         QString text = &(line.toStdString().c_str()[rx.pos(6) + rx.cap(6).toStdString().size() + 2]); // FIXME
         //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
 
-        if (Utils::verbosityCharacterToInt(verbosity.toStdString()[0]) <= m_deviceWidget->getVerbosityLevel())
+        int verbosityLevel = Utils::verbosityCharacterToInt(verbosity.toStdString()[0]);
+        if (verbosityLevel <= m_deviceWidget->getVerbosityLevel())
         {
-            m_deviceWidget->getTextEdit().append(line);
+            int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+            QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
+
+            //m_deviceWidget->getTextEdit().append(line);
+            m_deviceWidget->getTextEdit().setTextColor(verbosityColor);
+            m_deviceWidget->getTextEdit().insertPlainText(verbosity + " ");
+
+            m_deviceWidget->getTextEdit().setTextColor(QColor(ThemeColors::Colors[theme][ThemeColors::DateTime]));
+            m_deviceWidget->getTextEdit().insertPlainText(date + " ");
+            m_deviceWidget->getTextEdit().insertPlainText(time + " ");
+
+            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::Pid]);
+            m_deviceWidget->getTextEdit().insertPlainText(pid + " ");
+            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::Tid]);
+            m_deviceWidget->getTextEdit().insertPlainText(tid + " ");
+
+            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::Tag]);
+            m_deviceWidget->getTextEdit().insertPlainText(tag + " ");
+
+            m_deviceWidget->getTextEdit().setTextColor(verbosityColor);
+            m_deviceWidget->getTextEdit().insertPlainText(text + "\n");
         }
     }
 }

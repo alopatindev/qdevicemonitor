@@ -24,10 +24,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionSettings_triggered()
 {
+    QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
     saveSettings();
     SettingsDialog dialog(this);
+    dialog.loadSettings(s);
     if (dialog.exec() == QDialog::Accepted)
     {
+        dialog.saveSettings(s);
         loadSettings();
     }
 }

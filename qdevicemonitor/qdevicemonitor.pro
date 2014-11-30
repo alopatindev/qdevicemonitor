@@ -28,7 +28,8 @@ HEADERS  += MainWindow.h \
     DataTypes.h \
     DeviceWidget.h \
     SettingsDialog.h \
-    Utils.h
+    Utils.h \
+    ThemeColors.h
 
 FORMS    += MainWindow.ui \
     DeviceWidget.ui \

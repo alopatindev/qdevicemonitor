@@ -8,6 +8,10 @@ using namespace DataTypes;
 
 DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     : QObject(parent)
+    , m_visibleLines(1000)
+    , m_fontSize(12)
+    , m_darkTheme(false)
+    , m_autoRemoveFilesHours(48)
 {
 }
 

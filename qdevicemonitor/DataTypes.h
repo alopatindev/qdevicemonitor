@@ -28,6 +28,16 @@ namespace DataTypes
         "Debug",
         "Verbose"
     };
+
+    enum VerbosityEnum
+    {
+        Fatal,
+        Error,
+        Warn,
+        Info,
+        Debug,
+        Verbose
+    };
 }
 
 #endif // DATATYPES_H

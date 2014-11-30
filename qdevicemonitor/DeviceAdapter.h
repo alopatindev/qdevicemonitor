@@ -21,7 +21,7 @@ private:
 
     int m_visibleLines;
     QString m_font;
-    QString m_fontSize;
+    int m_fontSize;
     bool m_darkTheme;
     int m_autoRemoveFilesHours;
 
@@ -31,6 +31,8 @@ public:
     void stop();
     void loadSettings(const QSettings& s);
     void saveSettings(QSettings& s);
+
+    bool isDarkTheme() const { return m_darkTheme; }
 
 signals:
 

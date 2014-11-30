@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QDir>
 #include <QPointer>
+#include <QSettings>
 #include <QSharedPointer>
 
 namespace Ui {
@@ -19,6 +20,9 @@ class SettingsDialog : public QDialog
 public:
     explicit SettingsDialog(QPointer<QWidget> parent = 0);
     ~SettingsDialog();
+
+    void loadSettings(const QSettings& s);
+    void saveSettings(QSettings& s);
 };
 
 #endif // SETTINGSDIALOG_H
