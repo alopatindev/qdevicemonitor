@@ -1,8 +1,11 @@
 #include "AndroidDevice.h"
 #include "Utils.h"
 
-#include <QTextStream>
 #include <QDebug>
+#include <QRegExp>
+#include <QRegExpValidator>
+#include <QScrollBar>
+#include <QWeakPointer>
 
 using namespace DataTypes;
 
@@ -11,6 +14,7 @@ static QProcess s_devicesListProcess;
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
+    , m_emptyTextEdit(true)
 {
     updateDeviceModel();
     startLogger();
@@ -22,7 +26,8 @@ AndroidDevice::~AndroidDevice()
     m_deviceInfoProcess.close();
     m_deviceLogProcess.close();
     s_devicesListProcess.close();
-    m_deviceLogFile.flush();
+    //m_deviceLogFileStream->flush();
+    m_deviceLogFileStream.clear();
     m_deviceLogFile.close();
 }
 
@@ -40,10 +45,19 @@ void AndroidDevice::updateDeviceModel()
 
 void AndroidDevice::startLogger()
 {
+    m_deviceLogFile.setFileName(
+        Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-")
+    );
+    m_deviceLogFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+    m_deviceLogFileStream = QSharedPointer<QTextStream>(new QTextStream(&m_deviceLogFile));
+    m_deviceLogFileStream->setCodec("UTF-8");
+
     QStringList args;
     args.append("-s");
     args.append(m_id);
     args.append("logcat");
+    args.append("-v");
+    args.append("threadtime");
     args.append("*:v");
     m_deviceLogProcess.start("adb", args);
     m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
@@ -53,9 +67,6 @@ void AndroidDevice::update()
 {
     if (m_deviceInfoProcess.state() == QProcess::NotRunning && m_deviceInfoProcess.canReadLine())
     {
-        QString stringStream;
-        QTextStream stream;
-        stream.setCodec("UTF-8");
         QString model = m_deviceInfoProcess.readLine().trimmed();
         m_deviceInfoProcess.close();
         //qDebug() << "model of" << m_id << "is" << model;
@@ -68,27 +79,36 @@ void AndroidDevice::update()
 
     if (m_deviceLogProcess.state() == QProcess::Running && m_deviceLogProcess.canReadLine())
     {
-        if (!m_deviceLogFile.isOpen())
-        {
-            m_deviceLogFile.setFileName(
-                Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-")
-            );
-            m_deviceLogFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
-        }
-
         QString stringStream;
         QTextStream stream;
         stream.setCodec("UTF-8");
         stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
         stream << m_deviceLogProcess.readAll();
 
-        QTextStream logFileStream(&m_deviceLogFile);
-        logFileStream.setCodec("UTF-8");
         while (!stream.atEnd())
         {
             QString line = stream.readLine();
-            m_deviceWidget->getTextEdit().append(line);
-            logFileStream << line << "\n";
+            *m_deviceLogFileStream << line << "\n";
+
+            static QRegExp rx("([\\d-]+) ([\\d:\\.]+) (\\d+) (\\d+) ([A-Z]) (.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
+            rx.setMinimal(true);
+
+            if (rx.indexIn(line) > -1)
+            {
+                QString date = rx.cap(1);
+                QString time = rx.cap(2);
+                QString pid = rx.cap(3);
+                QString tid = rx.cap(4);
+                QString verbosity = rx.cap(5);
+                QString tag = rx.cap(6).trimmed();
+                QString text = &(line.toStdString().c_str()[rx.pos(6) + rx.cap(6).toStdString().size() + 2]); // FIXME
+                //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
+
+                if (Utils::verbosityCharacterToInt(verbosity.toStdString()[0]) <= m_deviceWidget->getVerbosityLevel())
+                {
+                    m_deviceWidget->getTextEdit().append(line);
+                }
+            }
         }
     }
 }

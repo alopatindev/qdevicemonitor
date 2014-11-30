@@ -4,6 +4,7 @@
 #include "BaseDevice.h"
 #include <QFile>
 #include <QProcess>
+#include <QTextStream>
 
 using namespace DataTypes;
 
@@ -12,6 +13,8 @@ class AndroidDevice : public BaseDevice
     QProcess m_deviceInfoProcess;
     QProcess m_deviceLogProcess;
     QFile m_deviceLogFile;
+    QSharedPointer<QTextStream> m_deviceLogFileStream;
+    bool m_emptyTextEdit;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,

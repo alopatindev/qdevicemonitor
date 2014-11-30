@@ -41,11 +41,39 @@ const QString& Utils::getConfigPath()
 QString Utils::removeSpecialCharacters(const QString& text)
 {
     QString out(text);
-    out.remove(QRegExp("[^a-zA-Z\\d\\s]"));
+    static QRegExp regexp("[^a-zA-Z\\d\\s]");
+    out.remove(regexp);
     return out;
 }
 
 QString Utils::getCurrentDateTime()
 {
     return QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
+}
+
+int Utils::verbosityCharacterToInt(char character)
+{
+    switch (character)
+    {
+    case 'V':
+        return 5;
+
+    case 'D':
+        return 4;
+
+    case 'I':
+        return 3;
+
+    case 'W':
+        return 2;
+
+    case 'E':
+        return 1;
+
+    case 'F':
+        return 0;
+
+    default:
+        return -1;
+    }
 }

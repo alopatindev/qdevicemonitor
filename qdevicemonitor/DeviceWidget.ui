@@ -73,7 +73,10 @@ p, li { white-space: pre-wrap; }
      <item>
       <widget class="QCheckBox" name="wrapCheckBox">
        <property name="text">
-        <string>Wrap</string>
+        <string>Wrap Lines</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -127,5 +130,22 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>clearLogPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>textEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>406</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

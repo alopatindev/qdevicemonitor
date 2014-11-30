@@ -20,16 +20,13 @@ namespace DataTypes
 
     typedef QMap<QString, QSharedPointer<BaseDevice>> DevicesMap;
 
-    enum Verbosity
-    {
-        Verbose,
-        Debug,
-        Info,
-        Warn,
-        Error,
-        Fatal,
-
-        VerbosityEnd
+    static const char* const Verbosity[] = {
+        "Fatal",
+        "Error",
+        "Warn",
+        "Info",
+        "Debug",
+        "Verbose"
     };
 }
 

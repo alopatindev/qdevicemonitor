@@ -12,6 +12,7 @@ public:
     static const QString& getConfigPath();
     static QString removeSpecialCharacters(const QString& text);
     static QString getCurrentDateTime();
+    static int verbosityCharacterToInt(char character);
 };
 
 #endif // UTILS_H

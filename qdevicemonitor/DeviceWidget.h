@@ -20,11 +20,13 @@ class DeviceWidget : public QWidget
 public:
     explicit DeviceWidget(QPointer<QWidget> parent = 0);
     QTextEdit& getTextEdit() const { return *(ui->textEdit); }
+    int getVerbosityLevel() const;
 
 signals:
 
 public slots:
     void on_verbositySlider_valueChanged(int value);
+    void on_wrapCheckBox_toggled(bool checked);
 };
 
 #endif // DEVICEWIDGET_H
