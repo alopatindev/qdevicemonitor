@@ -15,6 +15,7 @@ class AndroidDevice : public BaseDevice
     QFile m_deviceLogFile;
     QSharedPointer<QTextStream> m_deviceLogFileStream;
     bool m_emptyTextEdit;
+    int m_lastVerbosityLevel;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
@@ -28,6 +29,9 @@ public:
 private:
     void updateDeviceModel();
     void startLogger();
+    void stopLogger();
+    void filterAndAddToTextEdit(const QString& line);
+    void reloadTextEdit();
 };
 
 #endif // ANDROIDDEVICE_H

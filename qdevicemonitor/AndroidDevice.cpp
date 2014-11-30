@@ -15,6 +15,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_emptyTextEdit(true)
+    , m_lastVerbosityLevel(-1)
 {
     updateDeviceModel();
     startLogger();
@@ -23,12 +24,9 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
 AndroidDevice::~AndroidDevice()
 {
     qDebug() << "~AndroidDevice";
-    m_deviceInfoProcess.close();
-    m_deviceLogProcess.close();
+    stopLogger();
     s_devicesListProcess.close();
-    //m_deviceLogFileStream->flush();
-    m_deviceLogFileStream.clear();
-    m_deviceLogFile.close();
+    m_deviceInfoProcess.close();
 }
 
 void AndroidDevice::updateDeviceModel()
@@ -63,6 +61,14 @@ void AndroidDevice::startLogger()
     m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
 }
 
+void AndroidDevice::stopLogger()
+{
+    m_deviceLogProcess.close();
+    //m_deviceLogFileStream->flush();
+    m_deviceLogFileStream.clear();
+    m_deviceLogFile.close();
+}
+
 void AndroidDevice::update()
 {
     if (m_deviceInfoProcess.state() == QProcess::NotRunning && m_deviceInfoProcess.canReadLine())
@@ -77,40 +83,61 @@ void AndroidDevice::update()
         }
     }
 
-    if (m_deviceLogProcess.state() == QProcess::Running && m_deviceLogProcess.canReadLine())
+    if (m_deviceLogProcess.state() == QProcess::Running)
     {
-        QString stringStream;
-        QTextStream stream;
-        stream.setCodec("UTF-8");
-        stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
-        stream << m_deviceLogProcess.readAll();
-
-        while (!stream.atEnd())
+        if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
         {
-            QString line = stream.readLine();
-            *m_deviceLogFileStream << line << "\n";
+            m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
+            reloadTextEdit();
+        }
+        else if(m_deviceLogProcess.canReadLine())
+        {
+            QString stringStream;
+            QTextStream stream;
+            stream.setCodec("UTF-8");
+            stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
+            //m_deviceWidget->getTextEdit().setPlainText(m_deviceLogProcess.readAll());
+            stream << m_deviceLogProcess.readAll();
 
-            static QRegExp rx("([\\d-]+) ([\\d:\\.]+) (\\d+) (\\d+) ([A-Z]) (.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
-            rx.setMinimal(true);
-
-            if (rx.indexIn(line) > -1)
+            while (!stream.atEnd())
             {
-                QString date = rx.cap(1);
-                QString time = rx.cap(2);
-                QString pid = rx.cap(3);
-                QString tid = rx.cap(4);
-                QString verbosity = rx.cap(5);
-                QString tag = rx.cap(6).trimmed();
-                QString text = &(line.toStdString().c_str()[rx.pos(6) + rx.cap(6).toStdString().size() + 2]); // FIXME
-                //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
-
-                if (Utils::verbosityCharacterToInt(verbosity.toStdString()[0]) <= m_deviceWidget->getVerbosityLevel())
-                {
-                    m_deviceWidget->getTextEdit().append(line);
-                }
+                QString line = stream.readLine();
+                *m_deviceLogFileStream << line << "\n";
+                filterAndAddToTextEdit(line);
             }
         }
     }
+}
+
+void AndroidDevice::filterAndAddToTextEdit(const QString& line)
+{
+    static QRegExp rx("([\\d-]+) ([\\d:\\.]+) (\\d+) (\\d+) ([A-Z]) (.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
+    rx.setMinimal(true);
+
+    if (rx.indexIn(line) > -1)
+    {
+        QString date = rx.cap(1);
+        QString time = rx.cap(2);
+        QString pid = rx.cap(3);
+        QString tid = rx.cap(4);
+        QString verbosity = rx.cap(5);
+        QString tag = rx.cap(6).trimmed();
+        QString text = &(line.toStdString().c_str()[rx.pos(6) + rx.cap(6).toStdString().size() + 2]); // FIXME
+        //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
+
+        if (Utils::verbosityCharacterToInt(verbosity.toStdString()[0]) <= m_deviceWidget->getVerbosityLevel())
+        {
+            m_deviceWidget->getTextEdit().append(line);
+        }
+    }
+}
+
+void AndroidDevice::reloadTextEdit()
+{
+    qDebug() << "reloadTextEdit";
+    stopLogger();
+    m_deviceWidget->getTextEdit().clear();
+    startLogger();
 }
 
 void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
