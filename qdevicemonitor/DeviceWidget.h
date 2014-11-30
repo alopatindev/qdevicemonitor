@@ -2,6 +2,7 @@
 #define DEVICEWIDGET_H
 
 #include "ui_DeviceWidget.h"
+#include "DeviceAdapter.h"
 
 #include <QPointer>
 #include <QSharedPointer>
@@ -16,9 +17,10 @@ class DeviceWidget : public QWidget
     Q_OBJECT
 
     QSharedPointer<Ui::DeviceWidget> ui;
+    QPointer<DeviceAdapter> m_deviceAdapter;
 
 public:
-    explicit DeviceWidget(QPointer<QWidget> parent = 0);
+    explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
     QTextEdit& getTextEdit() const { return *(ui->textEdit); }
     int getVerbosityLevel() const;
 

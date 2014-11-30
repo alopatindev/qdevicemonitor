@@ -33,6 +33,9 @@ public:
     void saveSettings(QSettings& s);
 
     bool isDarkTheme() const { return m_darkTheme; }
+    const QString& getFont() const { return m_font; }
+    int getFontSize() const { return m_fontSize; }
+    int getAutoRemoveFilesHours() { return m_autoRemoveFilesHours; }
 
 signals:
 

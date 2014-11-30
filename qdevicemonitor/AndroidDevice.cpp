@@ -16,7 +16,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_emptyTextEdit(true)
-    , m_lastVerbosityLevel(-1)
+    , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
 {
     updateDeviceModel();
     startLogger();
@@ -150,6 +150,16 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 
             m_deviceWidget->getTextEdit().setTextColor(verbosityColor);
             m_deviceWidget->getTextEdit().insertPlainText(text + "\n");
+        }
+
+        QPointer<QScrollBar> sb = m_deviceWidget->getTextEdit().verticalScrollBar();
+        if (sb->maximum() > 0)
+        {
+            bool autoScrolling = sb->maximum() < 500 || (sb->value() * 100) / sb->maximum() > 25;  // FIXME: magic number
+            if (autoScrolling)
+            {
+                sb->setValue(sb->maximum());
+            }
         }
     }
 }

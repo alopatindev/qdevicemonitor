@@ -19,7 +19,7 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
 
-    m_deviceWidget = new DeviceWidget(static_cast<QTabWidget*>(m_tabWidget));
+    m_deviceWidget = new DeviceWidget(static_cast<QTabWidget*>(m_tabWidget), m_deviceAdapter);
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget, humanReadableName);
 }
 
