@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "SettingsDialog.h"
+#include "Utils.h"
 
 #include <QDebug>
 #include <QSettings>
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    (void)Utils::getLogsPath();
     loadSettings();
     m_deviceAdapter.setParent(ui->tabWidget);
     m_deviceAdapter.start();
@@ -17,6 +19,7 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
 MainWindow::~MainWindow()
 {
     saveSettings();
+    m_deviceAdapter.stop();
 }
 
 void MainWindow::on_actionSettings_triggered()
@@ -32,7 +35,7 @@ void MainWindow::on_actionSettings_triggered()
 void MainWindow::loadSettings()
 {
     qDebug() << "loadSettings";
-    QSettings s(SettingsDialog::getConfigPath(), QSettings::IniFormat);
+    QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
     qDebug() << "path" << s.fileName();
 
     QRect geom = s.value("geometry").toRect();
@@ -48,7 +51,7 @@ void MainWindow::loadSettings()
 void MainWindow::saveSettings()
 {
     qDebug() << "saveSettings";
-    QSettings s(SettingsDialog::getConfigPath(), QSettings::IniFormat);
+    QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
 
     s.setValue("geometry", geometry());
     qDebug() << geometry();

@@ -2,6 +2,7 @@
 #define ANDROIDDEVICE_H
 
 #include "BaseDevice.h"
+#include <QFile>
 #include <QProcess>
 
 using namespace DataTypes;
@@ -10,6 +11,7 @@ class AndroidDevice : public BaseDevice
 {
     QProcess m_deviceInfoProcess;
     QProcess m_deviceLogProcess;
+    QFile m_deviceLogFile;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,

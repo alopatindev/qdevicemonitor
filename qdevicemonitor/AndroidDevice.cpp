@@ -1,4 +1,6 @@
 #include "AndroidDevice.h"
+#include "Utils.h"
+
 #include <QTextStream>
 #include <QDebug>
 
@@ -20,6 +22,8 @@ AndroidDevice::~AndroidDevice()
     m_deviceInfoProcess.close();
     m_deviceLogProcess.close();
     s_devicesListProcess.close();
+    m_deviceLogFile.flush();
+    m_deviceLogFile.close();
 }
 
 void AndroidDevice::updateDeviceModel()
@@ -49,7 +53,7 @@ void AndroidDevice::update()
 {
     if (m_deviceInfoProcess.state() == QProcess::NotRunning && m_deviceInfoProcess.canReadLine())
     {
-        QString streamString;
+        QString stringStream;
         QTextStream stream;
         stream.setCodec("UTF-8");
         QString model = m_deviceInfoProcess.readLine().trimmed();
@@ -64,16 +68,27 @@ void AndroidDevice::update()
 
     if (m_deviceLogProcess.state() == QProcess::Running && m_deviceLogProcess.canReadLine())
     {
-        QString streamString;
+        if (!m_deviceLogFile.isOpen())
+        {
+            m_deviceLogFile.setFileName(
+                Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-")
+            );
+            m_deviceLogFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+        }
+
+        QString stringStream;
         QTextStream stream;
         stream.setCodec("UTF-8");
-        stream.setString(&streamString, QIODevice::ReadOnly | QIODevice::Text);
+        stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
         stream << m_deviceLogProcess.readAll();
+
+        QTextStream logFileStream(&m_deviceLogFile);
+        logFileStream.setCodec("UTF-8");
         while (!stream.atEnd())
         {
             QString line = stream.readLine();
-            //m_deviceLogFile << line;
             m_deviceWidget->getTextEdit().append(line);
+            logFileStream << line << "\n";
         }
     }
 }
@@ -85,10 +100,10 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
     {
         if (s_devicesListProcess.canReadLine())
         {
-            QString streamString;
+            QString stringStream;
             QTextStream stream;
             stream.setCodec("UTF-8");
-            stream.setString(&streamString, QIODevice::ReadOnly | QIODevice::Text);
+            stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
             stream << s_devicesListProcess.readAll();
             while (!stream.atEnd())
             {

@@ -11,15 +11,3 @@ SettingsDialog::SettingsDialog(QPointer<QWidget> parent)
 SettingsDialog::~SettingsDialog()
 {
 }
-
-const QString& SettingsDialog::getLogsPath()
-{
-    static const QString d = QDir::homePath() + "/" + qApp->applicationName();
-    return d;
-}
-
-const QString& SettingsDialog::getConfigPath()
-{
-    static const QString d = getLogsPath() + "/" + qApp->applicationName() + ".conf";
-    return d;
-}

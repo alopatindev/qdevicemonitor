@@ -1,5 +1,8 @@
 #include "DeviceAdapter.h"
 #include "AndroidDevice.h"
+#include "SettingsDialog.h"
+
+#include <QDebug>
 
 using namespace DataTypes;
 
@@ -10,9 +13,17 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
 
 void DeviceAdapter::start()
 {
+    qDebug() << "DeviceAdapter::start";
     update();
     connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
     m_updateTimer.start(UPDATE_FREQUENCY);
+}
+
+void DeviceAdapter::stop()
+{
+    qDebug() << "DeviceAdapter::stop";
+    m_updateTimer.stop();
+    m_updateTimer.disconnect(SIGNAL(timeout()), this, SLOT(update()));
 }
 
 void DeviceAdapter::update()

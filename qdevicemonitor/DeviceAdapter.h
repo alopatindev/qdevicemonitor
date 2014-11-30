@@ -28,6 +28,7 @@ private:
 public:
     explicit DeviceAdapter(QPointer<QTabWidget> parent = 0);
     void start();
+    void stop();
     void loadSettings(const QSettings& s);
     void saveSettings(QSettings& s);
 

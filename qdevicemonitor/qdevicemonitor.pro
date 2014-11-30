@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     AndroidDevice.cpp \
     BaseDevice.cpp \
     DeviceWidget.cpp \
-    SettingsDialog.cpp
+    SettingsDialog.cpp \
+    Utils.cpp
 
 HEADERS  += MainWindow.h \
     DeviceAdapter.h \
@@ -26,7 +27,8 @@ HEADERS  += MainWindow.h \
     BaseDevice.h \
     DataTypes.h \
     DeviceWidget.h \
-    SettingsDialog.h
+    SettingsDialog.h \
+    Utils.h
 
 FORMS    += MainWindow.ui \
     DeviceWidget.ui \

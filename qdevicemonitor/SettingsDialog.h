@@ -19,10 +19,6 @@ class SettingsDialog : public QDialog
 public:
     explicit SettingsDialog(QPointer<QWidget> parent = 0);
     ~SettingsDialog();
-
-public:
-    static const QString& getLogsPath();
-    static const QString& getConfigPath();
 };
 
 #endif // SETTINGSDIALOG_H
