@@ -26,7 +26,6 @@ AndroidDevice::~AndroidDevice()
 {
     qDebug() << "~AndroidDevice";
     stopLogger();
-    s_devicesListProcess.close();
     m_deviceInfoProcess.close();
 }
 
@@ -174,7 +173,6 @@ void AndroidDevice::reloadTextEdit()
 
 void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
-    static QProcess s_devicesListProcess;
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
         if (s_devicesListProcess.canReadLine())
@@ -218,4 +216,9 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
         s_devicesListProcess.start("adb", args);
         s_devicesListProcess.setReadChannel(QProcess::StandardOutput);
     }
+}
+
+void AndroidDevice::stopDevicesListProcess()
+{
+    s_devicesListProcess.close();
 }

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ctags -R .
-cd build-qdevicemonitor-Desktop-Debug/ && make -j16 && gdb ./qdevicemonitor
+cd qdevicemonitor && qmake 'CONFIG += debug' && make -j8 && gdb ./qdevicemonitor

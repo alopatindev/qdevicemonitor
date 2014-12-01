@@ -25,6 +25,7 @@ public:
     virtual void update();
 
     static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
+    static void stopDevicesListProcess();
 
 private:
     void updateDeviceModel();

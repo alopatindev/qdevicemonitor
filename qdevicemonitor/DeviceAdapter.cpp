@@ -28,6 +28,7 @@ void DeviceAdapter::stop()
     qDebug() << "DeviceAdapter::stop";
     m_updateTimer.stop();
     m_updateTimer.disconnect(SIGNAL(timeout()), this, SLOT(update()));
+    AndroidDevice::stopDevicesListProcess();
 }
 
 void DeviceAdapter::update()
