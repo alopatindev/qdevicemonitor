@@ -54,3 +54,13 @@ void BaseDevice::setOnline(bool online)
         updateTabWidget();
     }
 }
+
+void BaseDevice::setHumanReadableName(const QString& text)
+{
+    m_humanReadableName = text;
+}
+
+void BaseDevice::setHumanReadableDescription(const QString& text)
+{
+    m_humanReadableDescription = text;
+}

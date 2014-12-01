@@ -26,8 +26,13 @@ public:
     const QString& getHumanReadableName() const;
     const QString& getHumanReadableDescription() const;
 
+    void setHumanReadableName(const QString& text);
+    void setHumanReadableDescription(const QString& text);
+
     bool isOnline() const;
     void setOnline(bool online);
+
+    const QString& getId() { return m_id; }
 
 signals:
 

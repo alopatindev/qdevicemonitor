@@ -16,6 +16,7 @@ class AndroidDevice : public BaseDevice
     QSharedPointer<QTextStream> m_deviceLogFileStream;
     bool m_emptyTextEdit;
     int m_lastVerbosityLevel;
+    bool m_didReadModel;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,

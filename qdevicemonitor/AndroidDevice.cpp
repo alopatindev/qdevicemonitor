@@ -11,12 +11,14 @@
 using namespace DataTypes;
 
 static QProcess s_devicesListProcess;
+static const char* PLATFORM_STRING = "Android";
 
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_emptyTextEdit(true)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
+    , m_didReadModel(false)
 {
     updateDeviceModel();
     startLogger();
@@ -31,6 +33,7 @@ AndroidDevice::~AndroidDevice()
 
 void AndroidDevice::updateDeviceModel()
 {
+    qDebug() << "updateDeviceModel" << m_id;
     QStringList args;
     args.append("-s");
     args.append(m_id);
@@ -71,15 +74,25 @@ void AndroidDevice::stopLogger()
 
 void AndroidDevice::update()
 {
-    if (m_deviceInfoProcess.state() == QProcess::NotRunning && m_deviceInfoProcess.canReadLine())
+    if (!m_didReadModel && m_deviceInfoProcess.state() == QProcess::NotRunning)
     {
-        QString model = m_deviceInfoProcess.readLine().trimmed();
-        m_deviceInfoProcess.close();
-        //qDebug() << "model of" << m_id << "is" << model;
-        if (!model.isEmpty())
+        if (m_deviceInfoProcess.canReadLine())
         {
-            m_humanReadableName = model;
-            updateTabWidget();
+            QString model = m_deviceInfoProcess.readLine().trimmed();
+            if (!model.isEmpty())
+            {
+                qDebug() << "updateDeviceModel" << m_id << "=>" << model;
+                m_humanReadableName = model;
+                updateTabWidget();
+                m_didReadModel = true;
+            }
+        }
+
+        m_deviceInfoProcess.close();
+
+        if (!m_didReadModel)
+        {
+            updateDeviceModel();
         }
     }
 
@@ -111,9 +124,11 @@ void AndroidDevice::update()
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 {
-    static QRegExp rx("([\\d-]+) ([\\d:\\.]+) (\\d+) (\\d+) ([A-Z]) (.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
+    m_deviceWidget->getTextEdit().insertPlainText(line + "\n");
+    static QRegExp rx("([\\d-]+) *([\\d:\\.]+) *(\\d+) *(\\d+) *([A-Z]) *(.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
     rx.setMinimal(true);
 
+    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
     {
         QString date = rx.cap(1);
@@ -128,7 +143,6 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         int verbosityLevel = Utils::verbosityCharacterToInt(verbosity.toStdString()[0]);
         if (verbosityLevel <= m_deviceWidget->getVerbosityLevel())
         {
-            int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
             QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
             //m_deviceWidget->getTextEdit().append(line);
@@ -160,6 +174,12 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
                 sb->setValue(sb->maximum());
             }
         }
+    }
+    else
+    {
+        qDebug() << "failed to parse" << line;
+        m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose]);
+        m_deviceWidget->getTextEdit().insertPlainText(line + "\n");
     }
 }
 
@@ -197,13 +217,20 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
                         if (it == map.end())
                         {
                             map[deviceId] = QSharedPointer<BaseDevice>(
-                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr("Android"), deviceStatus, deviceAdapter)
+                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr(PLATFORM_STRING), tr("Initializing..."), deviceAdapter)
                             );
                         }
                         else
                         {
                             bool online = deviceStatus == "device";
                             (*it)->setOnline(online);
+                            (*it)->setHumanReadableDescription(
+                                tr("%1\nStatus: %2\nID: %3%4")
+                                    .arg(tr(PLATFORM_STRING))
+                                    .arg(online ? "Online" : "Offline")
+                                    .arg(deviceId)
+                                    .arg(!online ? "\n" + deviceStatus : "")
+                            );
                         }
                     }
                 }
