@@ -6,6 +6,7 @@
 #include <QRegExp>
 #include <QRegExpValidator>
 #include <QScrollBar>
+#include <QStringList>
 #include <QWeakPointer>
 
 using namespace DataTypes;
@@ -18,6 +19,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_emptyTextEdit(true)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
+    , m_lastFilter(m_deviceWidget->getFilterLineEdit().text())
     , m_didReadModel(false)
 {
     updateDeviceModel();
@@ -98,9 +100,15 @@ void AndroidDevice::update()
 
     if (m_deviceLogProcess.state() == QProcess::Running)
     {
+        const QString filter = m_deviceWidget->getFilterLineEdit().text();
         if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
         {
             m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
+            reloadTextEdit();
+        }
+        else if (m_lastFilter.compare(filter) != 0) // TODO: get with signal; check after timeout
+        {
+            m_lastFilter = filter;
             reloadTextEdit();
         }
         else if(m_deviceLogProcess.canReadLine())
@@ -128,6 +136,10 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     static QRegExp rx("([\\d-]+) *([\\d:\\.]+) *(\\d+) *(\\d+) *([A-Z]) *(.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
     rx.setMinimal(true);
 
+    QStringList filters = m_deviceWidget->getFilterLineEdit().text().split(" ");
+    bool filtersMatch = true;
+    bool filtersValid = true;
+
     int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
     {
@@ -137,11 +149,13 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         QString tid = rx.cap(4);
         QString verbosity = rx.cap(5);
         QString tag = rx.cap(6).trimmed();
-        QString text = &(line.toStdString().c_str()[rx.pos(6) + rx.cap(6).toStdString().size() + 2]); // FIXME
+        QString text = line.mid(rx.pos(6) + rx.cap(6).length() + 2); // the rest of the line after "foo: "
         //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
 
-        int verbosityLevel = Utils::verbosityCharacterToInt(verbosity.toStdString()[0]);
-        if (verbosityLevel <= m_deviceWidget->getVerbosityLevel())
+        VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.toStdString()[0])); // FIXME
+        checkFilters(filtersMatch, filtersValid, filters, verbosityLevel, pid, tid, tag, text);
+
+        if (filtersMatch)
         {
             QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
@@ -178,8 +192,57 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     else
     {
         qDebug() << "failed to parse" << line;
-        m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose]);
-        m_deviceWidget->getTextEdit().insertPlainText(line + "\n");
+        checkFilters(filtersMatch, filtersValid, filters);
+        if (filtersMatch)
+        {
+            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose]);
+            m_deviceWidget->getTextEdit().insertPlainText(line + "\n");
+        }
+    }
+
+    if (!filtersValid) // TODO
+    {
+        qDebug() << "filtersValid == false";
+    }
+}
+
+bool AndroidDevice::columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid) const
+{
+    if (filter.startsWith(column))
+    {
+        QString value = filter.mid(column.length());
+        if (value.isEmpty())
+        {
+            filtersValid = false;
+        }
+        else if (!originalValue.startsWith(value))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QString& pid, const QString& tid, const QString& tag, const QString& text) const
+{
+    filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
+
+    if (!filtersMatch)
+    {
+        return;
+    }
+
+    for (auto it = filters.begin(); it != filters.end(); ++it)
+    {
+        const QString& filter = *it;
+        if (!columnMatches("pid:", filter, pid, filtersValid) ||
+            !columnMatches("tid:", filter, tid, filtersValid) ||
+            !columnMatches("tag:", filter, tag, filtersValid) ||
+            !columnMatches("text:", filter, text, filtersValid))
+        {
+            filtersMatch = false;
+            break;
+        }
     }
 }
 
