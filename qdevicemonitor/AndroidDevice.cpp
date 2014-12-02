@@ -23,7 +23,6 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     , m_didReadModel(false)
 {
     updateDeviceModel();
-    startLogger();
 }
 
 AndroidDevice::~AndroidDevice()
@@ -48,6 +47,11 @@ void AndroidDevice::updateDeviceModel()
 
 void AndroidDevice::startLogger()
 {
+    if (!m_didReadModel)
+    {
+        return;
+    }
+
     m_deviceLogFile.setFileName(
         Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-")
     );
@@ -87,6 +91,7 @@ void AndroidDevice::update()
                 m_humanReadableName = model;
                 updateTabWidget();
                 m_didReadModel = true;
+                startLogger();
             }
         }
 

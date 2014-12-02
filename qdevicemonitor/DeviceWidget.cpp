@@ -26,8 +26,8 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
     ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
 
-    ui->verbositySlider->setValue(ui->verbositySlider->value());
-    ui->wrapCheckBox->setChecked(ui->wrapCheckBox->isChecked());
+    ui->verbositySlider->valueChanged(ui->verbositySlider->value());
+    ui->wrapCheckBox->setCheckState(ui->wrapCheckBox->isChecked() ? Qt::Checked : Qt::Unchecked);
 }
 
 void DeviceWidget::on_verbositySlider_valueChanged(int value)

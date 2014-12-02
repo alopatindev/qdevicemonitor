@@ -4,32 +4,32 @@
 #include <QDateTime>
 #include <QDir>
 #include <QRegExp>
+#include <QDebug>
+
+static const QString LOGS_DIR = "logs";
 
 const QString& Utils::getDataPath()
 {
-    static const QString d = QDir::homePath() + "/" + qApp->applicationName();
+    static const QString d = QDir::homePath() + "/." + qApp->applicationName();
     return d;
 }
 
 const QString& Utils::getLogsPath()
 {
-    static const QString LOGS_DIR = "logs";
-    static const QString d = QDir::homePath() + "/" + qApp->applicationName() + "/" + LOGS_DIR;
-
+    static const QString d = getDataPath() + "/" + LOGS_DIR;
     static bool initialized = false;
     if (!initialized)
     {
-        QDir(QDir::homePath()).mkdir(qApp->applicationName());
-        QDir(QDir::homePath() + "/" + qApp->applicationName()).mkdir(LOGS_DIR);
+        bool success = QDir(getDataPath()).mkpath(LOGS_DIR);
+        qDebug() << "creating directory" << d << "=>" << success;
         initialized = true;
     }
-
     return d;
 }
 
 QString Utils::getNewLogFilePath(const QString& suffix)
 {
-    return getLogsPath() + "/" + suffix + "_" + getCurrentDateTime() + ".log";
+    return getLogsPath() + "/" + suffix + getCurrentDateTime() + ".log";
 }
 
 const QString& Utils::getConfigPath()
