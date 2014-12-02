@@ -1,4 +1,4 @@
 #!/bin/bash
 
-git push
-git push bitbucket
+git push origin master
+git push bitbucket master

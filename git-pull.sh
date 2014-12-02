@@ -1,4 +1,4 @@
 #!/bin/bash
 
-git pull
-git pull bitbucket
+git pull origin master
+git pull bitbucket master
