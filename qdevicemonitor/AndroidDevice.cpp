@@ -137,7 +137,6 @@ void AndroidDevice::update()
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 {
-    m_deviceWidget->getTextEdit().insertPlainText(line + "\n");
     static QRegExp rx("([\\d-]+) *([\\d:\\.]+) *(\\d+) *(\\d+) *([A-Z]) *(.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
     rx.setMinimal(true);
 
@@ -164,7 +163,6 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         {
             QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
-            //m_deviceWidget->getTextEdit().append(line);
             m_deviceWidget->getTextEdit().setTextColor(verbosityColor);
             m_deviceWidget->getTextEdit().insertPlainText(verbosity + " ");
 
