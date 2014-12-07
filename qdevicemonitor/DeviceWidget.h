@@ -24,12 +24,17 @@ public:
     QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
     QTextEdit& getTextEdit() const { return *(ui->textEdit); }
     int getVerbosityLevel() const;
+    void maybeScrollTextEditToEnd();
 
 signals:
 
 public slots:
     void on_verbositySlider_valueChanged(int value);
     void on_wrapCheckBox_toggled(bool checked);
+    void on_scrollLockCheckBox_toggled(bool checked);
+
+private:
+    void scrollTextEditToEnd();
 };
 
 #endif // DEVICEWIDGET_H

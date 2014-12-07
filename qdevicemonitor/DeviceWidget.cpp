@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QPalette>
+#include <QScrollBar>
 
 using namespace DataTypes;
 
@@ -40,9 +41,32 @@ void DeviceWidget::on_verbositySlider_valueChanged(int value)
 void DeviceWidget::on_wrapCheckBox_toggled(bool checked)
 {
     ui->textEdit->setLineWrapMode(checked ? QTextEdit::WidgetWidth : QTextEdit::NoWrap);
+    maybeScrollTextEditToEnd();
+}
+
+void DeviceWidget::on_scrollLockCheckBox_toggled(bool)
+{
+    maybeScrollTextEditToEnd();
 }
 
 int DeviceWidget::getVerbosityLevel() const
 {
     return ui->verbositySlider->value();
+}
+
+void DeviceWidget::maybeScrollTextEditToEnd()
+{
+    if (!ui->scrollLockCheckBox->isChecked())
+    {
+        scrollTextEditToEnd();
+    }
+}
+
+void DeviceWidget::scrollTextEditToEnd()
+{
+    QScrollBar& sb = *(getTextEdit().verticalScrollBar());
+    if (sb.maximum() > 0)
+    {
+        sb.setValue(sb.maximum());
+    }
 }

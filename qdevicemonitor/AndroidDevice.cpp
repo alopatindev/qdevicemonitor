@@ -5,7 +5,6 @@
 #include <QDebug>
 #include <QRegExp>
 #include <QRegExpValidator>
-#include <QScrollBar>
 #include <QStringList>
 #include <QWeakPointer>
 
@@ -184,15 +183,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
             m_deviceWidget->getTextEdit().insertPlainText(text + "\n");
         }
 
-        QPointer<QScrollBar> sb = m_deviceWidget->getTextEdit().verticalScrollBar();
-        if (sb->maximum() > 0)
-        {
-            bool autoScrolling = sb->maximum() < 500 || (sb->value() * 100) / sb->maximum() > 25;  // FIXME: magic number
-            if (autoScrolling)
-            {
-                sb->setValue(sb->maximum());
-            }
-        }
+        m_deviceWidget->maybeScrollTextEditToEnd();
     }
     else
     {
@@ -230,6 +221,7 @@ bool AndroidDevice::columnMatches(const QString& column, const QString& filter, 
 
 bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text) const
 {
+    // TODO: ... or check regexp
     QString f = filter.trimmed();
     return f.isEmpty() || text.indexOf(f) != -1;
 }
