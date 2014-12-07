@@ -113,7 +113,7 @@ void AndroidDevice::update()
             m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
             scheduleReloadTextEdit();
         }
-        else if (m_lastFilter.compare(filter) != 0) // TODO: get with signal; check after timeout
+        else if (m_lastFilter.compare(filter) != 0)
         {
             m_lastFilter = filter;
             scheduleReloadTextEdit();
@@ -228,6 +228,12 @@ bool AndroidDevice::columnMatches(const QString& column, const QString& filter, 
     return true;
 }
 
+bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text) const
+{
+    QString f = filter.trimmed();
+    return f.isEmpty() || text.indexOf(f) != -1;
+}
+
 void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QString& pid, const QString& tid, const QString& tag, const QString& text) const
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
@@ -243,7 +249,8 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
         if (!columnMatches("pid:", filter, pid, filtersValid) ||
             !columnMatches("tid:", filter, tid, filtersValid) ||
             !columnMatches("tag:", filter, tag, filtersValid) ||
-            !columnMatches("text:", filter, text, filtersValid))
+            !columnMatches("text:", filter, text, filtersValid) ||
+            !columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;
