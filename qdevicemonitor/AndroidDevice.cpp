@@ -220,11 +220,28 @@ bool AndroidDevice::columnMatches(const QString& column, const QString& filter, 
     return true;
 }
 
-bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text) const
+bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text, bool& filtersValid) const
 {
-    // TODO: ... or check regexp
     QString f = filter.trimmed();
-    return f.isEmpty() || text.indexOf(f) != -1;
+    if (f.isEmpty() || text.indexOf(f) != -1)
+    {
+        return true;
+    }
+    else
+    {
+        static QRegExp rx("", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
+        rx.setPattern(f);
+        if (!rx.isValid())
+        {
+            filtersValid = false;
+        }
+        else
+        {
+            return rx.exactMatch(text);
+        }
+    }
+
+    return true;
 }
 
 void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QString& pid, const QString& tid, const QString& tag, const QString& text) const
@@ -243,7 +260,7 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
             !columnMatches("tid:", filter, tid, filtersValid) ||
             !columnMatches("tag:", filter, tag, filtersValid) ||
             !columnMatches("text:", filter, text, filtersValid) ||
-            !columnTextMatches(filter, text))
+            !columnTextMatches(filter, text, filtersValid))
         {
             filtersMatch = false;
             break;

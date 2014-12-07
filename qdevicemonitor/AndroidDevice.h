@@ -39,7 +39,7 @@ private:
     void stopLogger();
 
     bool columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid) const;
-    bool columnTextMatches(const QString& filter, const QString& text) const;
+    bool columnTextMatches(const QString& filter, const QString& text, bool& filtersValid) const;
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters,
                       VerbosityEnum verbosityLevel = Verbose,
                       const QString& pid = QString(),
