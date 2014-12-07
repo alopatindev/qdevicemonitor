@@ -77,6 +77,10 @@ void DeviceAdapter::loadSettings(const QSettings& s)
     {
         m_font = font.toString();
     }
+    else
+    {
+        m_font = "monospace";
+    }
 
     QVariant fontSize = s.value("fontSize");
     if (fontSize.isValid())
