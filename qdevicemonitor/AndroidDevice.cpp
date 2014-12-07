@@ -23,6 +23,8 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     , m_didReadModel(false)
 {
     updateDeviceModel();
+    m_reloadTextEditTimer.setSingleShot(true);
+    connect(&m_reloadTextEditTimer, SIGNAL(timeout()), this, SLOT(reloadTextEdit()));
 }
 
 AndroidDevice::~AndroidDevice()
@@ -109,12 +111,12 @@ void AndroidDevice::update()
         if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
         {
             m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
-            reloadTextEdit();
+            scheduleReloadTextEdit();
         }
         else if (m_lastFilter.compare(filter) != 0) // TODO: get with signal; check after timeout
         {
             m_lastFilter = filter;
-            reloadTextEdit();
+            scheduleReloadTextEdit();
         }
         else if(m_deviceLogProcess.canReadLine())
         {
@@ -255,6 +257,12 @@ void AndroidDevice::reloadTextEdit()
     stopLogger();
     m_deviceWidget->getTextEdit().clear();
     startLogger();
+}
+
+void AndroidDevice::scheduleReloadTextEdit(int timeout)
+{
+    m_reloadTextEditTimer.stop();
+    m_reloadTextEditTimer.start(timeout);
 }
 
 void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)

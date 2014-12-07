@@ -5,11 +5,14 @@
 #include <QFile>
 #include <QProcess>
 #include <QTextStream>
+#include <QTimer>
 
 using namespace DataTypes;
 
 class AndroidDevice : public BaseDevice
 {
+    Q_OBJECT
+
     QProcess m_deviceInfoProcess;
     QProcess m_deviceLogProcess;
     QFile m_deviceLogFile;
@@ -18,6 +21,7 @@ class AndroidDevice : public BaseDevice
     int m_lastVerbosityLevel;
     QString m_lastFilter;
     bool m_didReadModel;
+    QTimer m_reloadTextEditTimer;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
@@ -42,7 +46,9 @@ private:
                       const QString& tag = QString(),
                       const QString& text = QString()) const;
     void filterAndAddToTextEdit(const QString& line);
+    void scheduleReloadTextEdit(int timeout = 500);
 
+public slots:
     void reloadTextEdit();
 };
 
