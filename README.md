@@ -1,6 +1,8 @@
 QDeviceMonitor
 ==============
 
+[![Build Status](https://api.travis-ci.org/sbar/qdevicemonitor.svg?branch=master)](https://travis-ci.org/sbar/qdevicemonitor)
+
 Crossplatform Android, iOS and text file log viewer written in C++/Qt.
 
 License
