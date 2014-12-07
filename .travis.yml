@@ -8,6 +8,7 @@ os:
 
 before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
+        cat /etc/*release;
         sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa;
         sudo apt-get update -qq;
     fi
@@ -19,12 +20,10 @@ install:
 
         if [ "$CXX" = "g++" ];
             then sudo apt-get install -qq g++-4.8;
-            export CXX="g++-4.8";
         fi;
 
         if [ "$CXX" == "clang++" ]; then
             sudo apt-get install -qq clang-3.4;
-            export CXX="clang++-3.4";
         fi;
     fi
 
@@ -33,6 +32,13 @@ script:
   - $CXX --version;
     if [ $TRAVIS_OS_NAME = linux ]; then
         cd qdevicemonitor;
-        qmake;
+
+        if [ "$CXX" = "g++" ]; then
+            qmake -spec linux-g++;
+        fi;
+        if [ "$CXX" = "clang++" ]; then
+            qmake -spec linux-clang;
+        fi;
+
         make -j2;
     fi
