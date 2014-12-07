@@ -158,7 +158,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         QString text = line.mid(rx.pos(6) + rx.cap(6).length() + 2); // the rest of the line after "foo: "
         //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
 
-        VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.toStdString()[0])); // FIXME
+        VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity[0].toLatin1()));
         checkFilters(filtersMatch, filtersValid, filters, verbosityLevel, pid, tid, tag, text);
 
         if (filtersMatch)
