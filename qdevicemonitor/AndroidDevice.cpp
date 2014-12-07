@@ -29,6 +29,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
 AndroidDevice::~AndroidDevice()
 {
     qDebug() << "~AndroidDevice";
+    disconnect(&m_reloadTextEditTimer, SIGNAL(timeout()));
     stopLogger();
     m_deviceInfoProcess.close();
 }
