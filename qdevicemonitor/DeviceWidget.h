@@ -24,6 +24,7 @@ public:
     QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
     QTextEdit& getTextEdit() const { return *(ui->textEdit); }
     int getVerbosityLevel() const;
+    void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
 
 signals:

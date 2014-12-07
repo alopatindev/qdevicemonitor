@@ -197,16 +197,14 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         }
     }
 
-    if (!filtersValid) // TODO
-    {
-        qDebug() << "filtersValid == false";
-    }
+    m_deviceWidget->highlightFilterLineEdit(!filtersValid);
 }
 
-bool AndroidDevice::columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid) const
+bool AndroidDevice::columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound) const
 {
     if (filter.startsWith(column))
     {
+        columnFound = true;
         QString value = filter.mid(column.length());
         if (value.isEmpty())
         {
@@ -220,7 +218,7 @@ bool AndroidDevice::columnMatches(const QString& column, const QString& filter, 
     return true;
 }
 
-bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text, bool& filtersValid) const
+bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text) const
 {
     QString f = filter.trimmed();
     if (f.isEmpty() || text.indexOf(f) != -1)
@@ -233,7 +231,8 @@ bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text
         rx.setPattern(f);
         if (!rx.isValid())
         {
-            filtersValid = false;
+            //filtersValid = false; // causes line edit "blinking" as red, because for some lines it is a valid non-regexp string
+            return false;
         }
         else
         {
@@ -256,11 +255,18 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
     for (auto it = filters.begin(); it != filters.end(); ++it)
     {
         const QString& filter = *it;
-        if (!columnMatches("pid:", filter, pid, filtersValid) ||
-            !columnMatches("tid:", filter, tid, filtersValid) ||
-            !columnMatches("tag:", filter, tag, filtersValid) ||
-            !columnMatches("text:", filter, text, filtersValid) ||
-            !columnTextMatches(filter, text, filtersValid))
+
+        bool columnFound = false;
+        if (!columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
+            !columnMatches("tid:", filter, tid, filtersValid, columnFound) ||
+            !columnMatches("tag:", filter, tag, filtersValid, columnFound) ||
+            !columnMatches("text:", filter, text, filtersValid, columnFound))
+        {
+            filtersMatch = false;
+            break;
+        }
+
+        if (!columnFound && !columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;

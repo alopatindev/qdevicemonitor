@@ -54,6 +54,15 @@ int DeviceWidget::getVerbosityLevel() const
     return ui->verbositySlider->value();
 }
 
+void DeviceWidget::highlightFilterLineEdit(bool red)
+{
+    static QPalette normalPal = ui->filterLineEdit->palette();
+    static QPalette redPal(Qt::red);
+    redPal.setColor(QPalette::Highlight, Qt::red);
+
+    ui->filterLineEdit->setPalette(red ? redPal : normalPal);
+}
+
 void DeviceWidget::maybeScrollTextEditToEnd()
 {
     if (!ui->scrollLockCheckBox->isChecked())
