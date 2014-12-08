@@ -4,7 +4,6 @@
 
 #include <QDebug>
 #include <QRegExp>
-#include <QRegExpValidator>
 #include <QStringList>
 #include <QWeakPointer>
 
@@ -220,24 +219,40 @@ bool AndroidDevice::columnMatches(const QString& column, const QString& filter, 
 
 bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text) const
 {
-    QString f = filter.trimmed();
-    if (f.isEmpty() || text.indexOf(f) != -1)
+    static QString f[3];
+    f[0] = filter.trimmed();
+
+    if (f[0].isEmpty() || text.indexOf(f[0]) != -1)
     {
         return true;
     }
     else
     {
-        static QRegExp rx("", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
-        rx.setPattern(f);
-        if (!rx.isValid())
+        f[1] = QString(".*%1.*").arg(f[0]);
+        f[2] = QString(".*(%1).*").arg(f[1]);
+
+        static QRegExp rx[] = {
+            QRegExp("", Qt::CaseSensitive, QRegExp::RegExp),
+            QRegExp("", Qt::CaseSensitive, QRegExp::RegExp2),
+            QRegExp("", Qt::CaseSensitive, QRegExp::Wildcard),
+            QRegExp("", Qt::CaseSensitive, QRegExp::WildcardUnix),
+            QRegExp("", Qt::CaseSensitive, QRegExp::FixedString),
+            QRegExp("", Qt::CaseSensitive, QRegExp::W3CXmlSchema11)
+        };
+
+        for (size_t i = 0; i < sizeof(rx) / sizeof(rx[0]); ++i)
         {
-            //filtersValid = false; // causes line edit "blinking" as red, because for some lines it is a valid non-regexp string
-            return false;
+            QRegExp& r = rx[i];
+            for (size_t j = 0; j < sizeof(f) / sizeof(f[0]); ++j)
+            {
+                r.setPattern(f[j]);
+                if (r.isValid() && r.exactMatch(text))
+                {
+                    return true;
+                }
+            }
         }
-        else
-        {
-            return rx.exactMatch(text);
-        }
+        return false;
     }
 
     return true;
