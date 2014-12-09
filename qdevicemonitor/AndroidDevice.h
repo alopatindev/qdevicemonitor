@@ -4,6 +4,7 @@
 #include "BaseDevice.h"
 #include <QFile>
 #include <QProcess>
+#include <QStandardItemModel>
 #include <QTextStream>
 #include <QTimer>
 
@@ -22,6 +23,10 @@ class AndroidDevice : public BaseDevice
     QString m_lastFilter;
     bool m_didReadModel;
     QTimer m_reloadTextEditTimer;
+    QCompleter m_filterCompleter;
+    QStandardItemModel m_filterCompleterModel;
+    QTimer m_completionAddTimer;
+    static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
@@ -29,6 +34,7 @@ public:
                            QPointer<DeviceAdapter> deviceAdapter);
     ~AndroidDevice();
     virtual void update();
+    virtual const QCompleter& getFilterCompleter();
 
     static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
@@ -51,6 +57,7 @@ private:
 
 public slots:
     void reloadTextEdit();
+    void addFilterAsCompletion();
 };
 
 #endif // ANDROIDDEVICE_H

@@ -20,9 +20,14 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     , m_lastFilter(m_deviceWidget->getFilterLineEdit().text())
     , m_didReadModel(false)
 {
+
+    m_filterCompleter.setModel(&m_filterCompleterModel);
+    m_deviceWidget->getFilterLineEdit().setCompleter(&m_filterCompleter);
     updateDeviceModel();
     m_reloadTextEditTimer.setSingleShot(true);
+    m_completionAddTimer.setSingleShot(true);
     connect(&m_reloadTextEditTimer, SIGNAL(timeout()), this, SLOT(reloadTextEdit()));
+    connect(&m_completionAddTimer, SIGNAL(timeout()), this, SLOT(addFilterAsCompletion()));
 }
 
 AndroidDevice::~AndroidDevice()
@@ -134,6 +139,11 @@ void AndroidDevice::update()
             }
         }
     }
+}
+
+const QCompleter& AndroidDevice::getFilterCompleter()
+{
+    return m_filterCompleter;
 }
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
@@ -295,12 +305,22 @@ void AndroidDevice::reloadTextEdit()
     stopLogger();
     m_deviceWidget->getTextEdit().clear();
     startLogger();
+
+    m_completionAddTimer.stop();
+    m_completionAddTimer.start(COMPLETION_ADD_TIMEOUT);
 }
 
 void AndroidDevice::scheduleReloadTextEdit(int timeout)
 {
     m_reloadTextEditTimer.stop();
     m_reloadTextEditTimer.start(timeout);
+}
+
+void AndroidDevice::addFilterAsCompletion()
+{
+    qDebug() << "addFilterAsCompletion" << m_lastFilter;
+    m_filterCompleterModel.appendRow(new QStandardItem(m_lastFilter));
+    // TODO: add to a storage by key "Android"
 }
 
 void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)

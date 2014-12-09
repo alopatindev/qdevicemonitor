@@ -5,6 +5,7 @@
 #include "DeviceAdapter.h"
 #include "DataTypes.h"
 
+#include <QCompleter>
 #include <QPointer>
 #include <QProcess>
 #include <QString>
@@ -22,6 +23,7 @@ public:
                         QPointer<DeviceAdapter> deviceAdapter);
     void updateTabWidget();
     virtual void update() = 0;
+    virtual const QCompleter& getFilterCompleter() = 0;
 
     const QString& getHumanReadableName() const;
     const QString& getHumanReadableDescription() const;
