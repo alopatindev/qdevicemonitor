@@ -277,10 +277,8 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
         return;
     }
 
-    for (auto it = filters.begin(); it != filters.end(); ++it)
+    for (auto& filter : filters)
     {
-        const QString& filter = *it;
-
         bool columnFound = false;
         if (!columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
             !columnMatches("tid:", filter, tid, filtersValid, columnFound) ||

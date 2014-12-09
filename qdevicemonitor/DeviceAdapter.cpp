@@ -58,9 +58,9 @@ void DeviceAdapter::updateDevicesMap()
         }
     }
 
-    for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
+    for (auto& device : m_devicesMap)
     {
-        (*it)->update();
+        device->update();
     }
 }
 
