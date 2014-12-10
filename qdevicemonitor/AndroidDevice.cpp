@@ -17,7 +17,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_emptyTextEdit(true)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
-    , m_didReadModel(false)
+    , m_didReadDeviceModel(false)
 {
     updateDeviceModel();
 }
@@ -44,7 +44,7 @@ void AndroidDevice::updateDeviceModel()
 
 void AndroidDevice::startLogger()
 {
-    if (!m_didReadModel)
+    if (!m_didReadDeviceModel)
     {
         return;
     }
@@ -77,7 +77,7 @@ void AndroidDevice::stopLogger()
 
 void AndroidDevice::update()
 {
-    if (!m_didReadModel && m_deviceInfoProcess.state() == QProcess::NotRunning)
+    if (!m_didReadDeviceModel && m_deviceInfoProcess.state() == QProcess::NotRunning)
     {
         if (m_deviceInfoProcess.canReadLine())
         {
@@ -87,14 +87,14 @@ void AndroidDevice::update()
                 qDebug() << "updateDeviceModel" << m_id << "=>" << model;
                 m_humanReadableName = model;
                 updateTabWidget();
-                m_didReadModel = true;
+                m_didReadDeviceModel = true;
                 startLogger();
             }
         }
 
         m_deviceInfoProcess.close();
 
-        if (!m_didReadModel)
+        if (!m_didReadDeviceModel)
         {
             updateDeviceModel();
         }
