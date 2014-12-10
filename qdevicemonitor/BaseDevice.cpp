@@ -19,8 +19,22 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
 
+    m_filterCompleter.setModel(&m_filterCompleterModel);
+
     m_deviceWidget = new DeviceWidget(static_cast<QTabWidget*>(m_tabWidget), m_deviceAdapter);
+    m_deviceWidget->getFilterLineEdit().setCompleter(&m_filterCompleter);
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget, humanReadableName);
+    m_lastFilter = m_deviceWidget->getFilterLineEdit().text();
+
+    m_reloadTextEditTimer.setSingleShot(true);
+    m_completionAddTimer.setSingleShot(true);
+    connect(&m_reloadTextEditTimer, SIGNAL(timeout()), this, SLOT(reloadTextEdit()));
+    connect(&m_completionAddTimer, SIGNAL(timeout()), this, SLOT(addFilterAsCompletion()));
+}
+
+BaseDevice::~BaseDevice()
+{
+    disconnect(&m_reloadTextEditTimer, SIGNAL(timeout()));
 }
 
 void BaseDevice::updateTabWidget()
@@ -63,4 +77,24 @@ void BaseDevice::setHumanReadableName(const QString& text)
 void BaseDevice::setHumanReadableDescription(const QString& text)
 {
     m_humanReadableDescription = text;
+}
+
+void BaseDevice::reloadTextEdit()
+{
+    qDebug() << "BaseDevice::reloadTextEdit";
+    m_completionAddTimer.stop();
+    m_completionAddTimer.start(COMPLETION_ADD_TIMEOUT);
+}
+
+void BaseDevice::scheduleReloadTextEdit(int timeout)
+{
+    m_reloadTextEditTimer.stop();
+    m_reloadTextEditTimer.start(timeout);
+}
+
+void BaseDevice::addFilterAsCompletion()
+{
+    qDebug() << "addFilterAsCompletion" << m_lastFilter;
+    m_filterCompleterModel.appendRow(new QStandardItem(m_lastFilter));
+    // TODO: add to a storage by key "Android"
 }

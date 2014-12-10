@@ -8,8 +8,10 @@
 #include <QCompleter>
 #include <QPointer>
 #include <QProcess>
+#include <QStandardItemModel>
 #include <QString>
 #include <QTabWidget>
+#include <QTimer>
 
 using namespace DataTypes;
 
@@ -21,9 +23,12 @@ public:
     explicit BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                         const QString& humanReadableName, const QString& humanReadableDescription,
                         QPointer<DeviceAdapter> deviceAdapter);
+    virtual ~BaseDevice();
+
     void updateTabWidget();
     virtual void update() = 0;
-    virtual const QCompleter& getFilterCompleter() = 0;
+    virtual void filterAndAddToTextEdit(const QString& line) = 0;
+    void scheduleReloadTextEdit(int timeout = 500);
 
     const QString& getHumanReadableName() const;
     const QString& getHumanReadableDescription() const;
@@ -38,7 +43,9 @@ public:
 
 signals:
 
-public slots:
+protected slots:
+    virtual void reloadTextEdit();
+    void addFilterAsCompletion();
 
 protected:
     QString m_id;
@@ -50,6 +57,14 @@ protected:
     QPointer<DeviceWidget> m_deviceWidget;
     int m_tabIndex;
     QPointer<DeviceAdapter> m_deviceAdapter;
+    QString m_lastFilter;
+
+private:
+    QTimer m_reloadTextEditTimer;
+    QCompleter m_filterCompleter;
+    QStandardItemModel m_filterCompleterModel;
+    QTimer m_completionAddTimer;
+    static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
 };
 
 #endif // BASEDEVICE_H

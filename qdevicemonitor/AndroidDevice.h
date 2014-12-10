@@ -4,9 +4,7 @@
 #include "BaseDevice.h"
 #include <QFile>
 #include <QProcess>
-#include <QStandardItemModel>
 #include <QTextStream>
-#include <QTimer>
 
 using namespace DataTypes;
 
@@ -20,13 +18,7 @@ class AndroidDevice : public BaseDevice
     QSharedPointer<QTextStream> m_deviceLogFileStream;
     bool m_emptyTextEdit;
     int m_lastVerbosityLevel;
-    QString m_lastFilter;
     bool m_didReadModel;
-    QTimer m_reloadTextEditTimer;
-    QCompleter m_filterCompleter;
-    QStandardItemModel m_filterCompleterModel;
-    QTimer m_completionAddTimer;
-    static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
@@ -34,7 +26,7 @@ public:
                            QPointer<DeviceAdapter> deviceAdapter);
     ~AndroidDevice();
     virtual void update();
-    virtual const QCompleter& getFilterCompleter();
+    virtual void filterAndAddToTextEdit(const QString& line);
 
     static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
@@ -52,12 +44,9 @@ private:
                       const QString& tid = QString(),
                       const QString& tag = QString(),
                       const QString& text = QString()) const;
-    void filterAndAddToTextEdit(const QString& line);
-    void scheduleReloadTextEdit(int timeout = 500);
 
-public slots:
-    void reloadTextEdit();
-    void addFilterAsCompletion();
+protected slots:
+    virtual void reloadTextEdit();
 };
 
 #endif // ANDROIDDEVICE_H
