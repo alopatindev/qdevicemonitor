@@ -35,6 +35,7 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
 BaseDevice::~BaseDevice()
 {
     disconnect(&m_reloadTextEditTimer, SIGNAL(timeout()));
+    disconnect(&m_completionAddTimer, SIGNAL(timeout()));
 }
 
 void BaseDevice::updateTabWidget()
