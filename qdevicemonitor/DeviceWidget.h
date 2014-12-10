@@ -21,8 +21,8 @@ class DeviceWidget : public QWidget
 
 public:
     explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
-    QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
-    QTextEdit& getTextEdit() const { return *(ui->textEdit); }
+    inline QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
+    inline QTextEdit& getTextEdit() const { return *(ui->textEdit); }
     int getVerbosityLevel() const;
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();

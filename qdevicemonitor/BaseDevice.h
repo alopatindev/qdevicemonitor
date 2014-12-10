@@ -29,8 +29,8 @@ public:
     void scheduleReloadTextEdit(int timeout = 500);
     void maybeAddCompletionAfterDelay();
 
-    const QString& getHumanReadableName() const;
-    const QString& getHumanReadableDescription() const;
+    inline const QString& getHumanReadableName() const;
+    inline const QString& getHumanReadableDescription() const;
 
     void setHumanReadableName(const QString& text);
     void setHumanReadableDescription(const QString& text);
@@ -38,7 +38,7 @@ public:
     bool isOnline() const;
     void setOnline(bool online);
 
-    const QString& getId() { return m_id; }
+    inline const QString& getId() const { return m_id; }
 
 signals:
 
