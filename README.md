@@ -2,6 +2,7 @@ QDeviceMonitor
 ==============
 
 [![Build Status](https://api.travis-ci.org/alopatindev/qdevicemonitor.svg?branch=master)](https://travis-ci.org/alopatindev/qdevicemonitor)
+[![Build Status](https://ci.appveyor.com/api/projects/status/0uex640qxdalur5n?svg=true)](https://ci.appveyor.com/project/alopatindev/qdevicemonitor)
 
 Crossplatform Android, iOS and text file log viewer written in C++/Qt.
 
