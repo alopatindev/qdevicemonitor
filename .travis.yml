@@ -9,6 +9,9 @@ os:
 before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
+        uname -a;
+        cat /proc/cpuinfo;
+
         sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa;
         sudo apt-get update -qq;
     fi
