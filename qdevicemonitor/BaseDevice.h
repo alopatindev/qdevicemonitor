@@ -5,10 +5,8 @@
 #include "DeviceAdapter.h"
 #include "DataTypes.h"
 
-#include <QCompleter>
 #include <QPointer>
 #include <QProcess>
-#include <QStandardItemModel>
 #include <QString>
 #include <QTabWidget>
 #include <QTimer>
@@ -29,6 +27,7 @@ public:
     virtual void update() = 0;
     virtual void filterAndAddToTextEdit(const QString& line) = 0;
     void scheduleReloadTextEdit(int timeout = 500);
+    void maybeAddCompletionAfterDelay();
 
     const QString& getHumanReadableName() const;
     const QString& getHumanReadableDescription() const;
@@ -44,8 +43,7 @@ public:
 signals:
 
 protected slots:
-    virtual void reloadTextEdit();
-    void addFilterAsCompletion();
+    virtual void reloadTextEdit() = 0;
 
 protected:
     QString m_id;
@@ -61,10 +59,6 @@ protected:
 
 private:
     QTimer m_reloadTextEditTimer;
-    QCompleter m_filterCompleter;
-    QStandardItemModel m_filterCompleterModel;
-    QTimer m_completionAddTimer;
-    static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
 };
 
 #endif // BASEDEVICE_H

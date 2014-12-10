@@ -36,4 +36,4 @@ FORMS    += MainWindow.ui \
     DeviceWidget.ui \
     SettingsDialog.ui
 
-QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -std=c++0x -Werror

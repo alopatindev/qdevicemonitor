@@ -13,6 +13,14 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     , m_darkTheme(false)
     , m_autoRemoveFilesHours(48)
 {
+    m_filterCompleter.setModel(&m_filterCompleterModel);
+    m_completionAddTimer.setSingleShot(true);
+    connect(&m_completionAddTimer, SIGNAL(timeout()), this, SLOT(addFilterAsCompletion()));
+}
+
+DeviceAdapter::~DeviceAdapter()
+{
+    disconnect(&m_completionAddTimer, SIGNAL(timeout()));
 }
 
 void DeviceAdapter::start()
@@ -104,11 +112,17 @@ void DeviceAdapter::loadSettings(const QSettings& s)
     if (filterCompletions.isValid())
     {
         m_filterCompletions = filterCompletions.toStringList();
+        m_filterCompleterModel.clear();
+        for (const QString& filter : m_filterCompletions)
+        {
+            m_filterCompleterModel.appendRow(new QStandardItem(filter));
+        }
     }
 }
 
 void DeviceAdapter::saveSettings(QSettings& s)
 {
+    qDebug() << "DeviceAdapter::saveSettings";
     s.setValue("visibleLines", m_visibleLines);
     s.setValue("font", m_font);
     s.setValue("fontSize", m_fontSize);
@@ -117,9 +131,26 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("filterCompletions", m_filterCompletions);
 }
 
-void DeviceAdapter::setFilterCompletions(const QStringList& completions)
+void DeviceAdapter::maybeAddCompletionAfterDelay(const QString& filter)
 {
-    m_filterCompletions = completions;
+    qDebug() << "DeviceAdapter::maybeAddCompletionAfterDelay" << filter;
+    m_completionToAdd = filter;
+    m_completionAddTimer.stop();
+    m_completionAddTimer.start(COMPLETION_ADD_TIMEOUT);
+}
+
+void DeviceAdapter::addFilterAsCompletion()
+{
+    qDebug() << "addFilterAsCompletion" << m_completionToAdd;
+    if (m_filterCompletions.indexOf(m_completionToAdd) != -1)
+    {
+        qDebug() << m_completionToAdd << "is already in the list";
+        return;
+    }
+
+    m_filterCompleterModel.appendRow(new QStandardItem(m_completionToAdd));
+    m_filterCompletions.append(m_completionToAdd);
+
     size_t oldCompletionsNumber = m_filterCompletions.size() > MAX_FILTER_COMPLETIONS
                                   ? m_filterCompletions.size() - MAX_FILTER_COMPLETIONS
                                   : 0;
@@ -127,5 +158,6 @@ void DeviceAdapter::setFilterCompletions(const QStringList& completions)
     {
         qDebug() << "removing old" << oldCompletionsNumber << "completions";
         m_filterCompletions.erase(m_filterCompletions.begin(), m_filterCompletions.begin() + oldCompletionsNumber);
+        m_filterCompleterModel.removeRows(0, int(oldCompletionsNumber));
     }
 }

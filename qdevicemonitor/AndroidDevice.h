@@ -46,7 +46,7 @@ private:
                       const QString& text = QString()) const;
 
 protected slots:
-    virtual void reloadTextEdit();
+    void reloadTextEdit();
 };
 
 #endif // ANDROIDDEVICE_H

@@ -112,6 +112,7 @@ void AndroidDevice::update()
         {
             m_lastFilter = filter;
             scheduleReloadTextEdit();
+            m_deviceAdapter->maybeAddCompletionAfterDelay(filter);
         }
         else if(m_deviceLogProcess.canReadLine())
         {
@@ -289,8 +290,6 @@ void AndroidDevice::reloadTextEdit()
     stopLogger();
     m_deviceWidget->getTextEdit().clear();
     startLogger();
-
-    BaseDevice::reloadTextEdit();
 }
 
 void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
