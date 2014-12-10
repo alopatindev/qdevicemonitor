@@ -35,13 +35,6 @@
      <item>
       <widget class="QLineEdit" name="filterLineEdit"/>
      </item>
-     <item>
-      <widget class="QPushButton" name="clearFilterHistoryPushButton">
-       <property name="text">
-        <string>Clear Filter History</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>

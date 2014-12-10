@@ -24,7 +24,7 @@ public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                            const QString& humanReadableName, const QString& humanReadableDescription,
                            QPointer<DeviceAdapter> deviceAdapter);
-    ~AndroidDevice();
+    virtual ~AndroidDevice();
     virtual void update();
     virtual void filterAndAddToTextEdit(const QString& line);
 
