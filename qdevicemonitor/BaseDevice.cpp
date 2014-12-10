@@ -97,5 +97,6 @@ void BaseDevice::addFilterAsCompletion()
 {
     qDebug() << "addFilterAsCompletion" << m_lastFilter;
     m_filterCompleterModel.appendRow(new QStandardItem(m_lastFilter));
-    // TODO: add to a storage by key "Android"
+    // TODO: add to a storage
+    // move Completer stuff to DeviceAdapter
 }

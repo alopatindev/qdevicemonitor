@@ -99,6 +99,12 @@ void DeviceAdapter::loadSettings(const QSettings& s)
     {
         m_autoRemoveFilesHours = autoRemoveFilesHours.toInt();
     }
+
+    QVariant filterCompletions = s.value("filterCompletions");
+    if (filterCompletions.isValid())
+    {
+        m_filterCompletions = filterCompletions.toStringList();
+    }
 }
 
 void DeviceAdapter::saveSettings(QSettings& s)
@@ -108,4 +114,18 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("fontSize", m_fontSize);
     s.setValue("darkTheme", m_darkTheme);
     s.setValue("autoRemoveFilesHours", m_autoRemoveFilesHours);
+    s.setValue("filterCompletions", m_filterCompletions);
+}
+
+void DeviceAdapter::setFilterCompletions(const QStringList& completions)
+{
+    m_filterCompletions = completions;
+    size_t oldCompletionsNumber = m_filterCompletions.size() > MAX_FILTER_COMPLETIONS
+                                  ? m_filterCompletions.size() - MAX_FILTER_COMPLETIONS
+                                  : 0;
+    if (oldCompletionsNumber > 0)
+    {
+        qDebug() << "removing old" << oldCompletionsNumber << "completions";
+        m_filterCompletions.erase(m_filterCompletions.begin(), m_filterCompletions.begin() + oldCompletionsNumber);
+    }
 }
