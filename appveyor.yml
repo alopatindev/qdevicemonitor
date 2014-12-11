@@ -10,9 +10,15 @@ build_script:
   - cd qdevicemonitor
   - qmake
   - mingw32-make -j2
-  - move release\qdevicemonitor.exe release\qdevicemonitor-$(APPVEYOR_BUILD_VERSION).exe
   - dir release
   - cd ..
+  - dir C:\Qt\Qt5.3.2\5.3\
+  - dir C:\Qt\Qt5.3.2\5.3\*
+  - dir C:\MinGW\bin
+
+artifacts:
+  - path: qdevicemonitor\release\qdevicemonitor.exe
+  - name: QDeviceMonitor
 
 deploy:
   provider: FTP
@@ -22,4 +28,4 @@ deploy:
   password:
     secure: tL3jXgf4CjEoLuCxc9xR/iQTD03LrZ/i7GoVmR8o2oE=
   folder: windows
-  artifact: qdevicemonitor\\release\\qdevicemonitor-$(APPVEYOR_BUILD_VERSION).exe
+  artifact: /.*\.exe/
