@@ -47,5 +47,5 @@ script:
         make -j2;
 
         cd ..;
-        ./build_deb.sh
+        ./build_deb.sh;
     fi
