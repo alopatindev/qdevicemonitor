@@ -10,6 +10,8 @@ build_script:
   - cd qdevicemonitor
   - qmake
   - mingw32-make -j2
+  - dir
+  - dir ..
 
 deploy:
   provider: FTP
@@ -19,4 +21,4 @@ deploy:
   password:
     secure: tL3jXgf4CjEoLuCxc9xR/iQTD03LrZ/i7GoVmR8o2oE=
   folder: windows
-  artifacts: /.*\.exe/
+  artifacts: /.*/
