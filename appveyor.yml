@@ -12,7 +12,7 @@ build_script:
   - mingw32-make -j2
 
 deploy:
-  provider: ftp
+  provider: FTP
   protocol: ftps
   host: qdevicemonitor.uhostall.com
   username: u356567517
