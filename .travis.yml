@@ -20,9 +20,10 @@ install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
         sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev;
         sudo apt-get install qt5-default qttools5-dev-tools;
+        sudo apt-get install fakeroot;
 
-        if [ "$CXX" = "g++" ];
-            then sudo apt-get install -qq g++-4.8;
+        if [ "$CXX" = "g++" ]; then
+            sudo apt-get install -qq g++-4.8;
         fi;
 
         if [ "$CXX" == "clang++" ]; then
@@ -44,4 +45,7 @@ script:
         fi;
 
         make -j2;
+
+        cd ..;
+        ./build_deb.sh
     fi
