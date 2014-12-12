@@ -57,6 +57,9 @@ script:
     fi
 
 after_success:
-  - echo ${FTP_USER} ; curl --ftp-create-dirs -T *.deb -u "${FTP_USER}:${FTP_PASSWORD}" ftp://qdevicemonitor.uhostall.com/ubuntu/
+  - pwd
+  - echo $FTP_USER
+  - ls -l *.deb
+  - curl --ftp-create-dirs -T *.deb -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/ubuntu/
 
 # vim: textwidth=0

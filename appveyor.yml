@@ -5,10 +5,11 @@ os: unstable
 install:
   - set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin;C:\Program Files\7-Zip
+  - set OUTPUT_FILENAME=qdevicemonitor-%APPVEYOR_REPO_COMMIT%.7z
 
 build_script:
   - cd qdevicemonitor
-  - qmake
+  - qmake "CONFIG += static"
   - mingw32-make -j2
   - dir release
   - cd ..
@@ -19,27 +20,11 @@ build_script:
   - dir C:\Qt
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
-  - copy qdevicemonitor\release\qdevicemonitor.exe .
-  - copy C:\MinGW\bin\*.dll .
-  - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\*.dll .
-  - 7z a qdevicemonitor.7z qdevicemonitor.exe *.dll
+  - copy %QTDIR%\bin\libstdc++-6.dll .
+  - copy %QTDIR%\bin\libgcc_s_dw2-1.dll .
+  - move qdevicemonitor\release\qdevicemonitor.exe .
+  - 7z a %OUTPUT_FILENAME% qdevicemonitor.exe libgcc_s_dw2-1.dll libstdc++-6.dll
 
 artifacts:
-  - path: qdevicemonitor.7z
+  - path: $(OUTPUT_FILENAME)
     name: QDeviceMonitor
-
-#  - path: qdevicemonitor\release\qdevicemonitor.exe
-#    name: QDeviceMonitor
-
-#  - path: libgcc_s_dw2-1.dll
-#    name: libgcc_s_dw2-1
-
-#deploy:
-#  provider: FTP
-#  protocol: ftps
-#  host: qdevicemonitor.uhostall.com
-#  username: u356567517
-#  password:
-#    secure: tL3jXgf4CjEoLuCxc9xR/iQTD03LrZ/i7GoVmR8o2oE=
-#  folder: windows
-#  artifact: /.*\.exe/
