@@ -4,30 +4,35 @@ os: unstable
 
 install:
   - set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
-  - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin;C:\Program Files\7-Zip
+  - set MINGW=C:\MinGW
+  - set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin;C:\Program Files\7-Zip
   - set OUTPUT_DATETIME=%date:~-4,4%%date:~-10,2%%date:~-7,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
   - set OUTPUT_FILENAME=qdevicemonitor-%OUTPUT_DATETIME%-%APPVEYOR_REPO_COMMIT:~0,8%.zip
-  - set
-  - echo %OUTPUT_FILENAME%
+  - dir C:\Qt
+  - dir %QTDIR%\
+  - dir %QTDIR%\lib
+  - dir %QTDIR%\bin
+  - dir %MINGW%\bin
+  - dir "C:\Program Files"
+  - dir "C:\Program Files (x86)"
 
 build_script:
-  - echo %OUTPUT_FILENAME%
-  - echo %QTDIR%
   - cd qdevicemonitor
-  - qmake "CONFIG += static"
+  - qmake
   - mingw32-make -j2
   - dir release
   - cd ..
-  - dir C:\Qt\Qt5.3.2\5.3\mingw482_32
-  - dir C:\Qt\Qt5.3.2\5.3\mingw482_32\lib
-  - dir C:\Qt\Qt5.3.2\5.3\mingw482_32\bin
-  - dir C:\MinGW\bin
-  - dir C:\Qt
-  - dir "C:\Program Files"
-  - dir "C:\Program Files (x86)"
-  - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\libgcc_s_dw2-1.dll .
-  - move qdevicemonitor\release\qdevicemonitor.exe .
-  - 7z a %OUTPUT_FILENAME% qdevicemonitor.exe libgcc_s_dw2-1.dll
+  - copy "%QTDIR%\libgcc_s_dw2-1.dll" .
+  - copy "%QTDIR%\libstdc++-6.dll" .
+  - copy "%QTDIR%\libwinpthread-1.dll" .
+  - copy "%QTDIR%\icuin52.dll" .
+  - copy "%QTDIR%\icuuc52.dll" .
+  - copy "%QTDIR%\icudt52.dll" .
+  - copy "%QTDIR%\Qt5Core.dll" .
+  - copy "%QTDIR%\Qt5Gui.dll" .
+  - copy "%QTDIR%\Qt5Widgets.dll" .
+  - move "qdevicemonitor\release\qdevicemonitor.exe" .
+  - 7z a -mx=9 %OUTPUT_FILENAME% "qdevicemonitor.exe" "libgcc_s_dw2-1.dll" "libstdc++-6.dll" "libwinpthread-1.dll" "icuin52.dll" "icuuc52.dll" "icudt52.dll" "Qt5Core.dll" "Qt5Gui.dll" "Qt5Widgets.dll"
 
 artifacts:
   - path: $(OUTPUT_FILENAME)
