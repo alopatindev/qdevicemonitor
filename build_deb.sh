@@ -2,6 +2,7 @@
 
 set -e
 
+REVISION=$(git rev-parse HEAD)
 VERSION="0.0-1"
 PROGRAMNAME="qdevicemonitor"
 
@@ -21,4 +22,6 @@ Description: Crossplatform Android, iOS and text file log viewer
  Also it is a GUI for tailf command-line tool." > debian/DEBIAN/control
 
 fakeroot dpkg-deb --build debian
-mv debian.deb "${PROGRAMNAME}-${VERSION}-$(date -u +%Y%m%d-%H-%M-%S).deb"
+mv debian.deb "${PROGRAMNAME}-${VERSION}-$(date -u +%Y%m%d-%H-%M-%S)-${REVISION:0:8}.deb"
+
+# vim: textwidth=0
