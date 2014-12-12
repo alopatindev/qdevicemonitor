@@ -8,8 +8,9 @@ os:
 
 env:
   global:
-    secure: n0nANhPJX/N32Rnns0e3Oc2dje24iZl25oPo+hSUC1cho4jl3LE+CwZUy1BH72lw9Xbve/R2k9BfkInstGD0dyeNS2Fi5nfSFQwYnFvAa7N2G/AMrwI+OeUgiZEwCZ2o6qcDaKTa95PTkKgvk4bkN2zNjUvCS7bjUz0o6TFRWCA=
-    secure: fiDJGTfJm+4DP1GkgqmqifVYTDrURb/1r+Flx7OVwY7zbqs4xKfHkf2zDjqcFNyHeSj4+ekqba7x+5zKyjDuC9QNlSu4dZPrDyjLBxA262CHQLqYvP0FdG0aNjR3/PBMqUDPzsY0If26n7xlzJRlAJv5mFpwx0mya46UnTIrpIk=
+    - secure: "n0nANhPJX/N32Rnns0e3Oc2dje24iZl25oPo+hSUC1cho4jl3LE+CwZUy1BH72lw9Xbve/R2k9BfkInstGD0dyeNS2Fi5nfSFQwYnFvAa7N2G/AMrwI+OeUgiZEwCZ2o6qcDaKTa95PTkKgvk4bkN2zNjUvCS7bjUz0o6TFRWCA="
+    - secure: "fiDJGTfJm+4DP1GkgqmqifVYTDrURb/1r+Flx7OVwY7zbqs4xKfHkf2zDjqcFNyHeSj4+ekqba7x+5zKyjDuC9QNlSu4dZPrDyjLBxA262CHQLqYvP0FdG0aNjR3/PBMqUDPzsY0If26n7xlzJRlAJv5mFpwx0mya46UnTIrpIk="
+    - FTP_USER1=test
 
 before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
@@ -57,9 +58,7 @@ script:
     fi
 
 after_success:
-  - pwd
-  - echo $FTP_USER
-  - ls -l *.deb
+  - echo $FTP_USER1
   - curl --ftp-create-dirs -T *.deb -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/ubuntu/
 
 # vim: textwidth=0

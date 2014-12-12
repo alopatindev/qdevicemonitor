@@ -3,11 +3,16 @@ version: 0.0.{build}
 os: unstable
 
 install:
+  - set
   - set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin;C:\Program Files\7-Zip
   - set OUTPUT_FILENAME=qdevicemonitor-%APPVEYOR_REPO_COMMIT%.7z
+  - echo %OUTPUT_FILENAME%
+  - echo %date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~0,2%%time:~3,2%%time:~6,2%
 
 build_script:
+  - echo %OUTPUT_FILENAME%
+  - echo %QTDIR%
   - cd qdevicemonitor
   - qmake "CONFIG += static"
   - mingw32-make -j2
@@ -20,8 +25,8 @@ build_script:
   - dir C:\Qt
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
-  - copy %QTDIR%\bin\libstdc++-6.dll .
-  - copy %QTDIR%\bin\libgcc_s_dw2-1.dll .
+  - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\libgcc_s_dw2-1.dll .
+  - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\libstdc++-6.dll .
   - move qdevicemonitor\release\qdevicemonitor.exe .
   - 7z a %OUTPUT_FILENAME% qdevicemonitor.exe libgcc_s_dw2-1.dll libstdc++-6.dll
 
