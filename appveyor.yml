@@ -16,10 +16,15 @@ build_script:
   - dir C:\Qt\Qt5.3.2\5.3\mingw482_32\lib
   - dir C:\MinGW\bin
   - dir C:\Qt
+  - dir "C:\Program Files"
+  - dir "C:\Program Files (x86)"
 
 artifacts:
   - path: qdevicemonitor\release\qdevicemonitor.exe
     name: QDeviceMonitor
+
+  - path: C:\MinGW\bin\libgcc_s_dw2-1.dll
+    name: libgcc_s_dw2-1
 
 #deploy:
 #  provider: FTP
