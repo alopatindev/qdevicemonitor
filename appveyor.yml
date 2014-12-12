@@ -26,10 +26,11 @@ build_script:
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
   - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\libgcc_s_dw2-1.dll .
-  - copy C:\MinGW\bin\libstdc++-6.dll .
   - move qdevicemonitor\release\qdevicemonitor.exe .
-  - 7z a %OUTPUT_FILENAME% qdevicemonitor.exe libgcc_s_dw2-1.dll libstdc++-6.dll
+  - 7z a %OUTPUT_FILENAME% qdevicemonitor.exe libgcc_s_dw2-1.dll
 
 artifacts:
   - path: $(OUTPUT_FILENAME)
     name: QDeviceMonitor
+
+# vim: textwidth=0
