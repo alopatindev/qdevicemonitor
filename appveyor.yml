@@ -1,9 +1,32 @@
 version: 0.0.{build}
+
 os: unstable
+
 install:
   - set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
+
 build_script:
   - cd qdevicemonitor
   - qmake
   - mingw32-make -j2
+  - dir release
+  - cd ..
+  - dir C:\Qt\Qt5.3.2\5.3\mingw482_32
+  - dir C:\Qt\Qt5.3.2\5.3\mingw482_32\lib
+  - dir C:\MinGW\bin
+  - dir C:\Qt
+
+artifacts:
+  - path: qdevicemonitor\release\qdevicemonitor.exe
+    name: QDeviceMonitor
+
+#deploy:
+#  provider: FTP
+#  protocol: ftps
+#  host: qdevicemonitor.uhostall.com
+#  username: u356567517
+#  password:
+#    secure: tL3jXgf4CjEoLuCxc9xR/iQTD03LrZ/i7GoVmR8o2oE=
+#  folder: windows
+#  artifact: /.*\.exe/
