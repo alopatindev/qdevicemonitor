@@ -4,7 +4,7 @@ os: unstable
 
 install:
   - set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
-  - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
+  - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin;C:\Program Files\7-Zip
 
 build_script:
   - cd qdevicemonitor
@@ -18,13 +18,19 @@ build_script:
   - dir C:\Qt
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
+  - copy C:\MinGW\bin\libgcc_s_dw2-1.dll .
+  - copy qdevicemonitor\release\qdevicemonitor.exe .
+  - 7z a qdevicemonitor.7z qdevicemonitor.exe libgcc_s_dw2-1.dll
 
 artifacts:
-  - path: qdevicemonitor\release\qdevicemonitor.exe
+  - path: qdevicemonitor.7z
     name: QDeviceMonitor
 
-  - path: C:\MinGW\bin\libgcc_s_dw2-1.dll
-    name: libgcc_s_dw2-1
+#  - path: qdevicemonitor\release\qdevicemonitor.exe
+#    name: QDeviceMonitor
+
+#  - path: libgcc_s_dw2-1.dll
+#    name: libgcc_s_dw2-1
 
 #deploy:
 #  provider: FTP

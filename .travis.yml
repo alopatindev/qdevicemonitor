@@ -9,7 +9,7 @@ os:
 env:
   global:
     secure: n0nANhPJX/N32Rnns0e3Oc2dje24iZl25oPo+hSUC1cho4jl3LE+CwZUy1BH72lw9Xbve/R2k9BfkInstGD0dyeNS2Fi5nfSFQwYnFvAa7N2G/AMrwI+OeUgiZEwCZ2o6qcDaKTa95PTkKgvk4bkN2zNjUvCS7bjUz0o6TFRWCA=
-    secure: V1c8Stzln65jOb2OFKadvy5n4Y3Wv15iqsPr5gsXO7bQUexycbiCnLy8czhQiNJo+DS0zU+SGetq4sem9I35oGaamvf22QGmRMPQ94ogm7zuuRFdhXJX35/IgA5OcNTeezk/YHSNJTvqrjrl+RcsNFPQi7O2aQzVDWqkmTMmUTo=
+    secure: YbcMteV9hkRvHn7EZjTYTQej3mBVKazBDkiO5RQKSTf8hbnGUTCINprk1LRZZ23/xhmSG7U3FEyrVO9ZTmstw4ltM+DGAzDqGHekelLRGdGtteshssRlgsj1w87u2zeMNldhd4o4EkT577OSekEJKvY1sM47MPXONJCow1aMowc=
 
 before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
@@ -57,6 +57,6 @@ script:
     fi
 
 after_success:
-  "curl --ftp-create-dirs -T *.deb -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/ubuntu/"
+  - echo ${FTP_USER} ; curl --ftp-create-dirs -T *.deb -u "${FTP_USER}:${FTP_PASSWORD}" ftp://qdevicemonitor.uhostall.com/ubuntu/
 
 # vim: textwidth=0
