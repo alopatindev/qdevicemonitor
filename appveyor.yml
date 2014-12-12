@@ -19,8 +19,14 @@ build_script:
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
   - copy C:\MinGW\bin\libgcc_s_dw2-1.dll .
+  - copy C:\MinGW\bin\libstdc++-6.dll .
+  - copy C:\MinGW\bin\libgcc_s_dw2-1.dll .
+  - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\Qt5Core.dll .
+  - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\Qt5Gui.dll .
+  - copy C:\Qt\Qt5.3.2\5.3\mingw482_32\bin\Qt5Widgets.dll .
   - copy qdevicemonitor\release\qdevicemonitor.exe .
-  - 7z a qdevicemonitor.7z qdevicemonitor.exe libgcc_s_dw2-1.dll
+  - 7z a qdevicemonitor.7z qdevicemonitor.exe *.dll
+  - rem copy C:\MinGW\bin\libgcj-13.dll .
 
 artifacts:
   - path: qdevicemonitor.7z

@@ -9,7 +9,7 @@ os:
 env:
   global:
     secure: n0nANhPJX/N32Rnns0e3Oc2dje24iZl25oPo+hSUC1cho4jl3LE+CwZUy1BH72lw9Xbve/R2k9BfkInstGD0dyeNS2Fi5nfSFQwYnFvAa7N2G/AMrwI+OeUgiZEwCZ2o6qcDaKTa95PTkKgvk4bkN2zNjUvCS7bjUz0o6TFRWCA=
-    secure: YbcMteV9hkRvHn7EZjTYTQej3mBVKazBDkiO5RQKSTf8hbnGUTCINprk1LRZZ23/xhmSG7U3FEyrVO9ZTmstw4ltM+DGAzDqGHekelLRGdGtteshssRlgsj1w87u2zeMNldhd4o4EkT577OSekEJKvY1sM47MPXONJCow1aMowc=
+    secure: fiDJGTfJm+4DP1GkgqmqifVYTDrURb/1r+Flx7OVwY7zbqs4xKfHkf2zDjqcFNyHeSj4+ekqba7x+5zKyjDuC9QNlSu4dZPrDyjLBxA262CHQLqYvP0FdG0aNjR3/PBMqUDPzsY0If26n7xlzJRlAJv5mFpwx0mya46UnTIrpIk=
 
 before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
