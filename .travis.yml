@@ -48,4 +48,5 @@ script:
 
         cd ..;
         ./build_deb.sh;
+        ls -l;
     fi
