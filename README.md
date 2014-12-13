@@ -20,7 +20,7 @@ TODO
 ### Mac OS X
 TODO
 
-### Microsoft Windows
+### Windows
 Download, unzip and run https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts
 
 ### Build from Source Code
