@@ -22,15 +22,15 @@ build_script:
   - mingw32-make -j2
   - dir release
   - cd ..
-  - copy "%QTDIR%\libgcc_s_dw2-1.dll" .
-  - copy "%QTDIR%\libstdc++-6.dll" .
-  - copy "%QTDIR%\libwinpthread-1.dll" .
-  - copy "%QTDIR%\icuin52.dll" .
-  - copy "%QTDIR%\icuuc52.dll" .
-  - copy "%QTDIR%\icudt52.dll" .
-  - copy "%QTDIR%\Qt5Core.dll" .
-  - copy "%QTDIR%\Qt5Gui.dll" .
-  - copy "%QTDIR%\Qt5Widgets.dll" .
+  - copy "%QTDIR%\bin\libgcc_s_dw2-1.dll" .
+  - copy "%QTDIR%\bin\libstdc++-6.dll" .
+  - copy "%QTDIR%\bin\libwinpthread-1.dll" .
+  - copy "%QTDIR%\bin\icuin52.dll" .
+  - copy "%QTDIR%\bin\icuuc52.dll" .
+  - copy "%QTDIR%\bin\icudt52.dll" .
+  - copy "%QTDIR%\bin\Qt5Core.dll" .
+  - copy "%QTDIR%\bin\Qt5Gui.dll" .
+  - copy "%QTDIR%\bin\Qt5Widgets.dll" .
   - move "qdevicemonitor\release\qdevicemonitor.exe" .
   - 7z a -mx=9 %OUTPUT_FILENAME% "qdevicemonitor.exe" "libgcc_s_dw2-1.dll" "libstdc++-6.dll" "libwinpthread-1.dll" "icuin52.dll" "icuuc52.dll" "icudt52.dll" "Qt5Core.dll" "Qt5Gui.dll" "Qt5Widgets.dll"
 
