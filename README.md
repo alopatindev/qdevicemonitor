@@ -9,19 +9,29 @@ Crossplatform Android, iOS and text file log viewer written in C++/Qt.
 Installation
 ------------
 
-Ubuntu GNU/Linux:
-* sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-* add *universe* repository
-* download and install deb package from http://qdevicemonitor.uhostall.com/ubuntu/
+# Ubuntu GNU/Linux
+1. sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+2. add **universe** repository
+3. download and install deb package from http://qdevicemonitor.uhostall.com/ubuntu
 
-Gentoo GNU/Linux
-* TODO
+# Gentoo GNU/Linux
+TODO
 
-Mac OS X
-* TODO
+# Mac OS X
+TODO
 
-Microsoft Windows
-* download and run https://ci.appveyor.com/project/alopatindev/qdevicemonitor
+# Microsoft Windows
+Download, unzip and run https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts
+
+# Build from Source Code
+Make sure you that have installed [Qt >= 5](http://www.qt.io/download-open-source).
+* open qdevicemonitor.pro with QtCreator and build the project
+* or use terminal commands
+```
+cd qdevicemonitor
+qmake
+make -j
+```
 
 License
 -------
