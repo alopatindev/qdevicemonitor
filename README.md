@@ -12,8 +12,9 @@ Installation
 ### GNU/Linux
 #### Ubuntu
 1. sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-2. add **universe** repository
-3. download and install deb package from http://qdevicemonitor.uhostall.com/ubuntu
+2. add **universe** repository (Software Center - Edit - Software Sources...)
+3. sudo apt-get update
+4. download and install deb package from http://qdevicemonitor.uhostall.com/ubuntu
 
 #### Gentoo
 TODO
