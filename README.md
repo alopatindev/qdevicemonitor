@@ -11,10 +11,10 @@ Installation
 
 ### GNU/Linux
 #### Ubuntu
-1. sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-2. add **universe** repository (Software Center - Edit - Software Sources...)
+1. Add **universe** repository (Software Center - Edit - Software Sources...)
+2. sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
 3. sudo apt-get update
-4. download and install deb package from http://qdevicemonitor.uhostall.com/ubuntu
+4. [Download](http://qdevicemonitor.uhostall.com/ubuntu) and install the last deb package
 
 #### Gentoo
 TODO
@@ -23,7 +23,8 @@ TODO
 TODO
 
 ### Windows
-Download, unzip and run https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts
+[Download](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unzip and run
+Full builds list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history)
 
 ### Build from Source Code
 Make sure you that have installed [Qt >= 5](http://www.qt.io/download-open-source).
