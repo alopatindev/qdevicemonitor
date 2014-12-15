@@ -23,6 +23,7 @@
 
 #include <QPointer>
 #include <QSharedPointer>
+#include <QTextStream>
 #include <QWidget>
 
 namespace Ui {
@@ -35,6 +36,8 @@ class DeviceWidget : public QWidget
 
     QSharedPointer<Ui::DeviceWidget> ui;
     QPointer<DeviceAdapter> m_deviceAdapter;
+    QTextStream m_textStream;
+    QString m_stringStream;
 
 public:
     explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
@@ -43,7 +46,7 @@ public:
     int getVerbosityLevel() const;
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
-    void addTextLine(const QColor& color, const QString& text);
+    void addText(const QColor& color, const QString& text);
 
 signals:
 

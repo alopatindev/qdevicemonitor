@@ -136,8 +136,7 @@ void AndroidDevice::update()
             QString stringStream;
             QTextStream stream;
             stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
-            //m_deviceWidget->getTextEdit().setPlainText(m_deviceLogProcess.readAll());
+            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
             stream << m_deviceLogProcess.readAll();
 
             while (!stream.atEnd())
@@ -178,12 +177,12 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         {
             QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
-            m_deviceWidget->addTextLine(verbosityColor, verbosity + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::DateTime], date + " " + time + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Pid], pid + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Tid], tid + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Tag], tag + " ");
-            m_deviceWidget->addTextLine(verbosityColor, text + "\n");
+            m_deviceWidget->addText(verbosityColor, verbosity + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], date + " " + time + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Pid], pid + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tid], tid + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tag], tag + " ");
+            m_deviceWidget->addText(verbosityColor, text + "\n");
         }
 
         m_deviceWidget->maybeScrollTextEditToEnd();
@@ -194,7 +193,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, filtersValid, filters);
         if (filtersMatch)
         {
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
         }
     }
 
@@ -306,7 +305,7 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
             QString stringStream;
             QTextStream stream;
             stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
+            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
             stream << s_devicesListProcess.readAll();
             while (!stream.atEnd())
             {
