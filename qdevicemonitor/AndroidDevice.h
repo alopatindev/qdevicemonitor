@@ -45,7 +45,7 @@ public:
     virtual void update();
     virtual void filterAndAddToTextEdit(const QString& line);
 
-    static void addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
+    static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
 
 private:

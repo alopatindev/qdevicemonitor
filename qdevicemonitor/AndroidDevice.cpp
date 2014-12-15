@@ -296,7 +296,7 @@ void AndroidDevice::reloadTextEdit()
     startLogger();
 }
 
-void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
+void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
@@ -307,6 +307,26 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
             stream.setCodec("UTF-8");
             stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
             stream << s_devicesListProcess.readAll();
+
+            for (auto& dev : map)
+            {
+                dev->setVisited(false);
+            }
+
+            auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
+            {
+                bool online = deviceStatus == "device";
+                device.setHumanReadableDescription(
+                    tr("%1\nStatus: %2\nID: %3%4")
+                        .arg(tr(PLATFORM_STRING))
+                        .arg(online ? "Online" : "Offline")
+                        .arg(deviceId)
+                        .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
+                );
+                device.setOnline(online);
+                device.setVisited(true);
+            };
+
             while (!stream.atEnd())
             {
                 QString line = stream.readLine();
@@ -327,19 +347,20 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
                         }
                         else
                         {
-                            bool online = deviceStatus == "device";
-                            (*it)->setOnline(online);
-                            (*it)->setHumanReadableDescription(
-                                tr("%1\nStatus: %2\nID: %3%4")
-                                    .arg(tr(PLATFORM_STRING))
-                                    .arg(online ? "Online" : "Offline")
-                                    .arg(deviceId)
-                                    .arg(!online ? "\n" + deviceStatus : "")
-                            );
+                            updateDeviceStatus(deviceStatus, *(*it), deviceId);
                         }
                     }
                 }
             }
+
+            for (auto& dev : map)
+            {
+                if (!dev->isVisited())
+                {
+                    updateDeviceStatus("", *dev, dev->getId());
+                }
+            }
+
             s_devicesListProcess.close();
         }
 

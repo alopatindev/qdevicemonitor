@@ -68,11 +68,6 @@ void DeviceWidget::on_scrollLockCheckBox_toggled(bool)
     maybeScrollTextEditToEnd();
 }
 
-int DeviceWidget::getVerbosityLevel() const
-{
-    return ui->verbositySlider->value();
-}
-
 void DeviceWidget::highlightFilterLineEdit(bool red)
 {
     static QPalette normalPal = ui->filterLineEdit->palette();

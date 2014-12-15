@@ -33,6 +33,7 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
     , m_tabWidget(parent)
     , m_tabIndex(-1)
     , m_deviceAdapter(deviceAdapter)
+    , m_visited(true)
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
 
@@ -57,21 +58,6 @@ void BaseDevice::updateTabWidget()
     // TODO: m_tabWidget->setTabIcon, m_online
 }
 
-const QString& BaseDevice::getHumanReadableName() const
-{
-    return m_humanReadableName;
-}
-
-const QString& BaseDevice::getHumanReadableDescription() const
-{
-    return m_humanReadableDescription;
-}
-
-bool BaseDevice::isOnline() const
-{
-    return m_online;
-}
-
 void BaseDevice::setOnline(bool online)
 {
     if (online != m_online)
@@ -79,17 +65,12 @@ void BaseDevice::setOnline(bool online)
         qDebug() << m_id << "is now" << (online ? "online" : "offline");
         m_online = online;
         updateTabWidget();
+
+        if (online)
+        {
+            reloadTextEdit();
+        }
     }
-}
-
-void BaseDevice::setHumanReadableName(const QString& text)
-{
-    m_humanReadableName = text;
-}
-
-void BaseDevice::setHumanReadableDescription(const QString& text)
-{
-    m_humanReadableDescription = text;
 }
 
 void BaseDevice::scheduleReloadTextEdit(int timeout)

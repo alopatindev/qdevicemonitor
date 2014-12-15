@@ -61,11 +61,11 @@ public:
     void loadSettings(const QSettings& s);
     void saveSettings(QSettings& s);
 
-    bool isDarkTheme() const { return m_darkTheme; }
+    inline bool isDarkTheme() const { return m_darkTheme; }
     inline const QString& getFont() const { return m_font; }
-    int getFontSize() const { return m_fontSize; }
-    int getAutoRemoveFilesHours() const { return m_autoRemoveFilesHours; }
-    int getVisibleBlocks() const { return m_visibleBlocks; }
+    inline int getFontSize() const { return m_fontSize; }
+    inline int getAutoRemoveFilesHours() const { return m_autoRemoveFilesHours; }
+    inline int getVisibleBlocks() const { return m_visibleBlocks; }
 
     inline QCompleter& getFilterCompleter() { return m_filterCompleter; }
     void maybeAddCompletionAfterDelay(const QString& filter);

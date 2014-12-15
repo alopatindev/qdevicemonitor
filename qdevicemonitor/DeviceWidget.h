@@ -43,7 +43,7 @@ public:
     explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
     inline QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
     inline QTextEdit& getTextEdit() const { return *(ui->textEdit); }
-    int getVerbosityLevel() const;
+    inline int getVerbosityLevel() const { return ui->verbositySlider->value(); }
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
     void addText(const QColor& color, const QString& text);
