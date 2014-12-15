@@ -43,6 +43,7 @@ public:
     int getVerbosityLevel() const;
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
+    void addTextLine(const QColor& color, const QString& text);
 
 signals:
 

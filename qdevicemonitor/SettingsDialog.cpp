@@ -33,7 +33,7 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::loadSettings(const QSettings& s)
 {
-    ui->visibleLinesSpinBox->setValue(s.value("visibleLines").toInt());
+    ui->visibleBlocksSpinBox->setValue(s.value("visibleBlocks").toInt());
     ui->fontComboBox->setCurrentFont(QFont(s.value("font").toString()));
     ui->fontSizeSpinBox->setValue(s.value("fontSize").toInt());
     ui->darkThemeCheckBox->setChecked(s.value("darkTheme").toBool());
@@ -42,7 +42,7 @@ void SettingsDialog::loadSettings(const QSettings& s)
 
 void SettingsDialog::saveSettings(QSettings& s)
 {
-    s.setValue("visibleLines", ui->visibleLinesSpinBox->value());
+    s.setValue("visibleBlocks", ui->visibleBlocksSpinBox->value());
     s.setValue("font", ui->fontComboBox->currentFont().family());
     s.setValue("fontSize", ui->fontSizeSpinBox->value());
     s.setValue("darkTheme", ui->darkThemeCheckBox->isChecked());

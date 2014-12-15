@@ -178,23 +178,12 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         {
             QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
-            m_deviceWidget->getTextEdit().setTextColor(verbosityColor);
-            m_deviceWidget->getTextEdit().insertPlainText(verbosity + " ");
-
-            m_deviceWidget->getTextEdit().setTextColor(QColor(ThemeColors::Colors[theme][ThemeColors::DateTime]));
-            m_deviceWidget->getTextEdit().insertPlainText(date + " ");
-            m_deviceWidget->getTextEdit().insertPlainText(time + " ");
-
-            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::Pid]);
-            m_deviceWidget->getTextEdit().insertPlainText(pid + " ");
-            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::Tid]);
-            m_deviceWidget->getTextEdit().insertPlainText(tid + " ");
-
-            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::Tag]);
-            m_deviceWidget->getTextEdit().insertPlainText(tag + " ");
-
-            m_deviceWidget->getTextEdit().setTextColor(verbosityColor);
-            m_deviceWidget->getTextEdit().insertPlainText(text + "\n");
+            m_deviceWidget->addTextLine(verbosityColor, verbosity + " ");
+            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::DateTime], date + " " + time + " ");
+            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Pid], pid + " ");
+            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Tid], tid + " ");
+            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Tag], tag + " ");
+            m_deviceWidget->addTextLine(verbosityColor, text + "\n");
         }
 
         m_deviceWidget->maybeScrollTextEditToEnd();
@@ -205,8 +194,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, filtersValid, filters);
         if (filtersMatch)
         {
-            m_deviceWidget->getTextEdit().setTextColor(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose]);
-            m_deviceWidget->getTextEdit().insertPlainText(line + "\n");
+            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
         }
     }
 

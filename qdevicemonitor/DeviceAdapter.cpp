@@ -27,7 +27,7 @@ using namespace DataTypes;
 
 DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     : QObject(parent)
-    , m_visibleLines(1000)
+    , m_visibleBlocks(500)
     , m_fontSize(12)
     , m_darkTheme(false)
     , m_autoRemoveFilesHours(48)
@@ -93,10 +93,10 @@ void DeviceAdapter::updateDevicesMap()
 
 void DeviceAdapter::loadSettings(const QSettings& s)
 {
-    QVariant visibleLines = s.value("visibleLines");
-    if (visibleLines.isValid())
+    QVariant visibleBlocks = s.value("visibleBlocks");
+    if (visibleBlocks.isValid())
     {
-        m_visibleLines = visibleLines.toInt();
+        m_visibleBlocks = visibleBlocks.toInt();
     }
 
     QVariant font = s.value("font");
@@ -144,7 +144,7 @@ void DeviceAdapter::loadSettings(const QSettings& s)
 void DeviceAdapter::saveSettings(QSettings& s)
 {
     qDebug() << "DeviceAdapter::saveSettings";
-    s.setValue("visibleLines", m_visibleLines);
+    s.setValue("visibleBlocks", m_visibleBlocks);
     s.setValue("font", m_font);
     s.setValue("fontSize", m_fontSize);
     s.setValue("darkTheme", m_darkTheme);
