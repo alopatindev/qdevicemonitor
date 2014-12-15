@@ -77,6 +77,7 @@ public slots:
 
 private:
     void updateDevicesMap();
+    void removeOldLogFiles();
 };
 
 #endif // DEVICEADAPTER_H
