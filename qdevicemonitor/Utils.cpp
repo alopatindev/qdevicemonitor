@@ -23,7 +23,9 @@
 #include <QRegExp>
 #include <QDebug>
 
-static const QString LOGS_DIR = "logs";
+const char* Utils::LOGS_DIR = "logs";
+const char* Utils::LOG_EXT = ".log";
+const char* Utils::DATE_FORMAT = "yyyy-MM-dd_hh-mm-ss";
 
 const QString& Utils::getDataPath()
 {
@@ -46,7 +48,7 @@ const QString& Utils::getLogsPath()
 
 QString Utils::getNewLogFilePath(const QString& suffix)
 {
-    return getLogsPath() + "/" + suffix + getCurrentDateTime() + ".log";
+    return getLogsPath() + "/" + suffix + getCurrentDateTimeUtc() + LOG_EXT;
 }
 
 const QString& Utils::getConfigPath()
@@ -63,9 +65,9 @@ QString Utils::removeSpecialCharacters(const QString& text)
     return out;
 }
 
-QString Utils::getCurrentDateTime()
+QString Utils::getCurrentDateTimeUtc()
 {
-    return QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
+    return QDateTime::currentDateTimeUtc().toString(DATE_FORMAT);
 }
 
 int Utils::verbosityCharacterToInt(char character)

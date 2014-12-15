@@ -23,12 +23,16 @@
 class Utils
 {
 public:
+    static const char* LOGS_DIR;
+    static const char* LOG_EXT;
+    static const char* DATE_FORMAT;
+
     static const QString& getDataPath();
     static const QString& getLogsPath();
     static QString getNewLogFilePath(const QString& suffix);
     static const QString& getConfigPath();
     static QString removeSpecialCharacters(const QString& text);
-    static QString getCurrentDateTime();
+    static QString getCurrentDateTimeUtc();
     static int verbosityCharacterToInt(char character);
 };
 

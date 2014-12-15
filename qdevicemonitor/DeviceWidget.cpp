@@ -43,6 +43,7 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
     //ui->textEdit->setDefaultFont(QFont(m_deviceAdapter->getFont(), m_deviceAdapter->getFontSize()));
     ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
+    ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleBlocks());
 
     ui->verbositySlider->valueChanged(ui->verbositySlider->value());
     ui->wrapCheckBox->setCheckState(ui->wrapCheckBox->isChecked() ? Qt::Checked : Qt::Unchecked);
@@ -86,6 +87,12 @@ void DeviceWidget::maybeScrollTextEditToEnd()
     {
         scrollTextEditToEnd();
     }
+}
+
+void DeviceWidget::addTextLine(const QColor& color, const QString& text)
+{
+    ui->textEdit->setTextColor(color);
+    ui->textEdit->insertPlainText(text);
 }
 
 void DeviceWidget::scrollTextEditToEnd()

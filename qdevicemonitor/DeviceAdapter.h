@@ -37,7 +37,7 @@ private:
     DataTypes::DevicesMap m_devicesMap;
     QTimer m_updateTimer;
 
-    int m_visibleLines;
+    int m_visibleBlocks;
     QString m_font;
     int m_fontSize;
     bool m_darkTheme;
@@ -64,7 +64,8 @@ public:
     bool isDarkTheme() const { return m_darkTheme; }
     inline const QString& getFont() const { return m_font; }
     int getFontSize() const { return m_fontSize; }
-    int getAutoRemoveFilesHours() { return m_autoRemoveFilesHours; }
+    int getAutoRemoveFilesHours() const { return m_autoRemoveFilesHours; }
+    int getVisibleBlocks() const { return m_visibleBlocks; }
 
     inline QCompleter& getFilterCompleter() { return m_filterCompleter; }
     void maybeAddCompletionAfterDelay(const QString& filter);
@@ -77,6 +78,7 @@ public slots:
 
 private:
     void updateDevicesMap();
+    void removeOldLogFiles();
 };
 
 #endif // DEVICEADAPTER_H

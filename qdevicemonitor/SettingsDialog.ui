@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QSpinBox" name="visibleLinesSpinBox">
+    <widget class="QSpinBox" name="visibleBlocksSpinBox">
      <property name="minimum">
       <number>100</number>
      </property>
@@ -36,7 +36,7 @@
       <number>100</number>
      </property>
      <property name="value">
-      <number>1000</number>
+      <number>500</number>
      </property>
     </widget>
    </item>

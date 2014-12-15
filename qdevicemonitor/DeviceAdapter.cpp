@@ -18,14 +18,16 @@
 #include "DeviceAdapter.h"
 #include "AndroidDevice.h"
 #include "SettingsDialog.h"
+#include "Utils.h"
 
+#include <QDateTime>
 #include <QDebug>
 
 using namespace DataTypes;
 
 DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     : QObject(parent)
-    , m_visibleLines(1000)
+    , m_visibleBlocks(500)
     , m_fontSize(12)
     , m_darkTheme(false)
     , m_autoRemoveFilesHours(48)
@@ -91,10 +93,10 @@ void DeviceAdapter::updateDevicesMap()
 
 void DeviceAdapter::loadSettings(const QSettings& s)
 {
-    QVariant visibleLines = s.value("visibleLines");
-    if (visibleLines.isValid())
+    QVariant visibleBlocks = s.value("visibleBlocks");
+    if (visibleBlocks.isValid())
     {
-        m_visibleLines = visibleLines.toInt();
+        m_visibleBlocks = visibleBlocks.toInt();
     }
 
     QVariant font = s.value("font");
@@ -125,6 +127,8 @@ void DeviceAdapter::loadSettings(const QSettings& s)
         m_autoRemoveFilesHours = autoRemoveFilesHours.toInt();
     }
 
+    removeOldLogFiles();
+
     QVariant filterCompletions = s.value("filterCompletions");
     if (filterCompletions.isValid())
     {
@@ -140,7 +144,7 @@ void DeviceAdapter::loadSettings(const QSettings& s)
 void DeviceAdapter::saveSettings(QSettings& s)
 {
     qDebug() << "DeviceAdapter::saveSettings";
-    s.setValue("visibleLines", m_visibleLines);
+    s.setValue("visibleBlocks", m_visibleBlocks);
     s.setValue("font", m_font);
     s.setValue("fontSize", m_fontSize);
     s.setValue("darkTheme", m_darkTheme);
@@ -176,5 +180,31 @@ void DeviceAdapter::addFilterAsCompletion()
         qDebug() << "removing old" << oldCompletionsNumber << "completions";
         m_filterCompletions.erase(m_filterCompletions.begin(), m_filterCompletions.begin() + oldCompletionsNumber);
         m_filterCompleterModel.removeRows(0, int(oldCompletionsNumber));
+    }
+}
+
+void DeviceAdapter::removeOldLogFiles()
+{
+    qDebug() << "removeOldLogFiles older than" << m_autoRemoveFilesHours << "hours (" << m_autoRemoveFilesHours * 60 * 60 << "seconds )";
+    QStringList nameFilters;
+    nameFilters.append(QString("*%1").arg(Utils::LOG_EXT));
+
+    static const size_t dateLength = QString(Utils::DATE_FORMAT).length();
+    static const size_t logExtLength = QString(Utils::LOG_EXT).length();
+
+    QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
+
+    const QStringList& list = QDir(Utils::getLogsPath()).entryList(nameFilters, QDir::Files);
+    for (const auto& i : list)
+    {
+        const QString d = i.mid(i.length() - dateLength - logExtLength, dateLength);
+        QDateTime dateTime = QDateTime::fromString(d, Utils::DATE_FORMAT);
+        dateTime.setTimeSpec(Qt::UTC);
+        int dt = dateTime.secsTo(currentDateTime);
+        if (dt > m_autoRemoveFilesHours * 60 * 60)
+        {
+            bool result = QDir(Utils::getLogsPath()).remove(i);
+            qDebug() << "removing" << i << "=>" << result;
+        }
     }
 }
