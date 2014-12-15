@@ -23,8 +23,9 @@ TODO
 TODO
 
 ### Windows
-[Download](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unzip and run
-Full builds list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history)
+[Download](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unzip and run.
+
+Full builds list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history).
 
 ### Build from Source Code
 Make sure you that have installed [Qt >= 5](http://www.qt.io/download-open-source).
