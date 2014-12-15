@@ -43,6 +43,8 @@ public:
     void updateTabWidget();
     virtual void update() = 0;
     virtual void filterAndAddToTextEdit(const QString& line) = 0;
+    virtual const char* getPlatformString() const = 0;
+
     void scheduleReloadTextEdit(int timeout = 500);
     void maybeAddCompletionAfterDelay();
 

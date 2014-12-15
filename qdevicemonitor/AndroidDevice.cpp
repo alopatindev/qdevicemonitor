@@ -27,7 +27,6 @@
 using namespace DataTypes;
 
 static QProcess s_devicesListProcess;
-static const char* PLATFORM_STRING = "Android";
 
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
@@ -318,7 +317,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                 bool online = deviceStatus == "device";
                 device.setHumanReadableDescription(
                     tr("%1\nStatus: %2\nID: %3%4")
-                        .arg(tr(PLATFORM_STRING))
+                        .arg(tr(getPlatformStringStatic()))
                         .arg(online ? "Online" : "Offline")
                         .arg(deviceId)
                         .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
@@ -342,7 +341,14 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                         if (it == map.end())
                         {
                             map[deviceId] = QSharedPointer<BaseDevice>(
-                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr(PLATFORM_STRING), tr("Initializing..."), deviceAdapter)
+                                new AndroidDevice(
+                                    parent,
+                                    deviceId,
+                                    DeviceType::Android,
+                                    tr(getPlatformStringStatic()),
+                                    tr("Initializing..."),
+                                    deviceAdapter
+                                )
                             );
                         }
                         else

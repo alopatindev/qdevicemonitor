@@ -44,6 +44,7 @@ public:
     virtual ~AndroidDevice();
     virtual void update();
     virtual void filterAndAddToTextEdit(const QString& line);
+    virtual const char* getPlatformString() const { return getPlatformStringStatic(); }
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
@@ -61,6 +62,7 @@ private:
                       const QString& tid = QString(),
                       const QString& tag = QString(),
                       const QString& text = QString()) const;
+    static const char* getPlatformStringStatic() { return "Android"; }
 
 protected slots:
     void reloadTextEdit();

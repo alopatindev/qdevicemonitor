@@ -18,6 +18,7 @@
 #include "BaseDevice.h"
 
 #include <QDebug>
+#include <QIcon>
 
 using namespace DataTypes;
 
@@ -55,7 +56,11 @@ void BaseDevice::updateTabWidget()
 {
     m_tabWidget->setTabText(m_tabIndex, m_humanReadableName);
     m_tabWidget->setTabToolTip(m_tabIndex, m_humanReadableDescription);
-    // TODO: m_tabWidget->setTabIcon, m_online
+
+    QIcon icon(QString(":/icons/%1_%2.png")
+        .arg(getPlatformString())
+        .arg(m_online ? "online" : "offline"));
+    m_tabWidget->setTabIcon(m_tabIndex, icon);
 }
 
 void BaseDevice::setOnline(bool online)
