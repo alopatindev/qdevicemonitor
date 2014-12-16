@@ -30,6 +30,7 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     : QObject(parent)
     , m_visibleBlocks(500)
     , m_fontSize(12)
+    , m_fontBold(false)
     , m_darkTheme(false)
     , m_autoRemoveFilesHours(48)
 {
@@ -116,6 +117,12 @@ void DeviceAdapter::loadSettings(const QSettings& s)
         m_fontSize = fontSize.toInt();
     }
 
+    QVariant fontBold = s.value("fontBold");
+    if (fontBold.isValid())
+    {
+        m_fontBold = fontBold.toBool();
+    }
+
     QVariant darkTheme = s.value("darkTheme");
     if (darkTheme.isValid())
     {
@@ -148,6 +155,7 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("visibleBlocks", m_visibleBlocks);
     s.setValue("font", m_font);
     s.setValue("fontSize", m_fontSize);
+    s.setValue("fontBold", m_fontBold);
     s.setValue("darkTheme", m_darkTheme);
     s.setValue("autoRemoveFilesHours", m_autoRemoveFilesHours);
     s.setValue("filterCompletions", m_filterCompletions);

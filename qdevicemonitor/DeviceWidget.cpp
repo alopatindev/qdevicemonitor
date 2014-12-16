@@ -87,8 +87,11 @@ void DeviceWidget::maybeScrollTextEditToEnd()
 
 void DeviceWidget::addText(const QColor& color, const QString& text)
 {
-    QString out("<font style=\"font-family: %1; font-size: %2pt;\" color=\"%3\">%4</font>");
-    out = out.arg(m_deviceAdapter->getFont()).arg(m_deviceAdapter->getFontSize());
+    QString out("<font style=\"font-family: %1; font-size: %2pt; font-weight: %3;\" color=\"%4\">%5</font>");
+    out = out
+        .arg(m_deviceAdapter->getFont())
+        .arg(m_deviceAdapter->getFontSize())
+        .arg(m_deviceAdapter->isFontBold() ? "bold" : "none");
 
     if (text.endsWith("\n"))
     {

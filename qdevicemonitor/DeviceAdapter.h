@@ -40,6 +40,7 @@ private:
     int m_visibleBlocks;
     QString m_font;
     int m_fontSize;
+    bool m_fontBold;
     bool m_darkTheme;
     int m_autoRemoveFilesHours;
     QStandardItemModel m_filterCompleterModel;
@@ -66,6 +67,7 @@ public:
     inline bool isDarkTheme() const { return m_darkTheme; }
     inline const QString& getFont() const { return m_font; }
     inline int getFontSize() const { return m_fontSize; }
+    inline bool isFontBold() const { return m_fontBold; }
     inline int getAutoRemoveFilesHours() const { return m_autoRemoveFilesHours; }
     inline int getVisibleBlocks() const { return m_visibleBlocks; }
 

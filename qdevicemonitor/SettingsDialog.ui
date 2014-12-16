@@ -68,6 +68,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="fontBoldCheckBox">
+       <property name="text">
+        <string>Bold</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QSpinBox" name="fontSizeSpinBox">
        <property name="minimumSize">
         <size>

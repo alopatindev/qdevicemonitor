@@ -36,6 +36,7 @@ void SettingsDialog::loadSettings(const QSettings& s)
     ui->visibleBlocksSpinBox->setValue(s.value("visibleBlocks").toInt());
     ui->fontComboBox->setCurrentFont(QFont(s.value("font").toString()));
     ui->fontSizeSpinBox->setValue(s.value("fontSize").toInt());
+    ui->fontBoldCheckBox->setChecked(s.value("fontBold").toBool());
     ui->darkThemeCheckBox->setChecked(s.value("darkTheme").toBool());
     ui->autoRemoveFilesOlderThanSpinBox->setValue(s.value("autoRemoveFilesHours").toInt());
 }
@@ -45,6 +46,7 @@ void SettingsDialog::saveSettings(QSettings& s)
     s.setValue("visibleBlocks", ui->visibleBlocksSpinBox->value());
     s.setValue("font", ui->fontComboBox->currentFont().family());
     s.setValue("fontSize", ui->fontSizeSpinBox->value());
+    s.setValue("fontBold", ui->fontBoldCheckBox->isChecked());
     s.setValue("darkTheme", ui->darkThemeCheckBox->isChecked());
     s.setValue("autoRemoveFilesHours", ui->autoRemoveFilesOlderThanSpinBox->value());
     s.sync();
