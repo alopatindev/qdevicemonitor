@@ -87,7 +87,6 @@ void DeviceWidget::maybeScrollTextEditToEnd()
 
 void DeviceWidget::addText(const QColor& color, const QString& text)
 {
-    ui->textEdit->setTextColor(color);
     if (text.endsWith("\n"))
     {
         m_textStream << QString("<font color=\"%1\">%2</font>").arg(color.name()).arg(text.left(text.length() - 1));
