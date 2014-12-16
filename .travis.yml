@@ -4,18 +4,12 @@ compiler:
   - gcc
 
 os:
-  #- linux
   - osx
 
 env:
   global:
     - secure: "n0nANhPJX/N32Rnns0e3Oc2dje24iZl25oPo+hSUC1cho4jl3LE+CwZUy1BH72lw9Xbve/R2k9BfkInstGD0dyeNS2Fi5nfSFQwYnFvAa7N2G/AMrwI+OeUgiZEwCZ2o6qcDaKTa95PTkKgvk4bkN2zNjUvCS7bjUz0o6TFRWCA="
     - secure: "fiDJGTfJm+4DP1GkgqmqifVYTDrURb/1r+Flx7OVwY7zbqs4xKfHkf2zDjqcFNyHeSj4+ekqba7x+5zKyjDuC9QNlSu4dZPrDyjLBxA262CHQLqYvP0FdG0aNjR3/PBMqUDPzsY0If26n7xlzJRlAJv5mFpwx0mya46UnTIrpIk="
-
-matrix:
-  include:
-    - os: osx
-    - os: linux
 
 before_install:
   - uname -a;
@@ -52,25 +46,29 @@ install:
 
 
 script:
-    cd qdevicemonitor;
+  - cd qdevicemonitor;
 
-    if [ $CXX = "g++" ]; then
-        qmake -spec linux-g++;
-    fi;
-    if [ $CXX = "clang++" ]; then
-        qmake -spec linux-clang;
+    if [ $TRAVIS_OS_NAME = linux ]; then
+        if [ $CXX = "g++" ]; then
+            qmake -spec linux-g++;
+        fi;
+        if [ $CXX = "clang++" ]; then
+            qmake -spec linux-clang;
+        fi;
+        ./ci-scripts/build_deb.sh;
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+        if [ $CXX = "g++" ]; then
+            qmake -spec macx-g++;
+        fi;
+        if [ $CXX = "clang++" ]; then
+            qmake -spec macx-clang;
+        fi;
     fi;
 
     make -j2;
-
     cd ..;
-
-    if [ $TRAVIS_OS_NAME = linux ]; then
-        ./ci-scripts/build_deb.sh;
-    elif [ $TRAVIS_OS_NAME = osx ]; then
-        ls -l qdevicemonitor;
-        file qdevicemonitor/qdevicemonitor;
-    fi;
+    ls -l qdevicemonitor;
+    file qdevicemonitor/qdevicemonitor;
 
     ls -l;
 
