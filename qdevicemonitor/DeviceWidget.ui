@@ -33,7 +33,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="filterLineEdit"/>
+      <widget class="QLineEdit" name="filterLineEdit">
+       <property name="toolTip">
+        <string>Search for messages. Accepts regexes and wildcards. Prefix with pid:, tid:, tag: or text: to limit scope.</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
