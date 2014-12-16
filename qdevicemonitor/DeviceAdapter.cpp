@@ -22,6 +22,7 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QSet>
 
 using namespace DataTypes;
 
@@ -192,8 +193,13 @@ void DeviceAdapter::removeOldLogFiles()
     static const size_t dateLength = QString(Utils::DATE_FORMAT).length();
     static const size_t logExtLength = QString(Utils::LOG_EXT).length();
 
-    QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
+    QSet<QString> currentLogFileNames;
+    for (const auto& device : m_devicesMap)
+    {
+        currentLogFileNames.insert(device->getCurrentLogFileName());
+    }
 
+    QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
     const QStringList& list = QDir(Utils::getLogsPath()).entryList(nameFilters, QDir::Files);
     for (const auto& i : list)
     {
@@ -201,7 +207,7 @@ void DeviceAdapter::removeOldLogFiles()
         QDateTime dateTime = QDateTime::fromString(d, Utils::DATE_FORMAT);
         dateTime.setTimeSpec(Qt::UTC);
         int dt = dateTime.secsTo(currentDateTime);
-        if (dt > m_autoRemoveFilesHours * 60 * 60)
+        if (dt > m_autoRemoveFilesHours * 60 * 60 && !currentLogFileNames.contains(i))
         {
             bool result = QDir(Utils::getLogsPath()).remove(i);
             qDebug() << "removing" << i << "=>" << result;

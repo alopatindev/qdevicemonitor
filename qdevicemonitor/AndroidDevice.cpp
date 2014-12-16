@@ -20,6 +20,7 @@
 #include "ThemeColors.h"
 
 #include <QDebug>
+#include <QFileInfo>
 #include <QRegExp>
 #include <QStringList>
 #include <QWeakPointer>
@@ -67,9 +68,10 @@ void AndroidDevice::startLogger()
 
     qDebug() << "AndroidDevice::startLogger";
 
-    m_deviceLogFile.setFileName(
-        Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-")
-    );
+    const QString currentLogAbsFileName = Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-");
+    m_currentLogFileName = QFileInfo(currentLogAbsFileName).fileName();
+
+    m_deviceLogFile.setFileName(currentLogAbsFileName);
     m_deviceLogFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
     m_deviceLogFileStream = QSharedPointer<QTextStream>(new QTextStream(&m_deviceLogFile));
     m_deviceLogFileStream->setCodec("UTF-8");

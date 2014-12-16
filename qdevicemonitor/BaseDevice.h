@@ -62,6 +62,8 @@ public:
 
     inline const QString& getId() const { return m_id; }
 
+    inline const QString& getCurrentLogFileName() const { return m_currentLogFileName; }
+
 signals:
 
 protected slots:
@@ -78,6 +80,7 @@ protected:
     int m_tabIndex;
     QPointer<DeviceAdapter> m_deviceAdapter;
     QString m_lastFilter;
+    QString m_currentLogFileName;
 
 private:
     QTimer m_reloadTextEditTimer;
