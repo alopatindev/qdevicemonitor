@@ -20,6 +20,7 @@
 #include "Utils.h"
 
 #include <QDebug>
+#include <QMessageBox>
 #include <QSettings>
 
 MainWindow::MainWindow(QPointer<QWidget> parent)
@@ -51,6 +52,28 @@ void MainWindow::on_actionSettings_triggered()
         loadSettings();
         m_deviceAdapter.allDevicesReloadText();
     }
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::about(this,
+        tr("About %1 %2").arg(qApp->applicationName(),
+                              qApp->applicationVersion()),
+        tr("<b>%1 %2</b><br><br>"
+           "Crossplatform Android, iOS and text file log viewer written in C++/Qt.<br>\n"
+           "Copyright (c) 2014 Alexander Lopatin<br>\n"
+           "<a href=\"https://github.com/alopatindev/qdevicemonitor\">https://github.com/alopatindev/qdevicemonitor</a><br>\n\n"
+           "<center>This program is released under<br>\n"
+           "the terms of the<br>\n"
+           "GNU GENERAL PUBLIC LICENSE<br>\n"
+           "Version 3, 29 June 2007</center>")
+                .arg(qApp->applicationName(),
+                     qApp->applicationVersion()));
+}
+
+void MainWindow::on_actionAboutQt_triggered()
+{
+    QMessageBox::aboutQt(this);
 }
 
 void MainWindow::loadSettings()

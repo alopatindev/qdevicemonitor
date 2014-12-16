@@ -44,6 +44,8 @@ public:
 
 public slots:
     void on_actionSettings_triggered();
+    void on_actionAbout_triggered();
+    void on_actionAboutQt_triggered();
 
 private:
     QSharedPointer<Ui::MainWindow> ui;
