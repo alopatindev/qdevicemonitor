@@ -65,10 +65,12 @@ void AndroidDevice::startLogger()
         return;
     }
 
+    qDebug() << "AndroidDevice::startLogger";
+
     m_deviceLogFile.setFileName(
         Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-")
     );
-    m_deviceLogFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+    m_deviceLogFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
     m_deviceLogFileStream = QSharedPointer<QTextStream>(new QTextStream(&m_deviceLogFile));
     m_deviceLogFileStream->setCodec("UTF-8");
 
@@ -95,6 +97,8 @@ void AndroidDevice::startLogger()
 
 void AndroidDevice::stopLogger()
 {
+    qDebug() << "AndroidDevice::stopLogger";
+
     m_deviceLogProcess.close();
     //m_deviceLogFileStream->flush();
     m_deviceLogFileStream.clear();
@@ -114,6 +118,7 @@ void AndroidDevice::update()
                 m_humanReadableName = model;
                 updateTabWidget();
                 m_didReadDeviceModel = true;
+                stopLogger();
                 startLogger();
             }
         }
@@ -299,10 +304,19 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
 
 void AndroidDevice::reloadTextEdit()
 {
+    if (!m_didReadDeviceModel)
+    {
+        return;
+    }
+
     qDebug() << "reloadTextEdit";
-    stopLogger();
     m_deviceWidget->getTextEdit().clear();
-    startLogger();
+
+    m_deviceLogFileStream->seek(0);
+    while (!m_deviceLogFileStream->atEnd())
+    {
+        filterAndAddToTextEdit(m_deviceLogFileStream->readLine());
+    }
 }
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
