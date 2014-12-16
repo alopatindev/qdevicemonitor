@@ -81,16 +81,6 @@ void AndroidDevice::startLogger()
     args.append("-s");
     args.append(m_id);
     args.append("logcat");
-    args.append("-c");
-    m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
-    m_deviceLogProcess.start("adb", args);
-    m_deviceLogProcess.waitForFinished();
-    m_deviceLogProcess.close();
-
-    args.clear();
-    args.append("-s");
-    args.append(m_id);
-    args.append("logcat");
     args.append("-v");
     args.append("threadtime");
     args.append("*:v");
@@ -134,36 +124,58 @@ void AndroidDevice::update()
         }
     }
 
-    if (m_deviceLogProcess.state() == QProcess::Running)
+    switch (m_deviceLogProcess.state())
     {
-        const QString filter = m_deviceWidget->getFilterLineEdit().text();
-        if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
+    case QProcess::Running:
         {
-            m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
-            scheduleReloadTextEdit();
-        }
-        else if (m_lastFilter.compare(filter) != 0)
-        {
-            m_filtersValid = true;
-            m_lastFilter = filter;
-            scheduleReloadTextEdit();
-            m_deviceAdapter->maybeAddCompletionAfterDelay(filter);
-        }
-        else if(m_deviceLogProcess.canReadLine())
-        {
-            QString stringStream;
-            QTextStream stream;
-            stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-            stream << m_deviceLogProcess.readAll();
-
-            while (!stream.atEnd())
+            const QString filter = m_deviceWidget->getFilterLineEdit().text();
+            if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
             {
-                QString line = stream.readLine();
-                *m_deviceLogFileStream << line << "\n";
-                filterAndAddToTextEdit(line);
+                m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
+                scheduleReloadTextEdit();
+            }
+            else if (m_lastFilter.compare(filter) != 0)
+            {
+                m_filtersValid = true;
+                m_lastFilter = filter;
+                scheduleReloadTextEdit();
+                m_deviceAdapter->maybeAddCompletionAfterDelay(filter);
+            }
+            else if (!m_deviceLogFileStream->atEnd())
+            {
+                for (int i = 0; i < MAX_LINES_UPDATE && !m_deviceLogFileStream->atEnd(); ++i)
+                {
+                    filterAndAddToTextEdit(m_deviceLogFileStream->readLine());
+                }
+            }
+            else if(m_deviceLogProcess.canReadLine())
+            {
+                QString stringStream;
+                QTextStream stream;
+                stream.setCodec("UTF-8");
+                stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
+
+                for (int i = 0; i < MAX_LINES_UPDATE && !m_deviceLogProcess.atEnd(); ++i)
+                {
+                    stream << m_deviceLogProcess.readLine();
+                    QString line = stream.readLine();
+                    *m_deviceLogFileStream << line << "\n";
+                    filterAndAddToTextEdit(line);
+                }
             }
         }
+        break;
+    case QProcess::NotRunning:
+        {
+            qDebug() << "m_deviceLogProcess not running";
+            stopLogger();
+            startLogger();
+            reloadTextEdit();
+        }
+        break;
+    case QProcess::Starting:
+    default:
+        break;
     }
 }
 
@@ -316,10 +328,6 @@ void AndroidDevice::reloadTextEdit()
     m_deviceWidget->getTextEdit().clear();
 
     m_deviceLogFileStream->seek(0);
-    while (!m_deviceLogFileStream->atEnd())
-    {
-        filterAndAddToTextEdit(m_deviceLogFileStream->readLine());
-    }
 }
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
