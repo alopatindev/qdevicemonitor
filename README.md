@@ -29,8 +29,8 @@ Full builds list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemo
 
 ### Build from Source Code
 Make sure you that have installed [Qt >= 5](http://www.qt.io/download-open-source).
-* open qdevicemonitor.pro with QtCreator and build the project
-* or use the following terminal commands:
+* open *qdevicemonitor/qdevicemonitor.pro* with QtCreator and build the project
+* *or* use the following terminal commands:
 ```
 cd qdevicemonitor
 qmake

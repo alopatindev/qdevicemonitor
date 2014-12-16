@@ -5,6 +5,7 @@ compiler:
 
 os:
   - linux
+  - osx
 
 env:
   global:
@@ -12,14 +13,19 @@ env:
     - secure: "fiDJGTfJm+4DP1GkgqmqifVYTDrURb/1r+Flx7OVwY7zbqs4xKfHkf2zDjqcFNyHeSj4+ekqba7x+5zKyjDuC9QNlSu4dZPrDyjLBxA262CHQLqYvP0FdG0aNjR3/PBMqUDPzsY0If26n7xlzJRlAJv5mFpwx0mya46UnTIrpIk="
 
 before_install:
-  - if [ $TRAVIS_OS_NAME = linux ]; then
+  - uname -a;
+
+    if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
-        uname -a;
         cat /proc/cpuinfo;
 
         sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa;
         sudo apt-get update -qq;
-    fi
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+        brew update;
+    fi;
+
+    $CXX --version;
 
 install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
@@ -27,36 +33,45 @@ install:
         sudo apt-get install qt5-default qttools5-dev-tools;
         sudo apt-get install fakeroot;
 
-        if [ "$CXX" = "g++" ]; then
+        if [ $CXX = "g++" ]; then
             sudo apt-get install -qq g++-4.8;
         fi;
 
-        if [ "$CXX" = "clang++" ]; then
+        if [ $CXX = "clang++" ]; then
             sudo apt-get install -qq clang-3.4;
         fi;
-    fi
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+        brew install qt5;
+        brew ls qt5;
+    fi;
 
 
 script:
-  - $CXX --version;
+    cd qdevicemonitor;
+
+    if [ $CXX = "g++" ]; then
+        qmake -spec linux-g++;
+    fi;
+    if [ $CXX = "clang++" ]; then
+        qmake -spec linux-clang;
+    fi;
+
+    make -j2;
+
+    cd ..;
+
     if [ $TRAVIS_OS_NAME = linux ]; then
-        cd qdevicemonitor;
-
-        if [ "$CXX" = "g++" ]; then
-            qmake -spec linux-g++;
-        fi;
-        if [ "$CXX" = "clang++" ]; then
-            qmake -spec linux-clang;
-        fi;
-
-        make -j2;
-
-        cd ..;
         ./ci-scripts/build_deb.sh;
-        ls -l;
-    fi
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+        ls -l qdevicemonitor;
+        file qdevicemonitor/qdevicemonitor;
+    fi;
+
+    ls -l;
 
 after_success:
-  - curl --ftp-create-dirs -T *.deb -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/ubuntu/
+  - if [ $TRAVIS_OS_NAME = linux ]; then
+        curl --ftp-create-dirs -T *.deb -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/ubuntu/ ;
+    fi;
 
 # vim: textwidth=0
