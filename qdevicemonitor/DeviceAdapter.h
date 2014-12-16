@@ -52,6 +52,7 @@ public:
     static const int UPDATE_FREQUENCY = 100;
     static const int MAX_FILTER_COMPLETIONS = 60;
     static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
+    static const int MAX_LINES_UPDATE = 30;
 
     explicit DeviceAdapter(QPointer<QTabWidget> parent = 0);
     ~DeviceAdapter();

@@ -17,7 +17,7 @@ install:
 build_script:
   - cd qdevicemonitor
   - qmake
-  - mingw32-make -j2
+  - mingw32-make -j4
   - dir release
   - cd ..
   - mkdir platforms

@@ -70,8 +70,6 @@ public slots:
     virtual void reloadTextEdit() = 0;
 
 protected:
-    const static int MAX_LINES_UPDATE = 30;
-
     QString m_id;
     DeviceType m_type;
     QString m_humanReadableName;

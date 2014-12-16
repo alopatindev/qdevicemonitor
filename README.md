@@ -11,7 +11,7 @@ Installation
 
 ### GNU/Linux
 #### Ubuntu
-1. Add **universe** repository (Software Center - Edit - Software Sources...)
+1. Add **universe** repository (Software Center — Edit — Software Sources...)
 2. sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
 3. sudo apt-get update
 4. [Download](http://qdevicemonitor.uhostall.com/ubuntu) and install the last deb package

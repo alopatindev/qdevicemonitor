@@ -143,8 +143,7 @@ void AndroidDevice::update()
             }
             else if (!m_deviceLogFileStream->atEnd())
             {
-                for (int i = 0; i < MAX_LINES_UPDATE && !m_deviceLogFileStream->atEnd(); ++i)
-                {
+                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_deviceLogFileStream->atEnd(); ++i) {
                     filterAndAddToTextEdit(m_deviceLogFileStream->readLine());
                 }
             }
@@ -155,7 +154,7 @@ void AndroidDevice::update()
                 stream.setCodec("UTF-8");
                 stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
-                for (int i = 0; i < MAX_LINES_UPDATE && !m_deviceLogProcess.atEnd(); ++i)
+                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_deviceLogProcess.atEnd(); ++i)
                 {
                     stream << m_deviceLogProcess.readLine();
                     QString line = stream.readLine();

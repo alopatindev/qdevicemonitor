@@ -14,9 +14,6 @@ TEMPLATE = app
 
 RESOURCES = resources.qrc
 
-# FIXME
-ICON = icons/Android_online.png
-
 SOURCES += main.cpp\
         MainWindow.cpp \
     DeviceAdapter.cpp \
