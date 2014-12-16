@@ -43,17 +43,22 @@ public:
     void updateTabWidget();
     virtual void update() = 0;
     virtual void filterAndAddToTextEdit(const QString& line) = 0;
+    virtual const char* getPlatformString() const = 0;
+
     void scheduleReloadTextEdit(int timeout = 500);
     void maybeAddCompletionAfterDelay();
 
-    inline const QString& getHumanReadableName() const;
-    inline const QString& getHumanReadableDescription() const;
+    inline const QString& getHumanReadableName() const { return m_humanReadableName; }
+    inline const QString& getHumanReadableDescription() const { return m_humanReadableDescription; }
 
-    void setHumanReadableName(const QString& text);
-    void setHumanReadableDescription(const QString& text);
+    inline void setHumanReadableName(const QString& text) { m_humanReadableName = text; }
+    inline void setHumanReadableDescription(const QString& text) { m_humanReadableDescription = text; }
 
-    bool isOnline() const;
+    inline bool isOnline() const { return m_online; }
     void setOnline(bool online);
+
+    inline void setVisited(bool visited) { m_visited = visited; }
+    inline bool isVisited() const { return m_visited; }
 
     inline const QString& getId() const { return m_id; }
 
@@ -76,6 +81,7 @@ protected:
 
 private:
     QTimer m_reloadTextEditTimer;
+    bool m_visited;
 };
 
 #endif // BASEDEVICE_H

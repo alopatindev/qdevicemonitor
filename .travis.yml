@@ -52,7 +52,7 @@ script:
         make -j2;
 
         cd ..;
-        ./build_deb.sh;
+        ./ci-scripts/build_deb.sh;
         ls -l;
     fi
 

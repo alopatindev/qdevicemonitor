@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+  <file alias="icons/Android_online.png">icons/Android_online.png</file>
+  <file alias="icons/Android_offline.png">icons/Android_offline.png</file>
+</qresource>
+</RCC>

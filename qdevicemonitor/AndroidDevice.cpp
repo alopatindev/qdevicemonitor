@@ -27,7 +27,6 @@
 using namespace DataTypes;
 
 static QProcess s_devicesListProcess;
-static const char* PLATFORM_STRING = "Android";
 
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
@@ -136,8 +135,7 @@ void AndroidDevice::update()
             QString stringStream;
             QTextStream stream;
             stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
-            //m_deviceWidget->getTextEdit().setPlainText(m_deviceLogProcess.readAll());
+            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
             stream << m_deviceLogProcess.readAll();
 
             while (!stream.atEnd())
@@ -178,12 +176,12 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         {
             QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
-            m_deviceWidget->addTextLine(verbosityColor, verbosity + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::DateTime], date + " " + time + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Pid], pid + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Tid], tid + " ");
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::Tag], tag + " ");
-            m_deviceWidget->addTextLine(verbosityColor, text + "\n");
+            m_deviceWidget->addText(verbosityColor, verbosity + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], date + " " + time + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Pid], pid + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tid], tid + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tag], tag + " ");
+            m_deviceWidget->addText(verbosityColor, text + "\n");
         }
 
         m_deviceWidget->maybeScrollTextEditToEnd();
@@ -194,7 +192,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, filtersValid, filters);
         if (filtersMatch)
         {
-            m_deviceWidget->addTextLine(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
         }
     }
 
@@ -297,7 +295,7 @@ void AndroidDevice::reloadTextEdit()
     startLogger();
 }
 
-void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
+void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
@@ -306,8 +304,28 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
             QString stringStream;
             QTextStream stream;
             stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadOnly | QIODevice::Text);
+            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
             stream << s_devicesListProcess.readAll();
+
+            for (auto& dev : map)
+            {
+                dev->setVisited(false);
+            }
+
+            auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
+            {
+                bool online = deviceStatus == "device";
+                device.setHumanReadableDescription(
+                    tr("%1\nStatus: %2\nID: %3%4")
+                        .arg(tr(getPlatformStringStatic()))
+                        .arg(online ? "Online" : "Offline")
+                        .arg(deviceId)
+                        .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
+                );
+                device.setOnline(online);
+                device.setVisited(true);
+            };
+
             while (!stream.atEnd())
             {
                 QString line = stream.readLine();
@@ -323,24 +341,32 @@ void AndroidDevice::addNewDevicesOfThisType(QPointer<QTabWidget> parent, Devices
                         if (it == map.end())
                         {
                             map[deviceId] = QSharedPointer<BaseDevice>(
-                                new AndroidDevice(parent, deviceId, DeviceType::Android, tr(PLATFORM_STRING), tr("Initializing..."), deviceAdapter)
+                                new AndroidDevice(
+                                    parent,
+                                    deviceId,
+                                    DeviceType::Android,
+                                    tr(getPlatformStringStatic()),
+                                    tr("Initializing..."),
+                                    deviceAdapter
+                                )
                             );
                         }
                         else
                         {
-                            bool online = deviceStatus == "device";
-                            (*it)->setOnline(online);
-                            (*it)->setHumanReadableDescription(
-                                tr("%1\nStatus: %2\nID: %3%4")
-                                    .arg(tr(PLATFORM_STRING))
-                                    .arg(online ? "Online" : "Offline")
-                                    .arg(deviceId)
-                                    .arg(!online ? "\n" + deviceStatus : "")
-                            );
+                            updateDeviceStatus(deviceStatus, *(*it), deviceId);
                         }
                     }
                 }
             }
+
+            for (auto& dev : map)
+            {
+                if (!dev->isVisited())
+                {
+                    updateDeviceStatus("", *dev, dev->getId());
+                }
+            }
+
             s_devicesListProcess.close();
         }
 

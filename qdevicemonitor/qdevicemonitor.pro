@@ -12,6 +12,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qdevicemonitor
 TEMPLATE = app
 
+RESOURCES = resources.qrc
+
+# FIXME
+ICON = icons/Android_online.png
 
 SOURCES += main.cpp\
         MainWindow.cpp \

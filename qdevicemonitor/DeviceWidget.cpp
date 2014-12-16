@@ -31,16 +31,17 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
 {
     ui->setupUi(this);
 
+    m_textStream.setCodec("UTF-8");
+    m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
+
     if (m_deviceAdapter->isDarkTheme())
     {
-        //ui->textEdit->setTextBackgroundColor(Qt::black);
         QPalette pal;
         pal.setColor(QPalette::Text, Qt::white);
         pal.setColor(QPalette::Base, Qt::black);
         ui->textEdit->setPalette(pal);
     }
 
-    //ui->textEdit->setDefaultFont(QFont(m_deviceAdapter->getFont(), m_deviceAdapter->getFontSize()));
     ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
     ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleBlocks());
@@ -67,11 +68,6 @@ void DeviceWidget::on_scrollLockCheckBox_toggled(bool)
     maybeScrollTextEditToEnd();
 }
 
-int DeviceWidget::getVerbosityLevel() const
-{
-    return ui->verbositySlider->value();
-}
-
 void DeviceWidget::highlightFilterLineEdit(bool red)
 {
     static QPalette normalPal = ui->filterLineEdit->palette();
@@ -89,10 +85,18 @@ void DeviceWidget::maybeScrollTextEditToEnd()
     }
 }
 
-void DeviceWidget::addTextLine(const QColor& color, const QString& text)
+void DeviceWidget::addText(const QColor& color, const QString& text)
 {
     ui->textEdit->setTextColor(color);
-    ui->textEdit->insertPlainText(text);
+    if (text.endsWith("\n"))
+    {
+        m_textStream << QString("<font color=\"%1\">%2</font>").arg(color.name()).arg(text.left(text.length() - 1));
+        ui->textEdit->append(m_textStream.readLine());
+    }
+    else
+    {
+        m_textStream << QString("<font color=\"%1\">%2</font>").arg(color.name()).arg(text);
+    }
 }
 
 void DeviceWidget::scrollTextEditToEnd()

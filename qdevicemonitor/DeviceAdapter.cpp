@@ -75,7 +75,7 @@ void DeviceAdapter::updateDevicesMap()
             // TODO
             break;
         case DeviceType::Android:
-            AndroidDevice::addNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
+            AndroidDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
             break;
         case DeviceType::IOS:
             // TODO
