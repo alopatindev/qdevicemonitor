@@ -170,7 +170,6 @@ void AndroidDevice::update()
             qDebug() << "m_deviceLogProcess not running";
             stopLogger();
             startLogger();
-            reloadTextEdit();
         }
         break;
     case QProcess::Starting:
