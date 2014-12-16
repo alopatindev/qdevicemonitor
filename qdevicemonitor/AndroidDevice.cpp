@@ -54,8 +54,8 @@ void AndroidDevice::updateDeviceModel()
     args.append("shell");
     args.append("getprop");
     args.append("ro.product.model");
-    m_deviceInfoProcess.start("adb", args);
     m_deviceInfoProcess.setReadChannel(QProcess::StandardOutput);
+    m_deviceInfoProcess.start("adb", args);
 }
 
 void AndroidDevice::startLogger()
@@ -76,11 +76,21 @@ void AndroidDevice::startLogger()
     args.append("-s");
     args.append(m_id);
     args.append("logcat");
+    args.append("-c");
+    m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
+    m_deviceLogProcess.start("adb", args);
+    m_deviceLogProcess.waitForFinished();
+    m_deviceLogProcess.close();
+
+    args.clear();
+    args.append("-s");
+    args.append(m_id);
+    args.append("logcat");
     args.append("-v");
     args.append("threadtime");
     args.append("*:v");
-    m_deviceLogProcess.start("adb", args);
     m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
+    m_deviceLogProcess.start("adb", args);
 }
 
 void AndroidDevice::stopLogger()
@@ -372,8 +382,8 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
         QStringList args;
         args.append("devices");
-        s_devicesListProcess.start("adb", args);
         s_devicesListProcess.setReadChannel(QProcess::StandardOutput);
+        s_devicesListProcess.start("adb", args);
     }
 }
 
