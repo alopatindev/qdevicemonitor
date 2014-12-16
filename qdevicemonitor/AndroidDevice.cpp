@@ -249,11 +249,11 @@ bool AndroidDevice::columnTextMatches(const QString& filter, const QString& text
         f[2] = QString(".*(%1).*").arg(f[1]);
 
         static QRegExp rx[] = {
-            QRegExp("", Qt::CaseSensitive, QRegExp::RegExp),
+            //QRegExp("", Qt::CaseSensitive, QRegExp::RegExp),
             QRegExp("", Qt::CaseSensitive, QRegExp::RegExp2),
             QRegExp("", Qt::CaseSensitive, QRegExp::Wildcard),
             QRegExp("", Qt::CaseSensitive, QRegExp::WildcardUnix),
-            QRegExp("", Qt::CaseSensitive, QRegExp::FixedString),
+            //QRegExp("", Qt::CaseSensitive, QRegExp::FixedString),
             QRegExp("", Qt::CaseSensitive, QRegExp::W3CXmlSchema11)
         };
 
