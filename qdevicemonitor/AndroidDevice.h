@@ -36,6 +36,7 @@ class AndroidDevice : public BaseDevice
     bool m_emptyTextEdit;
     int m_lastVerbosityLevel;
     bool m_didReadDeviceModel;
+    bool m_filtersValid;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,

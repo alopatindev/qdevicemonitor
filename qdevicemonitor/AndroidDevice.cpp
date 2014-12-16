@@ -35,6 +35,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     , m_emptyTextEdit(true)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
     , m_didReadDeviceModel(false)
+    , m_filtersValid(true)
 {
     updateDeviceModel();
 }
@@ -143,6 +144,7 @@ void AndroidDevice::update()
         }
         else if (m_lastFilter.compare(filter) != 0)
         {
+            m_filtersValid = true;
             m_lastFilter = filter;
             scheduleReloadTextEdit();
             m_deviceAdapter->maybeAddCompletionAfterDelay(filter);
@@ -172,7 +174,6 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 
     QStringList filters = m_deviceWidget->getFilterLineEdit().text().split(" ");
     bool filtersMatch = true;
-    bool filtersValid = true;
 
     int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
@@ -187,7 +188,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
 
         VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity[0].toLatin1()));
-        checkFilters(filtersMatch, filtersValid, filters, verbosityLevel, pid, tid, tag, text);
+        checkFilters(filtersMatch, m_filtersValid, filters, verbosityLevel, pid, tid, tag, text);
 
         if (filtersMatch)
         {
@@ -206,14 +207,14 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     else
     {
         qDebug() << "failed to parse" << line;
-        checkFilters(filtersMatch, filtersValid, filters);
+        checkFilters(filtersMatch, m_filtersValid, filters);
         if (filtersMatch)
         {
             m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
         }
     }
 
-    m_deviceWidget->highlightFilterLineEdit(!filtersValid);
+    m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
 bool AndroidDevice::columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound) const
@@ -279,7 +280,7 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
 
-    if (!filtersMatch)
+    if (!filtersMatch || !filtersValid)
     {
         return;
     }
