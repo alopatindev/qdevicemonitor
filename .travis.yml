@@ -1,10 +1,10 @@
 language: cpp
 compiler:
-  - clang
   - gcc
+  #- clang
 
 os:
-  - osx
+  - linux
 
 env:
   global:
