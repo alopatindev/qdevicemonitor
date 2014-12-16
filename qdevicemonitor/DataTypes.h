@@ -20,7 +20,7 @@
 
 class BaseDevice;
 
-#include <QMap>
+#include <QHash>
 #include <QSharedPointer>
 #include <QString>
 
@@ -35,7 +35,7 @@ namespace DataTypes
         DeviceTypeEnd
     };
 
-    typedef QMap<QString, QSharedPointer<BaseDevice>> DevicesMap;
+    typedef QHash<QString, QSharedPointer<BaseDevice>> DevicesMap;
 
     static const char* const Verbosity[] = {
         "Fatal",
