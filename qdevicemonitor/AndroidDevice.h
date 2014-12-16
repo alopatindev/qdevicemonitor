@@ -64,7 +64,7 @@ private:
                       const QString& text = QString()) const;
     static const char* getPlatformStringStatic() { return "Android"; }
 
-protected slots:
+public slots:
     void reloadTextEdit();
 };
 

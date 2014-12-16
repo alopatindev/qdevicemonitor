@@ -60,6 +60,7 @@ public:
     void stop();
     void loadSettings(const QSettings& s);
     void saveSettings(QSettings& s);
+    void allDevicesReloadText();
 
     inline bool isDarkTheme() const { return m_darkTheme; }
     inline const QString& getFont() const { return m_font; }

@@ -66,7 +66,7 @@ public:
 
 signals:
 
-protected slots:
+public slots:
     virtual void reloadTextEdit() = 0;
 
 protected:

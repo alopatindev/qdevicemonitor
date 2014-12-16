@@ -214,3 +214,11 @@ void DeviceAdapter::removeOldLogFiles()
         }
     }
 }
+
+void DeviceAdapter::allDevicesReloadText()
+{
+    for (auto& device : m_devicesMap)
+    {
+        device->reloadTextEdit();
+    }
+}

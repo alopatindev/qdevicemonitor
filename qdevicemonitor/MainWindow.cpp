@@ -49,6 +49,7 @@ void MainWindow::on_actionSettings_triggered()
     {
         dialog.saveSettings(s);
         loadSettings();
+        m_deviceAdapter.allDevicesReloadText();
     }
 }
 

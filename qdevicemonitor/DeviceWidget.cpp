@@ -42,8 +42,8 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
         ui->textEdit->setPalette(pal);
     }
 
-    ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
-    ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
+    //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
+    //ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
     ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleBlocks());
 
     ui->verbositySlider->valueChanged(ui->verbositySlider->value());
@@ -87,14 +87,21 @@ void DeviceWidget::maybeScrollTextEditToEnd()
 
 void DeviceWidget::addText(const QColor& color, const QString& text)
 {
+    QString out("<font style=\"font-family: %1; font-size: %2pt;\" color=\"%3\">%4</font>");
+    out = out.arg(m_deviceAdapter->getFont()).arg(m_deviceAdapter->getFontSize());
+
     if (text.endsWith("\n"))
     {
-        m_textStream << QString("<font color=\"%1\">%2</font>").arg(color.name()).arg(text.left(text.length() - 1));
+        m_textStream << out
+            .arg(color.name())
+            .arg(text.left(text.length() - 1));
         ui->textEdit->append(m_textStream.readLine());
     }
     else
     {
-        m_textStream << QString("<font color=\"%1\">%2</font>").arg(color.name()).arg(text);
+        m_textStream << out
+            .arg(color.name())
+            .arg(text);
     }
 }
 
