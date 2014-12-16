@@ -23,9 +23,9 @@
 #include <QRegExp>
 #include <QDebug>
 
-const char* Utils::LOGS_DIR = "logs";
-const char* Utils::LOG_EXT = ".log";
-const char* Utils::DATE_FORMAT = "yyyy-MM-dd_hh-mm-ss";
+const char* const Utils::LOGS_DIR = "logs";
+const char* const Utils::LOG_EXT = ".log";
+const char* const Utils::DATE_FORMAT = "yyyy-MM-dd_hh-mm-ss";
 
 const QString& Utils::getDataPath()
 {
