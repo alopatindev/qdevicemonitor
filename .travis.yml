@@ -70,9 +70,9 @@ install:
             hdiutil eject "/Volumes/${QT_DISTRO_MOUNTPOINT}";
         };
 
+        ls -al ~;
+        ls -al /Applications;
         brew install -v --devel --fresh automake autoconf libtool wget libimobiledevice;
-
-        ls ~;
     fi;
 
 
