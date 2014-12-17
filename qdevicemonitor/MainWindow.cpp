@@ -21,7 +21,9 @@
 
 #include <QDebug>
 #include <QMessageBox>
+#include <QProcess>
 #include <QSettings>
+#include <QStringList>
 
 MainWindow::MainWindow(QPointer<QWidget> parent)
     : QMainWindow(parent)
@@ -30,6 +32,7 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
     ui->setupUi(this);
     (void)Utils::getLogsPath();
     loadSettings();
+    checkExternalPrograms();
     m_deviceAdapter.setParent(ui->tabWidget);
     m_deviceAdapter.start();
 }
@@ -102,4 +105,43 @@ void MainWindow::saveSettings()
     m_deviceAdapter.saveSettings(s);
 
     s.sync();
+}
+
+void MainWindow::checkExternalPrograms()
+{
+    static const size_t n = 3;
+    static const char* programs[n] = {
+        "adb",
+        "idevice_id",
+        "idevicesyslog"
+    };
+
+#ifdef Q_OS_UNIX
+    QProcess procs[n];
+
+    for (size_t i = 0; i < n; ++i)
+    {
+        QStringList args;
+        args.append(programs[i]);
+        procs[i].start("which", args);
+    }
+
+    for(size_t i = 0; i < n; ++i)
+    {
+        procs[i].waitForFinished();
+        if (procs[i].exitCode() != 0)
+        {
+            (void) QMessageBox::warning(
+                this,
+                tr("Some functionality is unavailable"),
+                tr("Program \"%1\" is not found. Please add its directory path to PATH environment variable and restart the application.")
+                    .arg(programs[i]));
+        }
+    }
+
+#endif
+
+#ifdef Q_WS_WIN
+    // TODO
+#endif
 }
