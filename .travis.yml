@@ -4,7 +4,7 @@ compiler:
   #- clang
 
 os:
-  - linux
+  #- linux
   - osx
 
 env:
@@ -41,8 +41,31 @@ install:
             sudo apt-get install -qq clang-3.4;
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        brew install qt5;
-        brew ls qt5;
+        function checksum_sha1() {
+            OUR_CHECKSUM=$(openssl sha1 "$1" | cut -d " " -f 2);
+            ORIG_CHECKSUM=$(grep -o '^[0-9a-f]*' "$2");
+            echo "${OUR_CHECKSUM}";
+            echo "${ORIG_CHECKSUM}";
+            if [ "${OUR_CHECKSUM}" == "${ORIG_CHECKSUM}" ]; then
+                echo 'checksum is ok';
+            else
+                exit 1;
+            fi;
+        };
+
+        QT_DISTRO_MOUNTPOINT="qt-opensource-mac-x64-clang-5.4.0";
+        QT_DISTRO_FILE="${QT_DISTRO_MOUNTPOINT}.dmg";
+        QT_DISTRO_SHA1_FILE="${QT_DISTRO_FILE}.sha1";
+        QT_DISTRO_URL="http://download.qt.io/official_releases/qt/5.4/5.4.0/";
+
+        wget -c --timeout=30 --tries=10 "${QT_DISTRO_SHA1_FILE}";
+        wget -c --timeout=30 --tries=10 "${QT_DISTRO_URL}/${QT_DISTRO_FILE}";
+        checksum_sha1 "${QT_DISTRO_URL}/${QT_DISTRO_FILE}" "${QT_DISTRO_URL}/${QT_DISTRO_SHA1_FILE}";
+
+        hdiutil attach "${QT_DISTRO_FILE}";
+        ls -l "/Volumes";
+        ls -lR "/Volumes/${QT_DISTRO_MOUNTPOINT}";
+        hdiutil eject "/Volumes/${QT_DISTRO_MOUNTPOINT}";
     fi;
 
 
