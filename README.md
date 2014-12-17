@@ -4,7 +4,7 @@ QDeviceMonitor
 [![Build Status](https://api.travis-ci.org/alopatindev/qdevicemonitor.svg?branch=master)](https://travis-ci.org/alopatindev/qdevicemonitor)
 [![Build Status](https://ci.appveyor.com/api/projects/status/0uex640qxdalur5n?svg=true)](https://ci.appveyor.com/project/alopatindev/qdevicemonitor)
 
-Crossplatform Android, iOS and text file log viewer written in C++/Qt.
+Crossplatform log viewer for Android, iOS and text files.
 
 Installation
 ------------
@@ -17,10 +17,10 @@ Installation
 4. [Download](http://qdevicemonitor.uhostall.com/ubuntu) and install the last deb package
 
 #### Gentoo
-TODO
+[Use ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla.
 
 ### Mac OS X
-TODO
+[Coming soon](http://qdevicemonitor.uhostall.com/osx).
 
 ### Windows
 [Download](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unzip and run.
@@ -29,8 +29,8 @@ Full builds list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemo
 
 ### Build from Source Code
 Make sure you that have installed [Qt >= 5](http://www.qt.io/download-open-source).
-* open *qdevicemonitor/qdevicemonitor.pro* with QtCreator and build the project
-* *or* use the following terminal commands:
+* open **qdevicemonitor/qdevicemonitor.pro** with QtCreator and build the project
+* **or** use the following terminal commands:
 ```
 cd qdevicemonitor
 qmake
