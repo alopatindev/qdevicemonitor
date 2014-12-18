@@ -18,6 +18,8 @@ Key Features
 4. Backing up to text files automatically. Automatic old files removal
 5. Log color highlighting (two color schemes)
 
+![Main Window](screenshots/mainwindow-osx.png)
+
 Installation
 ------------
 
