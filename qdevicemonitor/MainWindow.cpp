@@ -119,7 +119,7 @@ void MainWindow::checkExternalPrograms()
 #ifdef Q_OS_UNIX
     static const char* whichProgram = "which";
 #endif
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     static const char* whichProgram = "where";
 #endif
 
