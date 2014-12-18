@@ -73,7 +73,13 @@ install:
         ls -al ~;
         ls -al /Applications;
 
-        brew install -v libimobiledevice p7zip;
+        curl http://cmyip.com | grep 'My IP';
+        brew install tor torsocks;
+        ln -sfv /usr/local/opt/tor/*.plist ~/Library/LaunchAgents;
+        launchctl load ~/Library/LaunchAgents/homebrew.mxcl.tor.plist;
+        /usr/local/Cellar/tor/*/bin/torify curl http://cmyip.com | grep 'My IP';
+
+        /usr/local/Cellar/tor/*/bin/torify brew install -v libimobiledevice p7zip;
 
         install_qt5;
         echo "${PATH}";
