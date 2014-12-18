@@ -117,13 +117,19 @@ void MainWindow::checkExternalPrograms()
     };
 
 #ifdef Q_OS_UNIX
+    static const char* whichProgram = "which";
+#endif
+#ifdef Q_WS_WIN
+    static const char* whichProgram = "where";
+#endif
+
     QProcess procs[n];
 
     for (size_t i = 0; i < n; ++i)
     {
         QStringList args;
         args.append(programs[i]);
-        procs[i].start("which", args);
+        procs[i].start(whichProgram, args);
     }
 
     for(size_t i = 0; i < n; ++i)
@@ -138,10 +144,4 @@ void MainWindow::checkExternalPrograms()
                     .arg(programs[i]));
         }
     }
-
-#endif
-
-#ifdef Q_WS_WIN
-    // TODO
-#endif
 }
