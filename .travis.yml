@@ -59,15 +59,23 @@ install:
 
         function install_qt5() {
             DEPS_URL="http://qdevicemonitor.uhostall.com/dependencies/";
-            QT_DISTRO_FILE="Qt5.4.0_osx.7z";
+            QT_PV="Qt5.4.0";
+            QT_DISTRO_FILE="${QT_PV}_osx.7z";
             QT_DISTRO_SHA1_FILE="${QT_DISTRO_FILE}.sha1";
+            CURRENT_DIR="$(pwd)";
+
+            sudo ln -s "${HOME}" "/Users/sbar";
+            mkdir -p "${HOME}/${QT_PV}";
+            cd "${HOME}/${QT_PV}";
+
             wget -c --timeout=30 --tries=10 "${DEPS_URL}/${QT_DISTRO_SHA1_FILE}";
             wget -c --timeout=30 --tries=10 "${DEPS_URL}/${QT_DISTRO_FILE}";
             checksum_sha1 "${QT_DISTRO_FILE}" $(cat "${QT_DISTRO_SHA1_FILE}");
             7z x "${QT_DISTRO_FILE}";
-            export QTDIR="$(pwd)/5.4/clang_64";
+            export QTDIR="/Users/sbar/${QT_PV}/5.4/clang_64";
             export PATH="${QTDIR}/bin:${PATH}";
             echo "${PATH}";
+            cd "${CURRENT_DIR}";
         };
 
         ls -al ~;
