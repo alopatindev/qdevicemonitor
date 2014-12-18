@@ -2,6 +2,7 @@
 
 set -e
 
+echo "creating deb for ${PROGRAMNAME}"
 mkdir -p ./debian/DEBIAN
 mkdir -p ./debian/usr/bin
 find ./debian -type d | xargs chmod 755
