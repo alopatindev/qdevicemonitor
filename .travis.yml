@@ -85,7 +85,7 @@ install:
         for i in "tor-0.2.5.10.yosemite.bottle.tar.gz" "torsocks-2.0.0.yosemite.bottle.tar.gz"; do
             wget "${DEPS_URL}/${i}" -O "/Library/Caches/Homebrew/${i}";
             wget "${DEPS_URL}/${i}" -O "/Library/Caches/Homebrew/${i}";
-        done
+        done;
         curl http://cmyip.com | grep 'My IP';
         brew install -v tor torsocks;
         ln -sfv /usr/local/opt/tor/*.plist ~/Library/LaunchAgents;
