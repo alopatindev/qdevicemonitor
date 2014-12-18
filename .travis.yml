@@ -45,6 +45,8 @@ install:
             sudo apt-get install -qq clang-3.4;
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
+        DEPS_URL="http://qdevicemonitor.uhostall.com/dependencies";
+
         function checksum_sha1() {
             OUR_CHECKSUM=$(openssl sha1 "$1" | cut -d " " -f 2);
             ORIG_CHECKSUM="$2";
@@ -58,7 +60,6 @@ install:
         };
 
         function install_qt5() {
-            DEPS_URL="http://qdevicemonitor.uhostall.com/dependencies/";
             QT_PV="Qt5.4.0";
             QT_DISTRO_FILE="${QT_PV}_osx.7z";
             QT_DISTRO_SHA1_FILE="${QT_DISTRO_FILE}.sha1";
@@ -81,8 +82,10 @@ install:
         ls -al ~;
         ls -al /Applications;
 
+        wget "${DEPS_URL}/tor-0.2.5.10.yosemite.bottle.tar.gz" -O "/Library/Caches/Homebrew/";
+        wget "${DEPS_URL}/torsocks-2.0.0.yosemite.bottle.tar.gz" -O "/Library/Caches/Homebrew/";
         curl http://cmyip.com | grep 'My IP';
-        brew install tor torsocks;
+        brew install -v tor torsocks;
         ln -sfv /usr/local/opt/tor/*.plist ~/Library/LaunchAgents;
         launchctl load ~/Library/LaunchAgents/homebrew.mxcl.tor.plist;
         /usr/local/Cellar/tor/*/bin/torify curl http://cmyip.com | grep 'My IP';
@@ -122,7 +125,8 @@ script:
         ./ci-scripts/build_deb.sh;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         file qdevicemonitor/qdevicemonitor.app/Contents/MacOS/qdevicemonitor;
-        mv qdevicemonitor "${OUTPUT_ARCHIVE_NAME}";
+        mkdir "${OUTPUT_ARCHIVE_NAME}";
+        mv qdevicemonitor/qdevicemonitor.app "${OUTPUT_ARCHIVE_NAME}/qdevicemonitor.app";
         7z a -mx=9 "${OUTPUT_ARCHIVE_NAME}.zip" "${OUTPUT_ARCHIVE_NAME}";
     fi
   - ls -l;
