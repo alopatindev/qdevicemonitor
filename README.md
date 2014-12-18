@@ -34,12 +34,11 @@ Installation
 [Use ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla.
 
 ### Mac OS X
-[Coming soon](http://qdevicemonitor.uhostall.com/osx).
+[Download](http://qdevicemonitor.uhostall.com/osx), unzip and move the app to /Applications.
 
 ### Windows
 [Download](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unzip and run.
-
-Full builds list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history).
+Full build list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history).
 
 ### Build from Source Code
 Make sure you that have installed [Qt >= 5](http://www.qt.io/download-open-source).
