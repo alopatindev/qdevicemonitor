@@ -50,7 +50,7 @@ private:
     QStringList m_filterCompletions;
 
 public:
-    static const int UPDATE_FREQUENCY = 100;
+    static const int UPDATE_FREQUENCY = 20;
     static const int MAX_FILTER_COMPLETIONS = 60;
     static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
     static const int MAX_LINES_UPDATE = 30;

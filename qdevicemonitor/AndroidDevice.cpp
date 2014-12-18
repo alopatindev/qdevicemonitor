@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QRegExp>
-#include <QStringList>
 #include <QWeakPointer>
 
 using namespace DataTypes;
@@ -136,6 +135,7 @@ void AndroidDevice::update()
             }
             else if (m_lastFilter.compare(filter) != 0)
             {
+                m_filters = filter.split(" ");
                 m_filtersValid = true;
                 m_lastFilter = filter;
                 scheduleReloadTextEdit();
@@ -143,7 +143,8 @@ void AndroidDevice::update()
             }
             else if (!m_deviceLogFileStream->atEnd())
             {
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_deviceLogFileStream->atEnd(); ++i) {
+                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_deviceLogFileStream->atEnd(); ++i)
+                {
                     filterAndAddToTextEdit(m_deviceLogFileStream->readLine());
                 }
             }
@@ -182,7 +183,6 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     static QRegExp rx("([\\d-]+) *([\\d:\\.]+) *(\\d+) *(\\d+) *([A-Z]) *(.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
     rx.setMinimal(true);
 
-    QStringList filters = m_deviceWidget->getFilterLineEdit().text().split(" ");
     bool filtersMatch = true;
 
     int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
@@ -198,7 +198,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
 
         VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity[0].toLatin1()));
-        checkFilters(filtersMatch, m_filtersValid, filters, verbosityLevel, pid, tid, tag, text);
+        checkFilters(filtersMatch, m_filtersValid, m_filters, verbosityLevel, pid, tid, tag, text);
 
         if (filtersMatch)
         {
@@ -211,19 +211,18 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
             m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tag], tag + " ");
             m_deviceWidget->addText(verbosityColor, text + "\n");
         }
-
-        m_deviceWidget->maybeScrollTextEditToEnd();
     }
     else
     {
         qDebug() << "failed to parse" << line;
-        checkFilters(filtersMatch, m_filtersValid, filters);
+        checkFilters(filtersMatch, m_filtersValid, m_filters);
         if (filtersMatch)
         {
             m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
         }
     }
 
+    m_deviceWidget->maybeScrollTextEditToEnd();
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 

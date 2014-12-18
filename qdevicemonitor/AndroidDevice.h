@@ -21,6 +21,7 @@
 #include "BaseDevice.h"
 #include <QFile>
 #include <QProcess>
+#include <QStringList>
 #include <QTextStream>
 
 using namespace DataTypes;
@@ -37,6 +38,7 @@ class AndroidDevice : public BaseDevice
     int m_lastVerbosityLevel;
     bool m_didReadDeviceModel;
     bool m_filtersValid;
+    QStringList m_filters;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
