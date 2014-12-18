@@ -56,6 +56,8 @@ public:
     explicit DeviceAdapter(QPointer<QTabWidget> parent = 0);
     ~DeviceAdapter();
 
+    void removeDeviceByTabIndex(int index);
+
     void start();
     void stop();
     void loadSettings(const QSettings& s);

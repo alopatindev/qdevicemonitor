@@ -41,6 +41,8 @@ class DeviceWidget : public QWidget
 
 public:
     explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
+    virtual ~DeviceWidget();
+
     inline QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
     inline QTextEdit& getTextEdit() const { return *(ui->textEdit); }
     inline int getVerbosityLevel() const { return ui->verbositySlider->value(); }

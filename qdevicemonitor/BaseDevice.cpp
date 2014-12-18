@@ -54,6 +54,8 @@ BaseDevice::~BaseDevice()
 {
     disconnect(&m_reloadTextEditTimer, SIGNAL(timeout()));
     disconnect(&m_completionAddTimer, SIGNAL(timeout()));
+
+    delete m_deviceWidget; // FIXME: the design of QTabWidget is not really compatible with things like QSharedPointer at the moment
 }
 
 void BaseDevice::updateTabWidget()

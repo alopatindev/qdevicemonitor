@@ -79,6 +79,12 @@ void MainWindow::on_actionAboutQt_triggered()
     QMessageBox::aboutQt(this);
 }
 
+void MainWindow::on_tabWidget_tabCloseRequested(int index)
+{
+    qDebug() << "MainWindow::on_tabWidget_tabCloseRequested" << index;
+    m_deviceAdapter.removeDeviceByTabIndex(index);
+}
+
 void MainWindow::loadSettings()
 {
     qDebug() << "loadSettings";

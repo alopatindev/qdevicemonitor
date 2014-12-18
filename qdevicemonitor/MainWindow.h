@@ -46,6 +46,7 @@ public slots:
     void on_actionSettings_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
+    void on_tabWidget_tabCloseRequested(int index);
 
 private:
     QSharedPointer<Ui::MainWindow> ui;

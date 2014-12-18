@@ -50,6 +50,11 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
     ui->wrapCheckBox->setCheckState(ui->wrapCheckBox->isChecked() ? Qt::Checked : Qt::Unchecked);
 }
 
+DeviceWidget::~DeviceWidget()
+{
+    qDebug() << "~DeviceWidget";
+}
+
 void DeviceWidget::on_verbositySlider_valueChanged(int value)
 {
     qDebug() << "verbosity" << value;

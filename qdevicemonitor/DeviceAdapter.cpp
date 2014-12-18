@@ -219,3 +219,19 @@ void DeviceAdapter::allDevicesReloadText()
         device->reloadTextEdit();
     }
 }
+
+void DeviceAdapter::removeDeviceByTabIndex(int index)
+{
+    for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
+    {
+        if (it.value()->getTabIndex() == index)
+        {
+            QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
+            tabWidget->removeTab(index);
+            m_devicesMap.remove(it.key());
+            return;
+        }
+    }
+
+    Q_ASSERT_X(false, "removeDeviceByTabIndex", "tab is not found");
+}

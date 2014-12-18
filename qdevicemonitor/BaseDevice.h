@@ -60,6 +60,8 @@ public:
     inline void setVisited(bool visited) { m_visited = visited; }
     inline bool isVisited() const { return m_visited; }
 
+    inline int getTabIndex() const { return m_tabIndex; }
+
     inline const QString& getId() const { return m_id; }
 
     inline const QString& getCurrentLogFileName() const { return m_currentLogFileName; }
