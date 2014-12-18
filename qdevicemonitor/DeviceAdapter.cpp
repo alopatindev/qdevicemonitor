@@ -35,13 +35,10 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     , m_autoRemoveFilesHours(48)
 {
     m_filterCompleter.setModel(&m_filterCompleterModel);
-    m_completionAddTimer.setSingleShot(true);
-    connect(&m_completionAddTimer, SIGNAL(timeout()), this, SLOT(addFilterAsCompletion()));
 }
 
 DeviceAdapter::~DeviceAdapter()
 {
-    disconnect(&m_completionAddTimer, SIGNAL(timeout()));
 }
 
 void DeviceAdapter::start()
@@ -161,25 +158,17 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("filterCompletions", m_filterCompletions);
 }
 
-void DeviceAdapter::maybeAddCompletionAfterDelay(const QString& filter)
+void DeviceAdapter::addFilterAsCompletion(const QString& completionToAdd)
 {
-    qDebug() << "DeviceAdapter::maybeAddCompletionAfterDelay" << filter;
-    m_completionToAdd = filter;
-    m_completionAddTimer.stop();
-    m_completionAddTimer.start(COMPLETION_ADD_TIMEOUT);
-}
-
-void DeviceAdapter::addFilterAsCompletion()
-{
-    qDebug() << "addFilterAsCompletion" << m_completionToAdd;
-    if (m_filterCompletions.indexOf(m_completionToAdd) != -1)
+    qDebug() << "addFilterAsCompletion" << completionToAdd;
+    if (m_filterCompletions.indexOf(completionToAdd) != -1)
     {
-        qDebug() << m_completionToAdd << "is already in the list";
+        qDebug() << completionToAdd << "is already in the list";
         return;
     }
 
-    m_filterCompleterModel.appendRow(new QStandardItem(m_completionToAdd));
-    m_filterCompletions.append(m_completionToAdd);
+    m_filterCompleterModel.appendRow(new QStandardItem(completionToAdd));
+    m_filterCompletions.append(completionToAdd);
 
     size_t oldCompletionsNumber = m_filterCompletions.size() > MAX_FILTER_COMPLETIONS
                                   ? m_filterCompletions.size() - MAX_FILTER_COMPLETIONS

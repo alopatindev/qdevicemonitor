@@ -46,7 +46,7 @@ public:
     virtual const char* getPlatformString() const = 0;
 
     void scheduleReloadTextEdit(int timeout = 500);
-    void maybeAddCompletionAfterDelay();
+    void maybeAddCompletionAfterDelay(const QString& filter);
 
     inline const QString& getHumanReadableName() const { return m_humanReadableName; }
     inline const QString& getHumanReadableDescription() const { return m_humanReadableDescription; }
@@ -69,6 +69,9 @@ signals:
 public slots:
     virtual void reloadTextEdit() = 0;
 
+private slots:
+    void addFilterAsCompletion();
+
 protected:
     QString m_id;
     DeviceType m_type;
@@ -85,6 +88,8 @@ protected:
 private:
     QTimer m_reloadTextEditTimer;
     bool m_visited;
+    QString m_completionToAdd;
+    QTimer m_completionAddTimer;
 };
 
 #endif // BASEDEVICE_H

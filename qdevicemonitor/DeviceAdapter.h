@@ -45,8 +45,6 @@ private:
     int m_autoRemoveFilesHours;
     QStandardItemModel m_filterCompleterModel;
     QCompleter m_filterCompleter;
-    QString m_completionToAdd;
-    QTimer m_completionAddTimer;
     QStringList m_filterCompletions;
 
 public:
@@ -72,13 +70,12 @@ public:
     inline int getVisibleBlocks() const { return m_visibleBlocks; }
 
     inline QCompleter& getFilterCompleter() { return m_filterCompleter; }
-    void maybeAddCompletionAfterDelay(const QString& filter);
+    void addFilterAsCompletion(const QString& completionToAdd);
 
 signals:
 
 public slots:
     void update();
-    void addFilterAsCompletion();
 
 private:
     void updateDevicesMap();

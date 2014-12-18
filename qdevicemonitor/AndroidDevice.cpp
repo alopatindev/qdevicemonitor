@@ -139,7 +139,7 @@ void AndroidDevice::update()
                 m_filtersValid = true;
                 m_lastFilter = filter;
                 scheduleReloadTextEdit();
-                m_deviceAdapter->maybeAddCompletionAfterDelay(filter);
+                maybeAddCompletionAfterDelay(filter);
             }
             else if (!m_deviceLogFileStream->atEnd())
             {

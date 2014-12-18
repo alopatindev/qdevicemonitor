@@ -45,11 +45,15 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
 
     m_reloadTextEditTimer.setSingleShot(true);
     connect(&m_reloadTextEditTimer, SIGNAL(timeout()), this, SLOT(reloadTextEdit()));
+
+    m_completionAddTimer.setSingleShot(true);
+    connect(&m_completionAddTimer, SIGNAL(timeout()), this, SLOT(addFilterAsCompletion()));
 }
 
 BaseDevice::~BaseDevice()
 {
     disconnect(&m_reloadTextEditTimer, SIGNAL(timeout()));
+    disconnect(&m_completionAddTimer, SIGNAL(timeout()));
 }
 
 void BaseDevice::updateTabWidget()
@@ -82,4 +86,18 @@ void BaseDevice::scheduleReloadTextEdit(int timeout)
 {
     m_reloadTextEditTimer.stop();
     m_reloadTextEditTimer.start(timeout);
+}
+
+void BaseDevice::maybeAddCompletionAfterDelay(const QString& filter)
+{
+    qDebug() << "BaseDevice::maybeAddCompletionAfterDelay" << filter;
+    m_completionToAdd = filter;
+    m_completionAddTimer.stop();
+    m_completionAddTimer.start(DeviceAdapter::COMPLETION_ADD_TIMEOUT);
+}
+
+void BaseDevice::addFilterAsCompletion()
+{
+    qDebug() << "BaseDevice::addFilterAsCompletion";
+    m_deviceAdapter->addFilterAsCompletion(m_completionToAdd);
 }
