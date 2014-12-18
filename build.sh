@@ -1,4 +1,19 @@
 #!/bin/bash
 
+set -e
+OSX=0
+if [ "$(uname)" = Darwin ]; then
+    OSX=1
+    export PATH=~/Qt5.4.0/5.4/clang_64/bin/:${PATH}
+fi
+
 ctags -R .
-cd qdevicemonitor && qmake 'CONFIG += debug' && (time make -j8) && gdb ./qdevicemonitor
+cd qdevicemonitor
+qmake 'CONFIG += debug'
+time make -j8
+
+if [ $OSX = 1 ]; then
+    lldb qdevicemonitor.app/Contents/MacOS/qdevicemonitor
+else
+    gdb ./qdevicemonitor
+fi

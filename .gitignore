@@ -23,6 +23,7 @@ ui_*.h
 Makefile*
 *-build-*
 *build-*
+.qmake.stash
 
 # QtCreator
 
@@ -35,3 +36,4 @@ Makefile*
 tags
 *.swp
 qdevicemonitor/qdevicemonitor
+qdevicemonitor/qdevicemonitor.app
