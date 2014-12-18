@@ -72,7 +72,8 @@ install:
 
         ls -al ~;
         ls -al /Applications;
-        brew install -v --devel --fresh automake autoconf libtool wget libimobiledevice p7zip;
+
+        brew install -v libimobiledevice p7zip;
 
         install_qt5;
         echo "${PATH}";
