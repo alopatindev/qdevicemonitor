@@ -33,6 +33,7 @@ before_install:
   - $CXX --version;
 
 install:
+  - ci-scripts/set_env.sh
   - if [ $TRAVIS_OS_NAME = linux ]; then
         sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev;
         sudo apt-get install qt5-default qttools5-dev-tools;
@@ -72,7 +73,7 @@ install:
 
         ls -al ~;
         ls -al /Applications;
-        brew install -v --devel --fresh automake autoconf libtool wget libimobiledevice;
+        brew install -v --devel --fresh automake autoconf libtool wget libimobiledevice p7zip;
 
         install_qt5;
         echo "${PATH}";
@@ -101,15 +102,21 @@ script:
   - make -j2;
   - cd ..;
   - ls -l qdevicemonitor;
-  - file qdevicemonitor/qdevicemonitor;
   - if [ $TRAVIS_OS_NAME = linux ]; then
+        file qdevicemonitor/qdevicemonitor;
         ./ci-scripts/build_deb.sh;
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+        file qdevicemonitor/qdevicemonitor.app/Contents/MacOS/qdevicemonitor;
+        mv qdevicemonitor "${OUTPUT_ARCHIVE_NAME}";
+        7z a -mx=9 "${OUTPUT_ARCHIVE_NAME}.zip" "${OUTPUT_ARCHIVE_NAME}";
     fi
   - ls -l;
 
 after_success:
   - if [ $TRAVIS_OS_NAME = linux ]; then
         curl --ftp-create-dirs -T *.deb -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/ubuntu/ ;
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+        curl --ftp-create-dirs -T *.zip -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/osx/ ;
     fi;
 
 # vim: textwidth=0
