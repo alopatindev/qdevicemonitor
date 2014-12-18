@@ -92,7 +92,6 @@ script:
         if [ $CXX = "clang++" ]; then
             qmake -spec linux-clang;
         fi;
-        ./ci-scripts/build_deb.sh;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec macx-g++;
@@ -107,6 +106,10 @@ script:
     cd ..;
     ls -l qdevicemonitor;
     file qdevicemonitor/qdevicemonitor;
+
+    if [ $TRAVIS_OS_NAME = linux ]; then
+        ./ci-scripts/build_deb.sh;
+    fi
 
     ls -l;
 
