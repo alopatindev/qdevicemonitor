@@ -22,17 +22,17 @@ matrix:
 before_install:
   - uname -a;
 
-    if [ $TRAVIS_OS_NAME = linux ]; then
+  - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
         cat /proc/cpuinfo;
 
         sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa;
         sudo apt-get update -qq;
-    elif [ $TRAVIS_OS_NAME = osx ]; then
+  - elif [ $TRAVIS_OS_NAME = osx ]; then
         brew update;
-    fi;
+  - fi;
 
-    $CXX --version;
+  - $CXX --version;
 
 install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
@@ -48,7 +48,7 @@ install:
         if [ $CXX = "clang++" ]; then
             sudo apt-get install -qq clang-3.4;
         fi;
-    elif [ $TRAVIS_OS_NAME = osx ]; then
+  - elif [ $TRAVIS_OS_NAME = osx ]; then
         function checksum_sha1() {
             OUR_CHECKSUM=$(openssl sha1 "$1" | cut -d " " -f 2);
             ORIG_CHECKSUM="$2";
@@ -69,7 +69,8 @@ install:
             wget -c --timeout=30 --tries=10 "${DEPS_URL}/${QT_DISTRO_FILE}";
             checksum_sha1 "${QT_DISTRO_FILE}" $(cat "${QT_DISTRO_SHA1_FILE}");
             7z x "${QT_DISTRO_FILE}";
-            export PATH="$(pwd)/5.4/clang_64/bin:${PATH}";
+            export QTDIR="$(pwd)/5.4/clang_64";
+            export PATH="${QTDIR}/bin:${PATH}";
             echo "${PATH}";
         };
 
@@ -81,37 +82,38 @@ install:
         echo "${PATH}";
     fi;
 
-
 script:
   - cd qdevicemonitor;
 
-    if [ $TRAVIS_OS_NAME = linux ]; then
+  - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec linux-g++;
         fi;
         if [ $CXX = "clang++" ]; then
             qmake -spec linux-clang;
         fi;
-    elif [ $TRAVIS_OS_NAME = osx ]; then
+  - elif [ $TRAVIS_OS_NAME = osx ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec macx-g++;
         fi;
         if [ $CXX = "clang++" ]; then
+            echo "QTDIR: ${QTDIR}";
             qmake -spec macx-clang;
+            $QTDIR/bin/qmake -spec macx-clang;
         fi;
     fi;
 
-    echo "${PATH}";
-    make -j2;
-    cd ..;
-    ls -l qdevicemonitor;
-    file qdevicemonitor/qdevicemonitor;
+  - echo "${PATH}";
+  - make -j2;
+  - cd ..;
+  - ls -l qdevicemonitor;
+  - file qdevicemonitor/qdevicemonitor;
 
-    if [ $TRAVIS_OS_NAME = linux ]; then
+  - if [ $TRAVIS_OS_NAME = linux ]; then
         ./ci-scripts/build_deb.sh;
     fi
 
-    ls -l;
+  - ls -l;
 
 after_success:
   - if [ $TRAVIS_OS_NAME = linux ]; then
