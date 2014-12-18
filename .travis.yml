@@ -21,17 +21,15 @@ matrix:
 
 before_install:
   - uname -a;
-
   - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
         cat /proc/cpuinfo;
 
         sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa;
         sudo apt-get update -qq;
-  - elif [ $TRAVIS_OS_NAME = osx ]; then
+    elif [ $TRAVIS_OS_NAME = osx ]; then
         brew update;
-  - fi;
-
+    fi;
   - $CXX --version;
 
 install:
@@ -84,7 +82,6 @@ install:
 
 script:
   - cd qdevicemonitor;
-
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec linux-g++;
@@ -97,22 +94,19 @@ script:
             qmake -spec macx-g++;
         fi;
         if [ $CXX = "clang++" ]; then
-            echo "QTDIR: ${QTDIR}";
+            echo QTDIR ${QTDIR};
             qmake -spec macx-clang;
             $QTDIR/bin/qmake -spec macx-clang;
         fi;
     fi;
-
   - echo "${PATH}";
   - make -j2;
   - cd ..;
   - ls -l qdevicemonitor;
   - file qdevicemonitor/qdevicemonitor;
-
   - if [ $TRAVIS_OS_NAME = linux ]; then
         ./ci-scripts/build_deb.sh;
     fi
-
   - ls -l;
 
 after_success:
