@@ -38,15 +38,13 @@ install:
         sudo apt-get install qt5-default qttools5-dev-tools;
         sudo apt-get install fakeroot;
         sudo apt-get install libimobiledevice-dev libimobiledevice-utils;
-
         if [ $CXX = "g++" ]; then
             sudo apt-get install -qq g++-4.8;
         fi;
-
         if [ $CXX = "clang++" ]; then
             sudo apt-get install -qq clang-3.4;
         fi;
-  - elif [ $TRAVIS_OS_NAME = osx ]; then
+    elif [ $TRAVIS_OS_NAME = osx ]; then
         function checksum_sha1() {
             OUR_CHECKSUM=$(openssl sha1 "$1" | cut -d " " -f 2);
             ORIG_CHECKSUM="$2";
@@ -89,7 +87,7 @@ script:
         if [ $CXX = "clang++" ]; then
             qmake -spec linux-clang;
         fi;
-  - elif [ $TRAVIS_OS_NAME = osx ]; then
+    elif [ $TRAVIS_OS_NAME = osx ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec macx-g++;
         fi;
