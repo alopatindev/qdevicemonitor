@@ -141,6 +141,8 @@ script:
         mkdir "${THIRD_PARTY_DIR}";
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
+
+        mkdir "${OUTPUT_ARCHIVE_NAME}";
         mv "${PROGRAMNAME}/${PROGRAMNAME}.app" "${OUTPUT_ARCHIVE_NAME}/${PROGRAMNAME}.app";
         7z a -mx=9 "${OUTPUT_ARCHIVE_NAME}.zip" "${OUTPUT_ARCHIVE_NAME}";
     fi
