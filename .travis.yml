@@ -105,7 +105,7 @@ install:
 
 script:
   - source ci-scripts/set_env.sh;
-  - cd qdevicemonitor;
+  - cd "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec linux-g++;
@@ -125,14 +125,14 @@ script:
   - echo "${PATH}";
   - make -j2;
   - cd ..;
-  - ls -l qdevicemonitor;
+  - ls -l "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        file qdevicemonitor/qdevicemonitor;
+        file "${PROGRAMNAME}/${PROGRAMNAME}";
         ./ci-scripts/build_deb.sh;
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        file qdevicemonitor/qdevicemonitor.app/Contents/MacOS/qdevicemonitor;
+        file "${PROGRAMNAME}/${PROGRAMNAME}.app/Contents/MacOS/${PROGRAMNAME}";
         mkdir "${OUTPUT_ARCHIVE_NAME}";
-        mv qdevicemonitor/qdevicemonitor.app "${OUTPUT_ARCHIVE_NAME}/qdevicemonitor.app";
+        mv "${PROGRAMNAME}/${PROGRAMNAME}.app" "${OUTPUT_ARCHIVE_NAME}/${PROGRAMNAME}.app";
         7z a -mx=9 "${OUTPUT_ARCHIVE_NAME}.zip" "${OUTPUT_ARCHIVE_NAME}";
     fi
   - ls -l;

@@ -16,7 +16,7 @@ install:
   - dir "C:\Program Files (x86)"
 
 build_script:
-  - cd qdevicemonitor
+  - cd %PROGRAMNAME%
   - qmake
   - mingw32-make -j4
   - dir release
@@ -34,7 +34,7 @@ build_script:
   - copy "%QTDIR%\bin\Qt5Gui.dll" .
   - copy "%QTDIR%\bin\Qt5Widgets.dll" .
   - copy "%QTDIR%\plugins\platforms\qwindows.dll" platforms\
-  - move "..\qdevicemonitor\release\qdevicemonitor.exe" .
+  - move "..\%PROGRAMNAME%\release\%PROGRAMNAME%.exe" .
   - cd ..
   - 7z a -mx=9 "%OUTPUT_FILENAME%" "%OUTPUT_DIRECTORY%"
 
