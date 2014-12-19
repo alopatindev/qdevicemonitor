@@ -21,12 +21,14 @@
 
 #include <QDebug>
 #include <QFileInfo>
+#include <QHash>
 #include <QRegExp>
 #include <QWeakPointer>
 
 using namespace DataTypes;
 
 static QProcess s_devicesListProcess;
+static QHash<QString, bool> s_removedDeviceByTabClose;
 
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
@@ -331,6 +333,11 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 {
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
+        for (auto& i : s_removedDeviceByTabClose)
+        {
+            i = false;  // not visited
+        }
+
         if (s_devicesListProcess.canReadLine())
         {
             QString stringStream;
@@ -369,23 +376,30 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                         QString deviceId = lineSplit[0];
                         QString deviceStatus = lineSplit[1];
                         //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
-                        auto it = map.find(deviceId);
-                        if (it == map.end())
+                        if (s_removedDeviceByTabClose.contains(deviceId))
                         {
-                            map[deviceId] = QSharedPointer<BaseDevice>(
-                                new AndroidDevice(
-                                    parent,
-                                    deviceId,
-                                    DeviceType::Android,
-                                    tr(getPlatformStringStatic()),
-                                    tr("Initializing..."),
-                                    deviceAdapter
-                                )
-                            );
+                            s_removedDeviceByTabClose[deviceId] = true;  // visited
                         }
                         else
                         {
-                            updateDeviceStatus(deviceStatus, *(*it), deviceId);
+                            auto it = map.find(deviceId);
+                            if (it == map.end())
+                            {
+                                map[deviceId] = QSharedPointer<BaseDevice>(
+                                    new AndroidDevice(
+                                        parent,
+                                        deviceId,
+                                        DeviceType::Android,
+                                        tr(getPlatformStringStatic()),
+                                        tr("Initializing..."),
+                                        deviceAdapter
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                updateDeviceStatus(deviceStatus, *(*it), deviceId);
+                            }
                         }
                     }
                 }
@@ -395,7 +409,22 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
             {
                 if (!dev->isVisited())
                 {
-                    updateDeviceStatus("", *dev, dev->getId());
+                    if (!s_removedDeviceByTabClose.contains(dev->getId()))
+                    {
+                        updateDeviceStatus("", *dev, dev->getId());
+                    }
+                }
+            }
+
+            for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
+            {
+                if (it.value() == false)  // became offline
+                {
+                    it = s_removedDeviceByTabClose.erase(it);
+                }
+                else
+                {
+                    ++it;
                 }
             }
 
@@ -412,4 +441,9 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 void AndroidDevice::stopDevicesListProcess()
 {
     s_devicesListProcess.close();
+}
+
+void AndroidDevice::removedDeviceByTabClose(const QString& id)
+{
+    s_removedDeviceByTabClose[id] = false;
 }

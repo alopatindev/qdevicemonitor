@@ -51,6 +51,7 @@ public:
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
+    static void removedDeviceByTabClose(const QString& id);
 
 private:
     void updateDeviceModel();

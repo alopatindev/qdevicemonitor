@@ -228,6 +228,24 @@ void DeviceAdapter::removeDeviceByTabIndex(int index)
         {
             QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
             tabWidget->removeTab(index);
+            if (it.value()->isOnline())
+            {
+                switch (it.value()->getType())
+                {
+                case DeviceType::TextFile:
+                    // TODO
+                    break;
+                case DeviceType::Android:
+                    AndroidDevice::removedDeviceByTabClose(it.key());
+                    break;
+                case DeviceType::IOS:
+                    // TODO
+                    break;
+                default:
+                    break;
+                }
+            }
+
             m_devicesMap.remove(it.key());
             return;
         }

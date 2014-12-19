@@ -63,6 +63,7 @@ public:
     inline int getTabIndex() const { return m_tabIndex; }
 
     inline const QString& getId() const { return m_id; }
+    inline DeviceType getType() const { return m_type; }
 
     inline const QString& getCurrentLogFileName() const { return m_currentLogFileName; }
 
