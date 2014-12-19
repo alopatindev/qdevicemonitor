@@ -72,6 +72,7 @@ void AndroidDevice::startLogger()
 
     const QString currentLogAbsFileName = Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-");
     m_currentLogFileName = QFileInfo(currentLogAbsFileName).fileName();
+    m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
     m_deviceLogFile.setFileName(currentLogAbsFileName);
     m_deviceLogFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);

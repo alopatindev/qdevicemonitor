@@ -38,6 +38,7 @@ class DeviceWidget : public QWidget
     QPointer<DeviceAdapter> m_deviceAdapter;
     QTextStream m_textStream;
     QString m_stringStream;
+    QString m_currentLogFileName;
 
 public:
     explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
@@ -49,6 +50,7 @@ public:
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
     void addText(const QColor& color, const QString& text);
+    void onLogFileNameChanged(const QString& logFileName);
 
 signals:
 
@@ -56,6 +58,7 @@ public slots:
     void on_verbositySlider_valueChanged(int value);
     void on_wrapCheckBox_toggled(bool checked);
     void on_scrollLockCheckBox_toggled(bool checked);
+    void on_openLogFileButton_clicked();
 
 private:
     void scrollTextEditToEnd();

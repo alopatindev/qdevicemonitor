@@ -121,3 +121,17 @@ void DeviceWidget::scrollTextEditToEnd()
         sb.setValue(sb.maximum());
     }
 }
+
+void DeviceWidget::on_openLogFileButton_clicked()
+{
+    if (!m_currentLogFileName.empty())
+    {
+        // TODO
+        qDebug() << "open in text editor" << m_currentLogFileName;
+    }
+}
+
+void DeviceWidget::onLogFileNameChanged(const QString& logFileName)
+{
+    m_currentLogFileName = logFileName;
+}

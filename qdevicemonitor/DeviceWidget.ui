@@ -68,6 +68,13 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="openLogFileButton">
+       <property name="text">
+        <string>Open Log File</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QCheckBox" name="wrapCheckBox">
        <property name="text">
         <string>Wrap Lines</string>
