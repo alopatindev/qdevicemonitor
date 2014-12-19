@@ -97,7 +97,7 @@ install:
         ls -al /Applications;
 
         install_tor;
-        $TORIFY brew install -v libimobiledevice p7zip;
+        $TORIFY brew install -v android-platform-tools libimobiledevice p7zip;
 
         install_qt5;
         echo "${PATH}";
@@ -130,8 +130,17 @@ script:
         file "${PROGRAMNAME}/${PROGRAMNAME}";
         ./ci-scripts/build_deb.sh;
     elif [ $TRAVIS_OS_NAME = osx ]; then
+        function copy_3rdparty() {
+            THIRD_PARTY_NAME="$1";
+            THIRD_PARTY_DIR="$2";
+            PROGRAM_DIR=$(brew info "${THIRD_PARTY_NAME}" | grep '/Cellar/' | awk '{print $1}');
+            cp -rv "${PROGRAM_DIR}" "${THIRD_PARTY_DIR}/${THIRD_PARTY_NAME}";
+        };
         file "${PROGRAMNAME}/${PROGRAMNAME}.app/Contents/MacOS/${PROGRAMNAME}";
-        mkdir "${OUTPUT_ARCHIVE_NAME}";
+        THIRD_PARTY_DIR="${PROGRAMNAME}/${PROGRAMNAME}.app/Contents/MacOS/3rdparty";
+        mkdir "${THIRD_PARTY_DIR}";
+        copy_3dparty android-platform-tools "${THIRD_PARTY_DIR}";
+        copy_3dparty libimobiledevice "${THIRD_PARTY_DIR}";
         mv "${PROGRAMNAME}/${PROGRAMNAME}.app" "${OUTPUT_ARCHIVE_NAME}/${PROGRAMNAME}.app";
         7z a -mx=9 "${OUTPUT_ARCHIVE_NAME}.zip" "${OUTPUT_ARCHIVE_NAME}";
     fi

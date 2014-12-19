@@ -19,6 +19,7 @@
 #include "SettingsDialog.h"
 #include "Utils.h"
 
+#include <cstdlib>
 #include <QDebug>
 #include <QMessageBox>
 #include <QProcess>
@@ -30,9 +31,11 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    (void)Utils::getLogsPath();
+
+    setupEnvironment();
     loadSettings();
     checkExternalPrograms();
+
     m_deviceAdapter.setParent(ui->tabWidget);
     m_deviceAdapter.start();
 }
@@ -111,6 +114,25 @@ void MainWindow::saveSettings()
     m_deviceAdapter.saveSettings(s);
 
     s.sync();
+}
+
+void MainWindow::setupEnvironment()
+{
+    (void)Utils::getLogsPath();
+
+#ifdef Q_OS_MAC
+    QString thirdPartyDir(QCoreApplication::applicationDirPath() + "/3rdparty");
+    if (QFileInfo(thirdPartyDir).isDir())
+    {
+        const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
+        QString path(std::getenv("PATH"));
+        for (const auto& i : thirdPartyProgramDirs)
+        {
+            path += QString(":%1/%2/bin").arg(thirdPartyDir).arg(i);
+        }
+        ::setenv("PATH", path.toStdString().c_str(), 1);
+    }
+#endif
 }
 
 void MainWindow::checkExternalPrograms()

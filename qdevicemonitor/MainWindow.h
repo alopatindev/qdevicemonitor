@@ -51,6 +51,7 @@ public slots:
 private:
     QSharedPointer<Ui::MainWindow> ui;
     void checkExternalPrograms();
+    void setupEnvironment();
 };
 
 #endif // MAINWINDOW_H
