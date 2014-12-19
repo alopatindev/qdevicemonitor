@@ -124,7 +124,7 @@ void DeviceWidget::scrollTextEditToEnd()
 
 void DeviceWidget::on_openLogFileButton_clicked()
 {
-    if (!m_currentLogFileName.empty())
+    if (!m_currentLogFileName.isEmpty())
     {
         // TODO
         qDebug() << "open in text editor" << m_currentLogFileName;
