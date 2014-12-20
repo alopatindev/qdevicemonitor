@@ -16,9 +16,11 @@
 */
 
 #include "DeviceAdapter.h"
-#include "AndroidDevice.h"
 #include "SettingsDialog.h"
 #include "Utils.h"
+
+#include "AndroidDevice.h"
+#include "IOSDevice.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -55,6 +57,7 @@ void DeviceAdapter::stop()
     m_updateTimer.stop();
     m_updateTimer.disconnect(SIGNAL(timeout()), this, SLOT(update()));
     AndroidDevice::stopDevicesListProcess();
+    IOSDevice::stopDevicesListProcess();
 }
 
 void DeviceAdapter::update()
@@ -77,7 +80,7 @@ void DeviceAdapter::updateDevicesMap()
             AndroidDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
             break;
         case DeviceType::IOS:
-            // TODO
+            IOSDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
             break;
         default:
             break;
@@ -239,7 +242,7 @@ void DeviceAdapter::removeDeviceByTabIndex(int index)
                     AndroidDevice::removedDeviceByTabClose(it.key());
                     break;
                 case DeviceType::IOS:
-                    // TODO
+                    IOSDevice::removedDeviceByTabClose(it.key());
                     break;
                 default:
                     break;

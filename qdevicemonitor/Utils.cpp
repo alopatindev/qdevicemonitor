@@ -62,6 +62,7 @@ QString Utils::removeSpecialCharacters(const QString& text)
     QString out(text);
     static QRegExp regexp("[^a-zA-Z\\d\\s]");
     out.remove(regexp);
+    out.replace(" ", "_");
     return out;
 }
 

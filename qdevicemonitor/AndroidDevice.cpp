@@ -37,12 +37,13 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     , m_didReadDeviceModel(false)
     , m_filtersValid(true)
 {
+    qDebug() << "AndroidDevice::AndroidDevice";
     updateDeviceModel();
 }
 
 AndroidDevice::~AndroidDevice()
 {
-    qDebug() << "~AndroidDevice";
+    qDebug() << "AndroidDevice::~AndroidDevice";
     stopLogger();
     m_deviceInfoProcess.close();
 }
@@ -69,7 +70,11 @@ void AndroidDevice::startLogger()
 
     qDebug() << "AndroidDevice::startLogger";
 
-    const QString currentLogAbsFileName = Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-");
+    const QString currentLogAbsFileName = Utils::getNewLogFilePath(
+        QString("%1-%2-")
+            .arg(getPlatformStringStatic())
+            .arg(Utils::removeSpecialCharacters(m_humanReadableName))
+    );
     m_currentLogFileName = QFileInfo(currentLogAbsFileName).fileName();
     m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
@@ -348,7 +353,10 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
             for (auto& dev : map)
             {
-                dev->setVisited(false);
+                if (dev->getType() == DeviceType::Android)
+                {
+                    dev->setVisited(false);
+                }
             }
 
             auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
@@ -396,6 +404,10 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                                     )
                                 );
                             }
+                            else if ((*it)->getType() != DeviceType::Android)
+                            {
+                                qDebug() << "id collision";
+                            }
                             else
                             {
                                 updateDeviceStatus(deviceStatus, *(*it), deviceId);
@@ -407,11 +419,14 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
             for (auto& dev : map)
             {
-                if (!dev->isVisited())
+                if (dev->getType() == DeviceType::Android)
                 {
-                    if (!s_removedDeviceByTabClose.contains(dev->getId()))
+                    if (!dev->isVisited())
                     {
-                        updateDeviceStatus("", *dev, dev->getId());
+                        if (!s_removedDeviceByTabClose.contains(dev->getId()))
+                        {
+                            updateDeviceStatus("", *dev, dev->getId());
+                        }
                     }
                 }
             }
