@@ -34,7 +34,6 @@ class AndroidDevice : public BaseDevice
     QProcess m_deviceLogProcess;
     QFile m_deviceLogFile;
     QSharedPointer<QTextStream> m_deviceLogFileStream;
-    bool m_emptyTextEdit;
     int m_lastVerbosityLevel;
     bool m_didReadDeviceModel;
     bool m_filtersValid;

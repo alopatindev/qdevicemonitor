@@ -33,7 +33,6 @@ static QHash<QString, bool> s_removedDeviceByTabClose;
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
-    , m_emptyTextEdit(true)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
     , m_didReadDeviceModel(false)
     , m_filtersValid(true)
