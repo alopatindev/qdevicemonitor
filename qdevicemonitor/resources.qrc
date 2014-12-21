@@ -2,5 +2,7 @@
 <qresource>
   <file alias="icons/Android_online.png">icons/Android_online.png</file>
   <file alias="icons/Android_offline.png">icons/Android_offline.png</file>
+  <file alias="icons/iOS_online.png">icons/iOS_online.png</file>
+  <file alias="icons/iOS_offline.png">icons/iOS_offline.png</file>
 </qresource>
 </RCC>
