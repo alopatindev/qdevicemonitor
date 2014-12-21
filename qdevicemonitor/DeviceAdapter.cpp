@@ -225,6 +225,7 @@ void DeviceAdapter::allDevicesReloadText()
 
 void DeviceAdapter::removeDeviceByTabIndex(int index)
 {
+    qDebug() << "removeDeviceByTabIndex" << index;
     for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
     {
         if (it.value()->getTabIndex() == index)

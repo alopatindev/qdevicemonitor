@@ -162,7 +162,7 @@ void AndroidDevice::update()
                 stream.setCodec("UTF-8");
                 stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_deviceLogProcess.atEnd(); ++i)
+                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
                     stream << m_deviceLogProcess.readLine();
                     QString line = stream.readLine();
@@ -336,11 +336,33 @@ void AndroidDevice::reloadTextEdit()
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
+    auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
+    {
+        bool online = deviceStatus == "device";
+        device.setHumanReadableDescription(
+            tr("%1\nStatus: %2\nID: %3%4")
+                .arg(tr(getPlatformStringStatic()))
+                .arg(online ? "Online" : "Offline")
+                .arg(deviceId)
+                .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
+        );
+        device.setOnline(online);
+        device.setVisited(true);
+    };
+
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
         for (auto& i : s_removedDeviceByTabClose)
         {
             i = false;  // not visited
+        }
+
+        for (auto& dev : map)
+        {
+            if (dev->getType() == DeviceType::Android)
+            {
+                dev->setVisited(false);
+            }
         }
 
         if (s_devicesListProcess.canReadLine())
@@ -350,28 +372,6 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
             stream.setCodec("UTF-8");
             stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
             stream << s_devicesListProcess.readAll();
-
-            for (auto& dev : map)
-            {
-                if (dev->getType() == DeviceType::Android)
-                {
-                    dev->setVisited(false);
-                }
-            }
-
-            auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
-            {
-                bool online = deviceStatus == "device";
-                device.setHumanReadableDescription(
-                    tr("%1\nStatus: %2\nID: %3%4")
-                        .arg(tr(getPlatformStringStatic()))
-                        .arg(online ? "Online" : "Offline")
-                        .arg(deviceId)
-                        .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
-                );
-                device.setOnline(online);
-                device.setVisited(true);
-            };
 
             while (!stream.atEnd())
             {
@@ -416,35 +416,35 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                     }
                 }
             }
+        }
 
-            for (auto& dev : map)
+        for (auto& dev : map)
+        {
+            if (dev->getType() == DeviceType::Android)
             {
-                if (dev->getType() == DeviceType::Android)
+                if (!dev->isVisited())
                 {
-                    if (!dev->isVisited())
+                    if (!s_removedDeviceByTabClose.contains(dev->getId()))
                     {
-                        if (!s_removedDeviceByTabClose.contains(dev->getId()))
-                        {
-                            updateDeviceStatus("", *dev, dev->getId());
-                        }
+                        updateDeviceStatus("", *dev, dev->getId());
                     }
                 }
             }
-
-            for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
-            {
-                if (it.value() == false)  // became offline
-                {
-                    it = s_removedDeviceByTabClose.erase(it);
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-
-            s_devicesListProcess.close();
         }
+
+        for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
+        {
+            if (it.value() == false)  // became offline
+            {
+                it = s_removedDeviceByTabClose.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
+        s_devicesListProcess.close();
 
         QStringList args;
         args.append("devices");
