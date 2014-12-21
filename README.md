@@ -50,6 +50,15 @@ qmake
 make -j
 ```
 
+Troubleshooting
+---------------
+
+### iOS devices are not recognized on GNU/Linux
+Did you confirm from the device you trust this computer? Good.
+If you've just installed **usbmuxd** (as dependence) it probably didn't run
+automatically as you plugged in the device.
+If so try **udevadm control --reload** or run usbmuxd manually.
+
 License
 -------
 
