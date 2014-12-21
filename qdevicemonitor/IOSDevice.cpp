@@ -182,6 +182,21 @@ void IOSDevice::update()
     }
 }
 
+
+void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QString& text) const
+{
+    (void)filtersValid;
+
+    for (auto& filter : filters)
+    {
+        if (!text.contains(filter) && !Utils::columnTextMatches(filter, text))
+        {
+            filtersMatch = false;
+            break;
+        }
+    }
+}
+
 void IOSDevice::filterAndAddToTextEdit(const QString& line)
 {
     if (line == QString("[connected]") || line == QString("[disconnected]"))
@@ -189,9 +204,36 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         return;
     }
 
-    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    static QRegExp rx("([A-Za-z]* [\\d]* [\\d:]*) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
+    rx.setMinimal(true);
 
-    m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
+    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    if (rx.indexIn(line) > -1)
+    {
+        const QString prefix = rx.cap(1);
+        const QString deviceName = rx.cap(2);
+        const QString text = line.mid(rx.pos(2) + rx.cap(2).length() + 1);
+        bool filtersMatch = true;
+        checkFilters(filtersMatch, m_filtersValid, m_filters, text);
+
+        if (filtersMatch)
+        {
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], prefix + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityWarn], deviceName + " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], text + "\n");
+        }
+    }
+    else
+    {
+        // failed to parse
+        bool filtersMatch = true;
+        checkFilters(filtersMatch, m_filtersValid, m_filters, line);
+
+        if (filtersMatch)
+        {
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityInfo], line + "\n");
+        }
+    }
 
     m_deviceWidget->maybeScrollTextEditToEnd();
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
