@@ -33,17 +33,17 @@ static QHash<QString, bool> s_removedDeviceByTabClose;
 AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
-    , m_emptyTextEdit(true)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
     , m_didReadDeviceModel(false)
     , m_filtersValid(true)
 {
+    qDebug() << "AndroidDevice::AndroidDevice";
     updateDeviceModel();
 }
 
 AndroidDevice::~AndroidDevice()
 {
-    qDebug() << "~AndroidDevice";
+    qDebug() << "AndroidDevice::~AndroidDevice";
     stopLogger();
     m_deviceInfoProcess.close();
 }
@@ -70,7 +70,11 @@ void AndroidDevice::startLogger()
 
     qDebug() << "AndroidDevice::startLogger";
 
-    const QString currentLogAbsFileName = Utils::getNewLogFilePath("Android-" + Utils::removeSpecialCharacters(m_humanReadableName) + "-");
+    const QString currentLogAbsFileName = Utils::getNewLogFilePath(
+        QString("%1-%2-")
+            .arg(getPlatformStringStatic())
+            .arg(Utils::removeSpecialCharacters(m_humanReadableName))
+    );
     m_currentLogFileName = QFileInfo(currentLogAbsFileName).fileName();
     m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
@@ -158,7 +162,7 @@ void AndroidDevice::update()
                 stream.setCodec("UTF-8");
                 stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_deviceLogProcess.atEnd(); ++i)
+                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
                     stream << m_deviceLogProcess.readLine();
                     QString line = stream.readLine();
@@ -332,11 +336,33 @@ void AndroidDevice::reloadTextEdit()
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
+    auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
+    {
+        bool online = deviceStatus == "device";
+        device.setHumanReadableDescription(
+            tr("%1\nStatus: %2\nID: %3%4")
+                .arg(tr(getPlatformStringStatic()))
+                .arg(online ? "Online" : "Offline")
+                .arg(deviceId)
+                .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
+        );
+        device.setOnline(online);
+        device.setVisited(true);
+    };
+
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
         for (auto& i : s_removedDeviceByTabClose)
         {
             i = false;  // not visited
+        }
+
+        for (auto& dev : map)
+        {
+            if (dev->getType() == DeviceType::Android)
+            {
+                dev->setVisited(false);
+            }
         }
 
         if (s_devicesListProcess.canReadLine())
@@ -346,25 +372,6 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
             stream.setCodec("UTF-8");
             stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
             stream << s_devicesListProcess.readAll();
-
-            for (auto& dev : map)
-            {
-                dev->setVisited(false);
-            }
-
-            auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
-            {
-                bool online = deviceStatus == "device";
-                device.setHumanReadableDescription(
-                    tr("%1\nStatus: %2\nID: %3%4")
-                        .arg(tr(getPlatformStringStatic()))
-                        .arg(online ? "Online" : "Offline")
-                        .arg(deviceId)
-                        .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
-                );
-                device.setOnline(online);
-                device.setVisited(true);
-            };
 
             while (!stream.atEnd())
             {
@@ -397,6 +404,10 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                                     )
                                 );
                             }
+                            else if ((*it)->getType() != DeviceType::Android)
+                            {
+                                qDebug() << "id collision";
+                            }
                             else
                             {
                                 updateDeviceStatus(deviceStatus, *(*it), deviceId);
@@ -405,8 +416,11 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                     }
                 }
             }
+        }
 
-            for (auto& dev : map)
+        for (auto& dev : map)
+        {
+            if (dev->getType() == DeviceType::Android)
             {
                 if (!dev->isVisited())
                 {
@@ -416,21 +430,21 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                     }
                 }
             }
-
-            for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
-            {
-                if (it.value() == false)  // became offline
-                {
-                    it = s_removedDeviceByTabClose.erase(it);
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-
-            s_devicesListProcess.close();
         }
+
+        for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
+        {
+            if (it.value() == false)  // became offline
+            {
+                it = s_removedDeviceByTabClose.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
+        s_devicesListProcess.close();
 
         QStringList args;
         args.append("devices");

@@ -15,8 +15,8 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ANDROIDDEVICE_H
-#define ANDROIDDEVICE_H
+#ifndef IOSDEVICE_H
+#define IOSDEVICE_H
 
 #include "BaseDevice.h"
 #include <QFile>
@@ -26,7 +26,7 @@
 
 using namespace DataTypes;
 
-class AndroidDevice : public BaseDevice
+class IOSDevice : public BaseDevice
 {
     Q_OBJECT
 
@@ -40,10 +40,10 @@ class AndroidDevice : public BaseDevice
     QStringList m_filters;
 
 public:
-    explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+    explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                            const QString& humanReadableName, const QString& humanReadableDescription,
                            QPointer<DeviceAdapter> deviceAdapter);
-    virtual ~AndroidDevice();
+    virtual ~IOSDevice();
     virtual void update();
     virtual void filterAndAddToTextEdit(const QString& line);
     virtual const char* getPlatformString() const { return getPlatformStringStatic(); }
@@ -57,15 +57,7 @@ private:
     void startLogger();
     void stopLogger();
 
-    bool columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound) const;
-    bool columnTextMatches(const QString& filter, const QString& text) const;
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters,
-                      VerbosityEnum verbosityLevel = Verbose,
-                      const QString& pid = QString(),
-                      const QString& tid = QString(),
-                      const QString& tag = QString(),
-                      const QString& text = QString()) const;
-    static const char* getPlatformStringStatic() { return "Android"; }
+    static const char* getPlatformStringStatic() { return "iOS"; }
 
 public slots:
     void reloadTextEdit();
