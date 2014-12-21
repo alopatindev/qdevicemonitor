@@ -118,6 +118,8 @@ void MainWindow::saveSettings()
 
 void MainWindow::setupEnvironment()
 {
+    qDebug() << "MainWindow::setupEnvironment";
+
     (void)Utils::getLogsPath();
 
 #ifdef Q_OS_MAC
@@ -125,12 +127,25 @@ void MainWindow::setupEnvironment()
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
+
         QString path(std::getenv("PATH"));
+        QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
         for (const auto& i : thirdPartyProgramDirs)
         {
-            path += QString(":%1/%2/bin").arg(thirdPartyDir).arg(i);
+            qDebug() << "MainWindow::setupEnvironment 1" << i;
+            const QString prefix(path.isEmpty() ? "" : ":");
+            const QString dir = QString("%1/%2").arg(thirdPartyDir).arg(i);
+            path += QString("%1%2/bin").arg(prefix).arg(dir);
+            if (QFileInfo(QString("%1/lib").arg(dir)).isDir())
+            {
+                const QString prefix(dyldFallbackLibraryPath.isEmpty() ? "" : ":");
+                dyldFallbackLibraryPath += QString("%1%2/lib").arg(prefix).arg(dir);
+            }
         }
+        qDebug() << "PATH" << path;
+        qDebug() << "DYLD_FALLBACK_LIBRARY_PATH" << dyldFallbackLibraryPath;
         ::setenv("PATH", path.toStdString().c_str(), 1);
+        ::setenv("DYLD_FALLBACK_LIBRARY_PATH", dyldFallbackLibraryPath.toStdString().c_str(), 1);
     }
 #endif
 }
