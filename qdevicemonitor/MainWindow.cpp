@@ -92,7 +92,7 @@ void MainWindow::loadSettings()
 {
     qDebug() << "loadSettings";
     QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
-    qDebug() << "path" << s.fileName();
+    qDebug() << "config path" << s.fileName();
 
     QRect geom = s.value("geometry").toRect();
     if (geom.isValid())
@@ -132,7 +132,6 @@ void MainWindow::setupEnvironment()
         QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
         for (const auto& i : thirdPartyProgramDirs)
         {
-            qDebug() << "MainWindow::setupEnvironment 1" << i;
             const QString prefix(path.isEmpty() ? "" : ":");
             const QString dir = QString("%1/%2").arg(thirdPartyDir).arg(i);
             path += QString("%1%2/bin").arg(prefix).arg(dir);
