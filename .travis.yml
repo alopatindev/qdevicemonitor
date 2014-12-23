@@ -97,7 +97,7 @@ install:
         ls -al /Applications;
 
         install_tor;
-        $TORIFY brew install -v android-platform-tools libimobiledevice usbmuxd p7zip;
+        $TORIFY brew install -v android-platform-tools libimobiledevice p7zip;
 
         install_qt5;
         echo "${PATH}";
@@ -141,7 +141,6 @@ script:
         mkdir "${THIRD_PARTY_DIR}";
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
-        copy_3rdparty usbmuxd "${THIRD_PARTY_DIR}";
 
         mkdir "${OUTPUT_ARCHIVE_NAME}";
         mv "${PROGRAMNAME}/${PROGRAMNAME}.app" "${OUTPUT_ARCHIVE_NAME}/${PROGRAMNAME}.app";
