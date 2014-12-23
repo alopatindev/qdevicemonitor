@@ -39,12 +39,14 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType 
 {
     qDebug() << "IOSDevice::IOSDevice";
     updateDeviceModel();
+    connect(&m_deviceInfoProcess, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
 }
 
 IOSDevice::~IOSDevice()
 {
     qDebug() << "IOSDevice::~IOSDevice";
     stopLogger();
+    disconnect(&m_deviceInfoProcess, SIGNAL(readyReadStandardError()));
     m_deviceInfoProcess.close();
 }
 
@@ -370,4 +372,21 @@ void IOSDevice::stopDevicesListProcess()
 void IOSDevice::removedDeviceByTabClose(const QString& id)
 {
     s_removedDeviceByTabClose[id] = false;
+}
+
+void IOSDevice::readStandardError()
+{
+    qDebug() << "readStandardError";
+    QString stringStream;
+    QTextStream stream;
+    stream.setCodec("UTF-8");
+    stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
+    stream << m_deviceInfoProcess.readAllStandardError();
+
+    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !stream.atEnd(); ++i)
+    {
+        QString line = stream.readLine();
+        m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityFatal], line + "\n");
+    }
 }

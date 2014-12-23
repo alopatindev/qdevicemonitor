@@ -62,6 +62,9 @@ private:
 
 public slots:
     void reloadTextEdit();
+
+private slots:
+    void readStandardError();
 };
 
 #endif // ANDROIDDEVICE_H
