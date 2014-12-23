@@ -43,6 +43,7 @@ class DeviceWidget : public QWidget
 public:
     explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
     virtual ~DeviceWidget();
+    void hideVerbosity();
 
     inline QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
     inline QTextEdit& getTextEdit() const { return *(ui->textEdit); }

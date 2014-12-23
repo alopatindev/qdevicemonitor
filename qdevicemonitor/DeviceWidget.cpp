@@ -55,6 +55,12 @@ DeviceWidget::~DeviceWidget()
     qDebug() << "~DeviceWidget";
 }
 
+void DeviceWidget::hideVerbosity()
+{
+    ui->verbositySlider->setVisible(false);
+    ui->verbosityLabel->setVisible(false);
+}
+
 void DeviceWidget::on_verbositySlider_valueChanged(int value)
 {
     qDebug() << "verbosity" << value;

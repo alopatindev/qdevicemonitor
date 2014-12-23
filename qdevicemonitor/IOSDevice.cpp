@@ -38,6 +38,8 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType 
     , m_filtersValid(true)
 {
     qDebug() << "IOSDevice::IOSDevice";
+    m_deviceWidget->hideVerbosity();
+
     updateDeviceModel();
     connect(&m_deviceInfoProcess, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
 }

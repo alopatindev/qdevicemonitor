@@ -12,8 +12,8 @@ Key Features
 2. Logs can be taken from Android, iOS or from text file
 3. Filtering support
     1. Plain text, wildcards and regexes
-    2. Prefixes (pid:, tid:, tag: or text:)
-    3. Verbosity level
+    2. Prefixes **pid:, tid:, tag: or text:** (Android only)
+    3. Verbosity level (Android only)
     4. Automatic filter history that is used as autocomplete
 4. Backing up to text files automatically. Automatic old files removal
 5. Log color highlighting (two color schemes)
