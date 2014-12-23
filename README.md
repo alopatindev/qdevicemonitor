@@ -53,12 +53,17 @@ make -j
 Troubleshooting
 ---------------
 
-### iOS devices are not recognized on GNU/Linux?
-Did you confirm from the device you trust this computer? Good.
+### iOS devices are not recognized?
+Make sure that you confirmed from the device that you trust this computer.
 
+#### on GNU/Linux
 If you've just installed **usbmuxd** (as dependence) it probably didn't run
 automatically as you plugged in the device.
 If so—try **udevadm control --reload** or run usbmuxd manually.
+
+#### on Windows
+Make sure you've installed [iTunes](https://www.apple.com/itunes/download/)
+and checked that it runs and understands your device.
 
 License
 -------
