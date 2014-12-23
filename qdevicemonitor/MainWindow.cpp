@@ -147,18 +147,11 @@ void MainWindow::setupEnvironment()
         ::setenv("DYLD_FALLBACK_LIBRARY_PATH", dyldFallbackLibraryPath.toStdString().c_str(), 1);
     }
 #elif defined(Q_OS_WIN32)
-    QString thirdPartyDir(QCoreApplication::applicationDirPath() + "/3rdparty");
+    QString thirdPartyDir(QCoreApplication::applicationDirPath() + "\\3rdparty\\bin");
     if (QFileInfo(thirdPartyDir).isDir())
     {
-        const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
-
         QString path(std::getenv("Path"));
-        for (const auto& i : thirdPartyProgramDirs)
-        {
-            const QString prefix(path.isEmpty() ? "" : ";");
-            const QString dir = QString("%1/%2").arg(thirdPartyDir).arg(i);
-            path += QString("%1%2/bin").arg(prefix).arg(dir);
-        }
+        path += QString("%1%2/bin").arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
         ::setenv("Path", path.toStdString().c_str(), 1);
     }
