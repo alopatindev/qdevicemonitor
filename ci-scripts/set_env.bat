@@ -4,7 +4,7 @@ set MINGW=C:\MinGW
 set CYG_ROOT=C:/cygwin
 set CYG_MIRROR=http://cygwin.mirror.constant.com
 set CYG_CACHE=C:/cygwin/var/cache/setup
-set CYG_HOMEDIR=C:\cygwin\home\%USERNAME%
+set CYG_HOMEDIR=C:\cygwin\tmp
 
 set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin;C:\Program Files\7-Zip
 
