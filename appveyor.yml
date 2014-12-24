@@ -9,6 +9,8 @@ install:
   - echo %OUTPUT_FILENAME%
   - dir C:\
   - dir C:\Qt
+  - dir C:\cygwin
+  - dir C:\cygwin\home
   - dir %QTDIR%\
   - dir %QTDIR%\lib
   - dir %QTDIR%\bin
@@ -17,7 +19,7 @@ install:
   - dir "C:\Program Files (x86)"
   - '%CYG_ROOT%\setup-x86.exe -qnNdO -R "%CYG_ROOT%" -s "%CYG_MIRROR%" -l "%CYG_CACHE%" -P autoconf -P automake -P bison -P gcc-core -P gcc-g++ -P mingw-runtime -P mingw-binutils -P mingw-gcc-core -P mingw-gcc-g++ -P mingw-pthreads -P mingw-w32api -P libtool -P make -P python -P gettext-devel -P gettext -P intltool -P libiconv -P pkg-config -P git -P wget -P curl -P libusb1.0 -P libusb1.0-devel -P libxml2 -P libxml2-devel -P openssl-devel -P dos2unix'
   - copy ci-scripts\download_and_build_libimobiledevice.sh "%CYG_HOMEDIR%"
-  - '%CYG_ROOT%/bin/bash -lc "cygcheck -dc cygwin && cd /tmp && ./download_and_build_libimobiledevice.sh"'
+  - '%CYG_ROOT%/bin/bash -lc "cygcheck -dc cygwin && export HOME=/home/appveyor && cd $HOME && ./download_and_build_libimobiledevice.sh"'
 
 build_script:
   - cd %PROGRAMNAME%
