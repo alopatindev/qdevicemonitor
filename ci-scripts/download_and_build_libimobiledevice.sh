@@ -15,8 +15,8 @@ function download_and_unpack {
 
 function build_and_install {
     cd "$1"
+    exec 0</dev/null
     NOCONFIGURE=1 ./autogen.sh
-    sed -i 's!test -n "$DJDIR" || exec 7<&0 </dev/null!!' configure
     ./configure --prefix "$(pwd)/../${THIRD_PARTY_DIR}"
     make -j2
     make install
