@@ -59,8 +59,12 @@ void TextFileDevice::startLogger()
 
     m_logFile.setFileName(m_id);
     m_logFile.open(QIODevice::ReadOnly | QIODevice::Text);
+
     m_logFileStream = QSharedPointer<QTextStream>(new QTextStream(&m_logFile));
     m_logFileStream->setCodec("UTF-8");
+
+    Utils::seekToLastVisibleLines(m_logFile, *m_logFileStream, m_deviceAdapter->getVisibleBlocks());
+
     m_fsWatcher.addPath(m_id);
 }
 

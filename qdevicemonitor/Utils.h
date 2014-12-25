@@ -18,7 +18,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <QFile>
 #include <QString>
+#include <QTextStream>
 
 class Utils
 {
@@ -35,6 +37,7 @@ public:
     static QString getCurrentDateTimeUtc();
     static int verbosityCharacterToInt(char character);
     static bool columnTextMatches(const QString& filter, const QString& text);
+    static void seekToLastVisibleLines(QFile& file, QTextStream& textStream, int visibleLines);
 };
 
 #endif // UTILS_H
