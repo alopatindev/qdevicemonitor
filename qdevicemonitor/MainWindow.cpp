@@ -151,9 +151,10 @@ void MainWindow::setupEnvironment()
     if (QFileInfo(thirdPartyDir).isDir())
     {
         QString path(std::getenv("Path"));
-        path += QString("%1%2/bin").arg(prefix).arg(thirdPartyDir);
+        const QString prefix(path.isEmpty() ? "" : ";");
+        path = QString("Path=%1%2%3").arg(path).arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
-        ::setenv("Path", path.toStdString().c_str(), 1);
+        ::putenv(path.toStdString().c_str());
     }
 #endif
 }
