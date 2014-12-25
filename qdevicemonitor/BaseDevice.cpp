@@ -44,18 +44,18 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
     m_lastFilter = m_deviceWidget->getFilterLineEdit().text();
 
     m_reloadTextEditTimer.setSingleShot(true);
-    connect(&m_reloadTextEditTimer, SIGNAL(timeout()), this, SLOT(reloadTextEdit()));
+    connect(&m_reloadTextEditTimer, &QTimer::timeout, this, &BaseDevice::reloadTextEdit);
 
     m_completionAddTimer.setSingleShot(true);
-    connect(&m_completionAddTimer, SIGNAL(timeout()), this, SLOT(addFilterAsCompletion()));
+    connect(&m_completionAddTimer, &QTimer::timeout, this, &BaseDevice::addFilterAsCompletion);
 }
 
 BaseDevice::~BaseDevice()
 {
     qDebug() << "~BaseDevice" << m_id;
 
-    disconnect(&m_reloadTextEditTimer, SIGNAL(timeout()));
-    disconnect(&m_completionAddTimer, SIGNAL(timeout()));
+    disconnect(&m_reloadTextEditTimer, 0, this, 0);
+    disconnect(&m_completionAddTimer, 0, this, 0);
 
     delete m_deviceWidget; // FIXME: the design of QTabWidget is not really compatible with things like QSharedPointer at the moment
 }

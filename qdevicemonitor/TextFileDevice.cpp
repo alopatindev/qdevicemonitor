@@ -50,6 +50,7 @@ TextFileDevice::TextFileDevice(QPointer<QTabWidget> parent, const QString& id, D
 TextFileDevice::~TextFileDevice()
 {
     qDebug() << "TextFileDevice::~TextFileDevice";
+    disconnect(&m_fsWatcher, 0, this, 0);
     stopLogger();
 }
 

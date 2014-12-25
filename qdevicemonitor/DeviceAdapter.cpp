@@ -48,7 +48,7 @@ void DeviceAdapter::start()
 {
     qDebug() << "DeviceAdapter::start";
     update();
-    connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
+    connect(&m_updateTimer, &QTimer::timeout, this, &DeviceAdapter::update);
     m_updateTimer.start(UPDATE_FREQUENCY);
 }
 
@@ -56,7 +56,7 @@ void DeviceAdapter::stop()
 {
     qDebug() << "DeviceAdapter::stop";
     m_updateTimer.stop();
-    m_updateTimer.disconnect(SIGNAL(timeout()), this, SLOT(update()));
+    disconnect(&m_updateTimer, &QTimer::timeout, this, &DeviceAdapter::update);
     AndroidDevice::stopDevicesListProcess();
     IOSDevice::stopDevicesListProcess();
 }

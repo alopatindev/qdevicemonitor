@@ -39,14 +39,14 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType 
     m_deviceWidget->hideVerbosity();
 
     updateDeviceModel();
-    connect(&m_deviceInfoProcess, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
+    connect(&m_deviceInfoProcess, &QProcess::readyReadStandardError, this, &IOSDevice::readStandardError);
 }
 
 IOSDevice::~IOSDevice()
 {
     qDebug() << "IOSDevice::~IOSDevice";
     stopLogger();
-    disconnect(&m_deviceInfoProcess, SIGNAL(readyReadStandardError()));
+    disconnect(&m_deviceInfoProcess, 0, this, 0);
     m_deviceInfoProcess.close();
 }
 
