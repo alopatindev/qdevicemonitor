@@ -35,8 +35,6 @@ class IOSDevice : public BaseDevice
     QFile m_deviceLogFile;
     QSharedPointer<QTextStream> m_deviceLogFileStream;
     bool m_didReadDeviceModel;
-    bool m_filtersValid;
-    QStringList m_filters;
 
 public:
     explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,

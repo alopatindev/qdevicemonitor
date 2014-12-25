@@ -87,6 +87,8 @@ protected:
     QPointer<DeviceAdapter> m_deviceAdapter;
     QString m_lastFilter;
     QString m_currentLogFileName;
+    bool m_filtersValid;
+    QStringList m_filters;
 
 private:
     QTimer m_reloadTextEditTimer;

@@ -20,7 +20,6 @@
 
 #include "BaseDevice.h"
 #include <QFile>
-#include <QFileSystemWatcher>
 #include <QProcess>
 #include <QStringList>
 #include <QTextStream>
@@ -31,10 +30,7 @@ class TextFileDevice : public BaseDevice
 {
     Q_OBJECT
 
-    QFile m_logFile;
-    QSharedPointer<QTextStream> m_logFileStream;
-    QFileSystemWatcher m_fsWatcher;
-    bool m_fileChanged;
+    QProcess m_tailProcess;
 
 public:
     explicit TextFileDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
@@ -53,6 +49,8 @@ private:
     void stopLogger();
 
     static const char* getPlatformStringStatic() { return "Text File"; }
+
+    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QString& text) const;
 
 public slots:
     void reloadTextEdit();

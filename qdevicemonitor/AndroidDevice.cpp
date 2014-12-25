@@ -34,7 +34,6 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
     , m_didReadDeviceModel(false)
-    , m_filtersValid(true)
 {
     qDebug() << "AndroidDevice::AndroidDevice";
     updateDeviceModel();

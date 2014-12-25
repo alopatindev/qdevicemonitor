@@ -33,7 +33,6 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType 
                      const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_didReadDeviceModel(false)
-    , m_filtersValid(true)
 {
     qDebug() << "IOSDevice::IOSDevice";
     m_deviceWidget->hideVerbosity();

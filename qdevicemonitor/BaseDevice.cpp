@@ -34,6 +34,7 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
     , m_tabWidget(parent)
     , m_tabIndex(-1)
     , m_deviceAdapter(deviceAdapter)
+    , m_filtersValid(true)
     , m_visited(true)
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
