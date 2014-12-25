@@ -42,3 +42,4 @@ FORMS    += MainWindow.ui \
     SettingsDialog.ui
 
 QMAKE_CXXFLAGS += -std=c++0x -Werror
+win32:QMAKE_CXXFLAGS += -std=gnu++0x
