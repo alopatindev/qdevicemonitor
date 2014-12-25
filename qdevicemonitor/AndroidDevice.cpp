@@ -23,7 +23,6 @@
 #include <QFileInfo>
 #include <QHash>
 #include <QRegExp>
-#include <QWeakPointer>
 
 using namespace DataTypes;
 

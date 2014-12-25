@@ -34,7 +34,6 @@ class IOSDevice : public BaseDevice
     QProcess m_deviceLogProcess;
     QFile m_deviceLogFile;
     QSharedPointer<QTextStream> m_deviceLogFileStream;
-    int m_lastVerbosityLevel;
     bool m_didReadDeviceModel;
     bool m_filtersValid;
     QStringList m_filters;

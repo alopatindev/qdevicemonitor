@@ -23,7 +23,6 @@
 #include <QFileInfo>
 #include <QHash>
 #include <QRegExp>
-#include <QWeakPointer>
 
 using namespace DataTypes;
 
@@ -33,7 +32,6 @@ static QHash<QString, bool> s_removedDeviceByTabClose;
 IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
                      const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
-    , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
     , m_didReadDeviceModel(false)
     , m_filtersValid(true)
 {
@@ -136,12 +134,7 @@ void IOSDevice::update()
     case QProcess::Running:
         {
             const QString filter = m_deviceWidget->getFilterLineEdit().text();
-            if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
-            {
-                m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
-                scheduleReloadTextEdit();
-            }
-            else if (m_lastFilter.compare(filter) != 0)
+            if (m_lastFilter.compare(filter) != 0)
             {
                 m_filters = filter.split(" ");
                 m_filtersValid = true;

@@ -28,6 +28,10 @@
 #include <QSettings>
 #include <QStringList>
 
+#ifdef __MINGW32__
+extern int putenv(char *);
+#endif
+
 MainWindow::MainWindow(QPointer<QWidget> parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -169,8 +173,8 @@ void MainWindow::setupEnvironment()
         }
         qDebug() << "PATH" << path;
         qDebug() << "DYLD_FALLBACK_LIBRARY_PATH" << dyldFallbackLibraryPath;
-        ::setenv("PATH", path.toStdString().c_str(), 1);
-        ::setenv("DYLD_FALLBACK_LIBRARY_PATH", dyldFallbackLibraryPath.toStdString().c_str(), 1);
+        (void) ::setenv("PATH", path.toStdString().c_str(), 1);
+        (void) ::setenv("DYLD_FALLBACK_LIBRARY_PATH", dyldFallbackLibraryPath.toStdString().c_str(), 1);
     }
 #elif defined(Q_OS_WIN32)
     QString thirdPartyDir(QCoreApplication::applicationDirPath() + "\\3rdparty\\bin");
@@ -182,7 +186,7 @@ void MainWindow::setupEnvironment()
         const QString prefix(path.isEmpty() ? "" : ";");
         path = QString("Path=%1%2%3").arg(path).arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
-        ::_putenv(path.toStdString().c_str());
+        (void) ::putenv(path.toStdString().c_str());
     }
 #endif
 }
