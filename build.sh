@@ -9,11 +9,14 @@ fi
 
 ctags -R .
 cd qdevicemonitor
-qmake 'CONFIG += debug'
-time make -j8
 
 if [ $OSX = 1 ]; then
+    qmake 'CONFIG += debug'
+    time make -j8
     lldb qdevicemonitor.app/Contents/MacOS/qdevicemonitor
 else
+    #qmake -spec linux-g++ 'CONFIG += debug'
+    qmake -spec linux-clang 'CONFIG += debug'
+    time make -j16
     gdb ./qdevicemonitor
 fi

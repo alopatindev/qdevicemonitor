@@ -98,7 +98,6 @@ void AndroidDevice::stopLogger()
     qDebug() << "AndroidDevice::stopLogger";
 
     m_deviceLogProcess.close();
-    //m_deviceLogFileStream->flush();
     m_deviceLogFileStream.clear();
     m_deviceLogFile.close();
 }
@@ -356,7 +355,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                                         parent,
                                         deviceId,
                                         DeviceType::Android,
-                                        tr(getPlatformStringStatic()),
+                                        QString(getPlatformStringStatic()),
                                         tr("Initializing..."),
                                         deviceAdapter
                                     )

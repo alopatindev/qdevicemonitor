@@ -17,6 +17,7 @@
 
 #include "MainWindow.h"
 #include "SettingsDialog.h"
+#include "TextFileDevice.h"
 #include "Utils.h"
 
 #include <cstdlib>
@@ -57,8 +58,9 @@ void MainWindow::on_actionOpen_triggered()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), m_lastLogDirectory, tr("Logs (*.log *.log.*);;All Files (*)"));
     if (!fileName.isNull())
     {
-        m_lastLogDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
-        // TODO
+        QFileInfo fi(fileName);
+        m_lastLogDirectory = fi.absolutePath();
+        TextFileDevice::openLogFile(fi.absoluteFilePath());
     }
 }
 
@@ -186,7 +188,7 @@ void MainWindow::setupEnvironment()
         const QString prefix(path.isEmpty() ? "" : ";");
         path = QString("Path=%1%2%3").arg(path).arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
-        (void) ::putenv(path.toStdString().c_str());
+        (void) ::putenv(const_cast<char*>(path.toStdString().c_str()));
     }
 #endif
 }

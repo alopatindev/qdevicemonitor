@@ -306,7 +306,7 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
                                 parent,
                                 deviceId,
                                 DeviceType::IOS,
-                                tr(getPlatformStringStatic()),
+                                QString(getPlatformStringStatic()),
                                 tr("Initializing..."),
                                 deviceAdapter
                             )

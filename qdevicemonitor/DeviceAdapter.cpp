@@ -21,6 +21,7 @@
 
 #include "AndroidDevice.h"
 #include "IOSDevice.h"
+#include "TextFileDevice.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -74,7 +75,7 @@ void DeviceAdapter::updateDevicesMap()
         switch (type)
         {
         case DeviceType::TextFile:
-            // TODO
+            TextFileDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
             break;
         case DeviceType::Android:
             AndroidDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);

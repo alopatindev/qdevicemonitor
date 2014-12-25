@@ -19,6 +19,7 @@ SOURCES += main.cpp\
     DeviceAdapter.cpp \
     AndroidDevice.cpp \
     IOSDevice.cpp \
+    TextFileDevice.cpp \
     BaseDevice.cpp \
     DeviceWidget.cpp \
     SettingsDialog.cpp \
@@ -28,6 +29,7 @@ HEADERS  += MainWindow.h \
     DeviceAdapter.h \
     AndroidDevice.h \
     IOSDevice.h \
+    TextFileDevice.h \
     BaseDevice.h \
     DataTypes.h \
     DeviceWidget.h \

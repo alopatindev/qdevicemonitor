@@ -15,55 +15,47 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IOSDEVICE_H
-#define IOSDEVICE_H
+#ifndef TEXTFILEDEVICE_H
+#define TEXTFILEDEVICE_H
 
 #include "BaseDevice.h"
 #include <QFile>
+#include <QFileSystemWatcher>
 #include <QProcess>
 #include <QStringList>
 #include <QTextStream>
 
 using namespace DataTypes;
 
-class IOSDevice : public BaseDevice
+class TextFileDevice : public BaseDevice
 {
     Q_OBJECT
 
-    QProcess m_deviceInfoProcess;
-    QProcess m_deviceLogProcess;
-    QFile m_deviceLogFile;
-    QSharedPointer<QTextStream> m_deviceLogFileStream;
-    bool m_didReadDeviceModel;
-    bool m_filtersValid;
-    QStringList m_filters;
+    QFile m_logFile;
+    QSharedPointer<QTextStream> m_logFileStream;
+    QFileSystemWatcher m_fsWatcher;
+    bool m_fileChanged;
 
 public:
-    explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
-                       const QString& humanReadableName, const QString& humanReadableDescription,
-                       QPointer<DeviceAdapter> deviceAdapter);
-    virtual ~IOSDevice();
+    explicit TextFileDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+                           const QString& humanReadableName, const QString& humanReadableDescription,
+                           QPointer<DeviceAdapter> deviceAdapter);
+    virtual ~TextFileDevice();
     virtual void update();
     virtual void filterAndAddToTextEdit(const QString& line);
     virtual const char* getPlatformString() const { return getPlatformStringStatic(); }
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
-    static void stopDevicesListProcess();
-    static void removedDeviceByTabClose(const QString& id);
+    static void openLogFile(const QString& logFile);
 
 private:
-    void updateDeviceModel();
     void startLogger();
     void stopLogger();
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QString& text) const;
 
-    static const char* getPlatformStringStatic() { return "iOS"; }
+    static const char* getPlatformStringStatic() { return "Text File"; }
 
 public slots:
     void reloadTextEdit();
-
-private slots:
-    void readStandardError();
 };
 
 #endif // ANDROIDDEVICE_H
