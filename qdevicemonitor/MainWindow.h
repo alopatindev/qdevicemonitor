@@ -45,6 +45,7 @@ public:
 
 public slots:
     void on_actionOpen_triggered();
+    void on_actionQuit_triggered();
     void on_actionSettings_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();

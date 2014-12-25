@@ -60,6 +60,12 @@ void MainWindow::on_actionOpen_triggered()
     }
 }
 
+void MainWindow::on_actionQuit_triggered()
+{
+    qDebug() << "on_actionQuit_triggered";
+    close();
+}
+
 void MainWindow::on_actionSettings_triggered()
 {
     QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
