@@ -29,10 +29,6 @@
 #include <QSettings>
 #include <QStringList>
 
-#ifdef __MINGW32__
-extern int putenv(char *);
-#endif
-
 MainWindow::MainWindow(QPointer<QWidget> parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
