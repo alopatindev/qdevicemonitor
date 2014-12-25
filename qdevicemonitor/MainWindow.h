@@ -34,6 +34,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     DeviceAdapter m_deviceAdapter;
+    QString m_lastLogDirectory;
 
 public:
     explicit MainWindow(QPointer<QWidget> parent = 0);
@@ -43,6 +44,7 @@ public:
     void saveSettings();
 
 public slots:
+    void on_actionOpen_triggered();
     void on_actionSettings_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();

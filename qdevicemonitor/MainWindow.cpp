@@ -21,6 +21,8 @@
 
 #include <cstdlib>
 #include <QDebug>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QProcess>
 #include <QSettings>
@@ -44,6 +46,16 @@ MainWindow::~MainWindow()
 {
     saveSettings();
     m_deviceAdapter.stop();
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), m_lastLogDirectory, tr("Logs (*.log *.log.*);;All Files (*)"));
+    if (!fileName.isNull())
+    {
+        m_lastLogDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
+        // TODO
+    }
 }
 
 void MainWindow::on_actionSettings_triggered()
@@ -94,11 +106,24 @@ void MainWindow::loadSettings()
     QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
     qDebug() << "config path" << s.fileName();
 
-    QRect geom = s.value("geometry").toRect();
+    QVariant geom = s.value("geometry");
     if (geom.isValid())
     {
-        setGeometry(geom);
-        qDebug() << geom;
+        setGeometry(geom.toRect());
+    }
+
+    QVariant lastLogDirectory = s.value("lastLogDirectory");
+    if (lastLogDirectory.isValid())
+    {
+        m_lastLogDirectory = lastLogDirectory.toString();
+    }
+    else
+    {
+#ifdef Q_OS_WIN32
+        m_lastLogDirectory = "C:/";
+#else
+        m_lastLogDirectory = "/var/log";
+#endif
     }
 
     m_deviceAdapter.loadSettings(s);
@@ -110,7 +135,7 @@ void MainWindow::saveSettings()
     QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
 
     s.setValue("geometry", geometry());
-    qDebug() << geometry();
+    s.setValue("lastLogDirectory", m_lastLogDirectory);
     m_deviceAdapter.saveSettings(s);
 
     s.sync();
@@ -127,8 +152,9 @@ void MainWindow::setupEnvironment()
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
-
-        QString path(std::getenv("PATH"));
+        const char* pPath = std::getenv("PATH");
+        pPath = pPath ? pPath : "";
+        QString path(pPath);
         QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
         for (const auto& i : thirdPartyProgramDirs)
         {
@@ -150,11 +176,13 @@ void MainWindow::setupEnvironment()
     QString thirdPartyDir(QCoreApplication::applicationDirPath() + "\\3rdparty\\bin");
     if (QFileInfo(thirdPartyDir).isDir())
     {
-        QString path(std::getenv("Path"));
+        const char* pPath = std::getenv("Path");
+        pPath = pPath ? pPath : "";
+        QString path(pPath);
         const QString prefix(path.isEmpty() ? "" : ";");
         path = QString("Path=%1%2%3").arg(path).arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
-        ::putenv(path.toStdString().c_str());
+        ::_putenv(path.toStdString().c_str());
     }
 #endif
 }
@@ -168,10 +196,9 @@ void MainWindow::checkExternalPrograms()
         "idevicesyslog"
     };
 
-#ifdef Q_OS_UNIX
+#if defined(Q_OS_UNIX)
     static const char* whichProgram = "which";
-#endif
-#ifdef Q_OS_WIN32
+#elif defined(Q_OS_WIN32)
     static const char* whichProgram = "where";
 #endif
 
