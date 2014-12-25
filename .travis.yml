@@ -29,6 +29,7 @@ before_install:
         sudo apt-get update -qq;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         brew update;
+        ci-scripts/fix_brew.sh;
     fi;
   - $CXX --version;
 
@@ -96,8 +97,7 @@ install:
         ls -al ~;
         ls -al /Applications;
 
-        install_tor;
-        $TORIFY brew install -v android-platform-tools libimobiledevice p7zip;
+        brew install -v android-platform-tools libimobiledevice p7zip;
 
         install_qt5;
         echo "${PATH}";
