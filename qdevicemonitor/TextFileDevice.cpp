@@ -52,7 +52,7 @@ void TextFileDevice::startLogger()
     QStringList args;
     args.append("-F");
     args.append("-n");
-    const int n = m_filters.count() > 0 ? 3 : 1;
+    const int n = m_filters.count() > 0 ? 3 : 1;  // FIXME
     args.append(QString("%1").arg(m_deviceAdapter->getVisibleBlocks() * n));
     args.append(m_id);
     m_tailProcess.start("tail", args);
@@ -124,7 +124,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
     }
 
     m_deviceWidget->maybeScrollTextEditToEnd();
-    m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
+    //m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
 void TextFileDevice::reloadTextEdit()

@@ -109,7 +109,13 @@ void DeviceAdapter::loadSettings(const QSettings& s)
     }
     else
     {
+#if defined(Q_OS_MAC)
+        m_font = "Monaco";
+#elif defined(Q_OS_WIN32)
+        m_font = "Lucida Console";
+#else
         m_font = "monospace";
+#endif
     }
 
     QVariant fontSize = s.value("fontSize");
@@ -237,15 +243,13 @@ void DeviceAdapter::removeDeviceByTabIndex(int index)
             {
                 switch (it.value()->getType())
                 {
-                case DeviceType::TextFile:
-                    // TODO
-                    break;
                 case DeviceType::Android:
                     AndroidDevice::removedDeviceByTabClose(it.key());
                     break;
                 case DeviceType::IOS:
                     IOSDevice::removedDeviceByTabClose(it.key());
                     break;
+                case DeviceType::TextFile:
                 default:
                     break;
                 }
