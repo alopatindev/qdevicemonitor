@@ -29,11 +29,13 @@ for i in libplist-1.12 libusbmuxd-1.0.10 libimobiledevice-1.1.7 ; do
 done
 
 cp "/bin/cygwin1.dll" "${THIRD_PARTY_DIR}/bin/"
+cp "/bin/cygintl-8.dll" "${THIRD_PARTY_DIR}/bin/"
 cp "/bin/cygxml2-2.dll" "${THIRD_PARTY_DIR}/bin/"
 cp "/bin/cygiconv-2.dll" "${THIRD_PARTY_DIR}/bin/"
 cp "/bin/cygz.dll" "${THIRD_PARTY_DIR}/bin/"
 cp "/bin/cyggcc_s-1.dll" "${THIRD_PARTY_DIR}/bin/"
 cp "/bin/cygcrypto-1.0.0.dll" "${THIRD_PARTY_DIR}/bin/"
 cp "/bin/cygssl-1.0.0.dll" "${THIRD_PARTY_DIR}/bin/"
+cp "/bin/tail.exe" "${THIRD_PARTY_DIR}/bin/"
 
 # vim: textwidth=0

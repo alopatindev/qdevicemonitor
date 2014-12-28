@@ -83,7 +83,7 @@ install:
         };
 
         function install_tor() {
-            for i in "tor-0.2.5.10.yosemite.bottle.tar.gz" "torsocks-2.0.0.yosemite.bottle.tar.gz" "openssl-1.0.1j_1.mavericks.bottle.tar.gz" "libevent-2.0.21_1.mavericks.bottle.tar.gz"; do
+            for i in "tor-0.2.5.10.yosemite.bottle.tar.gz" "torsocks-2.0.0.yosemite.bottle.tar.gz" "openssl-1.0.1j_1.mavericks.bottle.tar.gz" "libevent-2.0.21_1.mavericks.bottle.tar.gz" "openssl-1.0.1j_1.mavericks.bottle.tar.gz" "libevent-2.0.21_1.mavericks.bottle.tar.gz" "tor-0.2.5.10.mavericks.bottle.tar.gz"; do
                 wget -v "${DEPS_URL}/${i}" -O "/Library/Caches/Homebrew/${i}";
             done;
             curl http://cmyip.com | grep 'My IP';
@@ -97,7 +97,8 @@ install:
         ls -al ~;
         ls -al /Applications;
 
-        brew install -v android-platform-tools libimobiledevice p7zip;
+        install_tor;
+        $TORIFY brew install -v android-platform-tools libimobiledevice p7zip;
 
         install_qt5;
         echo "${PATH}";
