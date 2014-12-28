@@ -171,6 +171,16 @@ void DeviceAdapter::loadSettings(const QSettings& s)
             m_filterCompleterModel.appendRow(new QStandardItem(filter));
         }
     }
+
+    QVariant logFiles = s.value("logFiles");
+    if (logFiles.isValid())
+    {
+        const QStringList lf = logFiles.toStringList();
+        for (const auto& i : lf)
+        {
+            TextFileDevice::openLogFile(i);
+        }
+    }
 }
 
 void DeviceAdapter::saveSettings(QSettings& s)
@@ -184,6 +194,16 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("autoRemoveFilesHours", m_autoRemoveFilesHours);
     s.setValue("textEditorPath", m_textEditorPath);
     s.setValue("filterCompletions", m_filterCompletions);
+
+    QStringList logFiles;
+    for (auto& device : m_devicesMap)
+    {
+        if (device->getType() == DeviceType::TextFile)
+        {
+            logFiles.append(device->getId());
+        }
+    }
+    s.setValue("logFiles", logFiles);
 }
 
 void DeviceAdapter::addFilterAsCompletion(const QString& completionToAdd)
