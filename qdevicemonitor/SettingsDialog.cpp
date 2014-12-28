@@ -19,6 +19,7 @@
 #include "ui_SettingsDialog.h"
 
 #include <QDebug>
+#include <QFileDialog>
 
 SettingsDialog::SettingsDialog(QPointer<QWidget> parent)
     : QDialog(parent)
@@ -39,6 +40,7 @@ void SettingsDialog::loadSettings(const QSettings& s)
     ui->fontBoldCheckBox->setChecked(s.value("fontBold").toBool());
     ui->darkThemeCheckBox->setChecked(s.value("darkTheme").toBool());
     ui->autoRemoveFilesOlderThanSpinBox->setValue(s.value("autoRemoveFilesHours").toInt());
+    ui->editorLineEdit->setText(s.value("textEditorPath").toString());
 }
 
 void SettingsDialog::saveSettings(QSettings& s)
@@ -49,5 +51,26 @@ void SettingsDialog::saveSettings(QSettings& s)
     s.setValue("fontBold", ui->fontBoldCheckBox->isChecked());
     s.setValue("darkTheme", ui->darkThemeCheckBox->isChecked());
     s.setValue("autoRemoveFilesHours", ui->autoRemoveFilesOlderThanSpinBox->value());
+    s.setValue("textEditorPath", ui->editorLineEdit->text());
     s.sync();
+}
+
+void SettingsDialog::on_editorBrowseButton_clicked()
+{
+    qDebug() << "on_editorBrowseButton_clicked";
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        tr("Open File"),
+        QString(),
+#if defined(Q_OS_WIN32)
+        tr("Executables (*.exe);;All Files (*)")
+#else
+        tr("All Files (*)")
+#endif
+    );
+
+    if (!fileName.isEmpty())
+    {
+        ui->editorLineEdit->setText(fileName);
+    }
 }

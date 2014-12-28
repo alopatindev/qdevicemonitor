@@ -40,6 +40,9 @@ public:
 
     void loadSettings(const QSettings& s);
     void saveSettings(QSettings& s);
+
+public slots:
+    void on_editorBrowseButton_clicked();
 };
 
 #endif // SETTINGSDIALOG_H

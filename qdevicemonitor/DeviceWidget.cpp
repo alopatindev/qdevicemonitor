@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QPalette>
+#include <QProcess>
 #include <QScrollBar>
 
 using namespace DataTypes;
@@ -132,8 +133,14 @@ void DeviceWidget::on_openLogFileButton_clicked()
 {
     if (!m_currentLogFileName.isEmpty())
     {
-        // TODO
-        qDebug() << "open in text editor" << m_currentLogFileName;
+        const QString textEditor = m_deviceAdapter->getTextEditorPath();
+        qDebug() << "open" << m_currentLogFileName << "in text editor" << textEditor;
+        if (!textEditor.isEmpty())
+        {
+            QStringList args;
+            args.append(m_currentLogFileName);
+            QProcess::startDetached(m_deviceAdapter->getTextEditorPath(), args);
+        }
     }
 }
 

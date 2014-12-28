@@ -40,14 +40,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Font</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QFontComboBox" name="fontComboBox">
@@ -95,21 +95,31 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="10" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QCheckBox" name="darkThemeCheckBox">
      <property name="text">
       <string>Dark Theme</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Auto Remove Files</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="QSpinBox" name="autoRemoveFilesOlderThanSpinBox">
      <property name="suffix">
       <string> hours</string>
@@ -128,17 +138,28 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Text Editor</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLineEdit" name="editorLineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="editorBrowseButton">
+       <property name="text">
+        <string>Browse...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="9" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -153,6 +174,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>visibleBlocksSpinBox</tabstop>
+  <tabstop>fontComboBox</tabstop>
+  <tabstop>fontBoldCheckBox</tabstop>
+  <tabstop>fontSizeSpinBox</tabstop>
+  <tabstop>darkThemeCheckBox</tabstop>
+  <tabstop>autoRemoveFilesOlderThanSpinBox</tabstop>
+  <tabstop>editorLineEdit</tabstop>
+  <tabstop>editorBrowseButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -162,8 +193,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>227</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -178,8 +209,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>227</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

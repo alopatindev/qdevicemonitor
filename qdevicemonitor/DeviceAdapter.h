@@ -46,6 +46,7 @@ private:
     QStandardItemModel m_filterCompleterModel;
     QCompleter m_filterCompleter;
     QStringList m_filterCompletions;
+    QString m_textEditorPath;
 
 public:
     static const int UPDATE_FREQUENCY = 20;
@@ -70,6 +71,7 @@ public:
     inline bool isFontBold() const { return m_fontBold; }
     inline int getAutoRemoveFilesHours() const { return m_autoRemoveFilesHours; }
     inline int getVisibleBlocks() const { return m_visibleBlocks; }
+    inline const QString& getTextEditorPath() const { return m_textEditorPath; }
 
     inline QCompleter& getFilterCompleter() { return m_filterCompleter; }
     void addFilterAsCompletion(const QString& completionToAdd);

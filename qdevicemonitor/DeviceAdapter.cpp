@@ -144,6 +144,23 @@ void DeviceAdapter::loadSettings(const QSettings& s)
 
     removeOldLogFiles();
 
+    QVariant textEditorPath = s.value("textEditorPath");
+    if (textEditorPath.isValid())
+    {
+        m_textEditorPath = textEditorPath.toString();
+    }
+
+    if (m_textEditorPath.isEmpty())
+    {
+#if defined(Q_OS_MAC)
+        m_textEditorPath = "/Applications/TextEdit.app/Contents/MacOS/TextEdit";
+#elif defined(Q_OS_WIN32)
+        m_textEditorPath = "notepad";
+#else
+        m_textEditorPath = "gedit";
+#endif
+    }
+
     QVariant filterCompletions = s.value("filterCompletions");
     if (filterCompletions.isValid())
     {
@@ -165,6 +182,7 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("fontBold", m_fontBold);
     s.setValue("darkTheme", m_darkTheme);
     s.setValue("autoRemoveFilesHours", m_autoRemoveFilesHours);
+    s.setValue("textEditorPath", m_textEditorPath);
     s.setValue("filterCompletions", m_filterCompletions);
 }
 
