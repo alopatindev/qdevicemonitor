@@ -200,7 +200,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         return;
     }
 
-    static QRegExp rx("([A-Za-z]* [\\d]* [\\d:]*) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
+    static QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
     rx.setMinimal(true);
 
     int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
@@ -209,6 +209,11 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         const QString prefix = rx.cap(1);
         const QString deviceName = rx.cap(2);
         const QString text = line.mid(rx.pos(2) + rx.cap(2).length() + 1);
+
+        /*qDebug() << "prefix" << prefix;
+        qDebug() << "deviceName" << deviceName;
+        qDebug() << "text" << text;*/
+
         bool filtersMatch = true;
         checkFilters(filtersMatch, m_filtersValid, m_filters, text);
 
