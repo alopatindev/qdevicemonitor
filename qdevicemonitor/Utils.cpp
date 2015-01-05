@@ -141,17 +141,32 @@ bool Utils::columnTextMatches(const QString& filter, const QString& text)
 
 void Utils::seekToLastVisibleLines(QFile& file, QTextStream& textStream, int visibleLines)
 {
-    file.seek(file.size());  // go to EOF
+    bool ok = file.seek(file.size());  // go to EOF
     int lines = 0;
     while (lines < visibleLines && textStream.pos() > 0)
     {
-        textStream.seek(textStream.pos() - 1);
+        if (!ok)
+        {
+            break;
+        }
+
+        ok = textStream.seek(textStream.pos() - 1);
         char ch;
-        textStream >> ch;
+        ok &= file.getChar(&ch);
         if (ch == '\n')
         {
             ++lines;
         }
-        textStream.seek(textStream.pos() - 1);
+        ok &= textStream.seek(textStream.pos() - 1);
+    }
+
+    if (!ok)
+    {
+        qDebug() << "seeking from the start";
+        textStream.seek(0);
+    }
+    else
+    {
+        qDebug() << "seeking back to" << visibleLines << "lines";
     }
 }

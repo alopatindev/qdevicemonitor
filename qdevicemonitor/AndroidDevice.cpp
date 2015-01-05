@@ -287,7 +287,7 @@ void AndroidDevice::reloadTextEdit()
     qDebug() << "reloadTextEdit";
     m_deviceWidget->getTextEdit().clear();
 
-    m_deviceLogFileStream->seek(0);
+    Utils::seekToLastVisibleLines(m_deviceLogFile, *m_deviceLogFileStream, m_deviceAdapter->getVisibleBlocks());
 }
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
