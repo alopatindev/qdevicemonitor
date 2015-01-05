@@ -6,41 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>752</width>
-    <height>451</height>
+    <width>1423</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="spacing">
-      <number>6</number>
-     </property>
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMinimumSize</enum>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Filter</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="filterLineEdit">
-       <property name="toolTip">
-        <string>Search for messages. Accepts regexes and wildcards. Prefix with pid:, tid:, tag: or text: to limit scope.</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item>
     <widget class="QTextEdit" name="textEdit">
      <property name="html">
@@ -56,62 +29,32 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QGridLayout" name="gridLayout">
      <property name="sizeConstraint">
       <enum>QLayout::SetMinAndMaxSize</enum>
      </property>
-     <item>
+     <item row="1" column="0">
       <widget class="QPushButton" name="clearLogPushButton">
        <property name="text">
         <string>Clear Log</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="openLogFileButton">
-       <property name="text">
-        <string>Open Log File</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="wrapCheckBox">
-       <property name="text">
-        <string>Wrap Lines</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
+     <item row="1" column="3">
       <widget class="QCheckBox" name="scrollLockCheckBox">
        <property name="text">
         <string>Scroll Lock</string>
        </property>
       </widget>
      </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="verbosityLabel">
+     <item row="1" column="1">
+      <widget class="QPushButton" name="openLogFileButton">
        <property name="text">
-        <string>verbosity</string>
+        <string>Open Log File</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="6">
       <widget class="QSlider" name="verbositySlider">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -136,10 +79,66 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
+     <item row="1" column="5">
+      <widget class="QLabel" name="verbosityLabel">
+       <property name="text">
+        <string>verbosity</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="2">
+      <widget class="QCheckBox" name="wrapCheckBox">
+       <property name="text">
+        <string>Wrap Lines</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Filter</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" colspan="6">
+      <widget class="QLineEdit" name="filterLineEdit">
+       <property name="toolTip">
+        <string>Search for messages. Accepts regexes and wildcards. Prefix with pid:, tid:, tag: or text: to limit scope.</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>filterLineEdit</tabstop>
+  <tabstop>clearLogPushButton</tabstop>
+  <tabstop>openLogFileButton</tabstop>
+  <tabstop>wrapCheckBox</tabstop>
+  <tabstop>scrollLockCheckBox</tabstop>
+  <tabstop>verbositySlider</tabstop>
+  <tabstop>textEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
