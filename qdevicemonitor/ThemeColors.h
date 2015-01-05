@@ -62,13 +62,13 @@ namespace ThemeColors
             Qt::red,
             Qt::yellow,
             Qt::green,
-            Qt::blue,
+            Qt::lightGray,
             Qt::white,
 
-            Qt::white,
+            Qt::lightGray,
+            Qt::green,
             Qt::blue,
-            Qt::darkBlue,
-            Qt::green
+            Qt::yellow
         },
     };
 }
