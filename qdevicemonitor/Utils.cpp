@@ -98,6 +98,24 @@ int Utils::verbosityCharacterToInt(char character)
     }
 }
 
+bool Utils::columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound)
+{
+    if (filter.startsWith(column))
+    {
+        columnFound = true;
+        QString value = filter.mid(column.length());
+        if (value.isEmpty())
+        {
+            filtersValid = false;
+        }
+        else if (!originalValue.contains(value))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool Utils::columnTextMatches(const QString& filter, const QString& text)
 {
     static QString f[3];

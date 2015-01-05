@@ -178,14 +178,18 @@ void IOSDevice::update()
     }
 }
 
-
 void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QString& text) const
 {
-    (void)filtersValid;
-
     for (auto& filter : filters)
     {
-        if (!text.contains(filter) && !Utils::columnTextMatches(filter, text))
+        bool columnFound = false;
+        if (!Utils::columnMatches("text:", filter, text, filtersValid, columnFound))
+        {
+            filtersMatch = false;
+            break;
+        }
+
+        if (!columnFound && !Utils::columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;

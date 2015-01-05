@@ -101,11 +101,16 @@ void TextFileDevice::update()
 
 void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QString& text) const
 {
-    (void)filtersValid;
-
     for (auto& filter : filters)
     {
-        if (!text.contains(filter) && !Utils::columnTextMatches(filter, text))
+        bool columnFound = false;
+        if (!Utils::columnMatches("text:", filter, text, filtersValid, columnFound))
+        {
+            filtersMatch = false;
+            break;
+        }
+
+        if (!columnFound && !Utils::columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;
@@ -129,7 +134,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         const QString text = line.mid(rx.pos(2) + rx.cap(2).length() + 1);
 
         /*qDebug() << "prefix" << prefix;
-        qDebug() << "deviceName" << deviceName;
+        qDebug() << "hostname" << hostname;
         qDebug() << "text" << text;*/
 
         bool filtersMatch = true;

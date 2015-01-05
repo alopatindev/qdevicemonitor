@@ -230,24 +230,6 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
-bool AndroidDevice::columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound) const
-{
-    if (filter.startsWith(column))
-    {
-        columnFound = true;
-        QString value = filter.mid(column.length());
-        if (value.isEmpty())
-        {
-            filtersValid = false;
-        }
-        else if (!originalValue.startsWith(value))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QString& pid, const QString& tid, const QString& tag, const QString& text) const
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
@@ -260,10 +242,10 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
     for (auto& filter : filters)
     {
         bool columnFound = false;
-        if (!columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
-            !columnMatches("tid:", filter, tid, filtersValid, columnFound) ||
-            !columnMatches("tag:", filter, tag, filtersValid, columnFound) ||
-            !columnMatches("text:", filter, text, filtersValid, columnFound))
+        if (!Utils::columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
+            !Utils::columnMatches("tid:", filter, tid, filtersValid, columnFound) ||
+            !Utils::columnMatches("tag:", filter, tag, filtersValid, columnFound) ||
+            !Utils::columnMatches("text:", filter, text, filtersValid, columnFound))
         {
             filtersMatch = false;
             break;
