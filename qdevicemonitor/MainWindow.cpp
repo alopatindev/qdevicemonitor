@@ -21,7 +21,9 @@
 #include "Utils.h"
 
 #include <cstdlib>
+#include <QApplication>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -118,6 +120,17 @@ void MainWindow::loadSettings()
     if (geom.isValid())
     {
         setGeometry(geom.toRect());
+    }
+    else
+    {
+        QRect geom = QApplication::desktop()->screenGeometry();
+        int screenWidth = geom.width();
+        int screenHeight = geom.height();
+        geom.setWidth(int(screenWidth * 0.7f));
+        geom.setHeight(int(screenHeight * 0.7f));
+        geom.moveLeft(int(screenWidth * 0.5f - geom.width() * 0.5f));
+        geom.moveTop(int(screenHeight * 0.5f - geom.height() * 0.5f));
+        setGeometry(geom);
     }
 
     QVariant lastLogDirectory = s.value("lastLogDirectory");
