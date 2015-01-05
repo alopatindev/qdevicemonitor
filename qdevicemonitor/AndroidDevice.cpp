@@ -285,7 +285,7 @@ void AndroidDevice::reloadTextEdit()
     }
 
     qDebug() << "reloadTextEdit";
-    m_deviceWidget->getTextEdit().clear();
+    m_deviceWidget->clearTextEdit();
 
     Utils::seekToLastVisibleLines(m_deviceLogFile, *m_deviceLogFileStream, m_deviceAdapter->getVisibleBlocks());
 }

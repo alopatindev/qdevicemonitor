@@ -130,7 +130,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
 void TextFileDevice::reloadTextEdit()
 {
     qDebug() << "reloadTextEdit";
-    m_deviceWidget->getTextEdit().clear();
+    m_deviceWidget->clearTextEdit();
     stopLogger();
     startLogger();
 }

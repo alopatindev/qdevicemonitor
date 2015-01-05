@@ -35,13 +35,7 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
     m_textStream.setCodec("UTF-8");
     m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
-    if (m_deviceAdapter->isDarkTheme())
-    {
-        QPalette pal;
-        pal.setColor(QPalette::Text, Qt::white);
-        pal.setColor(QPalette::Base, Qt::black);
-        ui->textEdit->setPalette(pal);
-    }
+    clearTextEdit();
 
     //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     //ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
@@ -118,6 +112,24 @@ void DeviceWidget::addText(const QColor& color, const QString& text)
             .arg(color.name())
             .arg(text);
     }
+}
+
+void DeviceWidget::clearTextEdit()
+{
+    static QPalette defaultPal = ui->textEdit->palette();
+    QPalette pal;
+    if (m_deviceAdapter->isDarkTheme())
+    {
+        pal.setColor(QPalette::Text, Qt::white);
+        pal.setColor(QPalette::Base, Qt::black);
+    }
+    else
+    {
+        pal = defaultPal;
+    }
+    ui->textEdit->setPalette(pal);
+
+    getTextEdit().clear();
 }
 
 void DeviceWidget::scrollTextEditToEnd()
