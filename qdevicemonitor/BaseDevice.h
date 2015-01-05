@@ -74,6 +74,7 @@ public slots:
 
 private slots:
     void addFilterAsCompletion();
+    void onTextEditReturnPressed();
 
 protected:
     QString m_id;
