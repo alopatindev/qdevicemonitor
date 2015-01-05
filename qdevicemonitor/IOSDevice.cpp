@@ -35,6 +35,7 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType 
     , m_didReadDeviceModel(false)
 {
     qDebug() << "IOSDevice::IOSDevice";
+    m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts regexes and wildcards. Prefix with text: to limit scope."));
     m_deviceWidget->hideVerbosity();
 
     updateDeviceModel();

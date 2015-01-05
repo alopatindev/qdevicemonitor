@@ -33,6 +33,7 @@ TextFileDevice::TextFileDevice(QPointer<QTabWidget> parent, const QString& id, D
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
 {
     qDebug() << "TextFileDevice::TextFileDevice";
+    m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts regexes and wildcards. Prefix with text: to limit scope."));
     m_deviceWidget->hideVerbosity();
     m_deviceWidget->onLogFileNameChanged(id);
 
