@@ -11,6 +11,11 @@ function download_and_unpack {
     TARBALL="${PACKNAME}-${VERSION}.tar.gz"
     wget -c -v --tries=10 --timeout=30 "https://github.com/libimobiledevice/${PACKNAME}/archive/${VERSION}.tar.gz" -O "${TARBALL}"
     tar xzvf "${TARBALL}"
+
+    if [ ${PACKNAME} = 'libimobiledevice' ]; then
+        exec 0</dev/null
+        patch -d "${1}/src" < lockdown-workaround.patch
+    fi
 }
 
 function build_and_install {

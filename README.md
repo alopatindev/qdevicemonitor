@@ -65,11 +65,6 @@ If so—try **udevadm control --reload** or run usbmuxd manually.
 Make sure you've installed [iTunes](https://www.apple.com/itunes/download/)
 and checked that it runs and understands your device.
 
-Known Issues
-------------
-iOS functionality is not available on Windows due to
-[libimobiledevice issue](https://github.com/libimobiledevice/libimobiledevice/issues/166).
-
 License
 -------
 

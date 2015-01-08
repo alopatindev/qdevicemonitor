@@ -1,0 +1,20 @@
+--- lockdown.c_orig	2015-01-09 01:56:00.861871767 +0300
++++ lockdown.c	2015-01-09 01:56:17.846870981 +0300
+@@ -814,14 +814,14 @@ static lockdownd_error_t lockdownd_do_pa
+ 			lockdownd_get_value(client, NULL, "WiFiAddress", &wifi_node);
+ 		} else {
+ 			/* use existing pair record */
+-			if (userpref_has_pair_record(client->udid)) {
++			//if (userpref_has_pair_record(client->udid)) {
+ 				userpref_read_pair_record(client->udid, &pair_record_plist);
+ 				if (!pair_record_plist) {
+ 					return LOCKDOWN_E_INVALID_CONF;
+ 				}
+-			} else {
++			/*} else {
+ 				return LOCKDOWN_E_INVALID_HOST_ID;
+-			}
++			}*/
+ 		}
+ 	}
+ 
