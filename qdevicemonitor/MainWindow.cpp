@@ -210,7 +210,7 @@ void MainWindow::setupEnvironment()
 
 void MainWindow::checkExternalPrograms()
 {
-    static const size_t n = 3;
+    static const size_t n = 5;
     static const char* programs[n] = {
         "adb",
         "idevice_id",
