@@ -21,11 +21,6 @@ install:
   - '%CYG_ROOT%/bin/bash -lc "cygcheck -dc cygwin && cd /tmp && ./download_and_build_libimobiledevice.sh"'
 
 build_script:
-  - cd %PROGRAMNAME%
-  - qmake "CONFIG += console"
-  - mingw32-make -j4
-  - dir release
-  - cd ..
   - mkdir "%OUTPUT_DIRECTORY%"
   - cd "%OUTPUT_DIRECTORY%"
   - mkdir "platforms"
@@ -39,8 +34,19 @@ build_script:
   - copy "%QTDIR%\bin\Qt5Gui.dll" .
   - copy "%QTDIR%\bin\Qt5Widgets.dll" .
   - copy "%QTDIR%\plugins\platforms\qwindows.dll" platforms\
-  - move "..\%PROGRAMNAME%\release\%PROGRAMNAME%.exe" .
   - move "%CYG_HOMEDIR%\3rdparty" .
+  - cd ..
+  - cd %PROGRAMNAME%
+  - qmake
+  - mingw32-make -j4
+  - dir release
+  - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%.exe"
+  - rmdir /S /Q release
+  - mingw32-make clean
+  - qmake "CONFIG += console"
+  - mingw32-make -j4
+  - dir release
+  - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"
   - cd ..
   - 7z a -mx=9 "%OUTPUT_FILENAME%" "%OUTPUT_DIRECTORY%"
 
