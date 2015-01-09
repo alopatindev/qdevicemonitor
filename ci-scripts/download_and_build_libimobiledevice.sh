@@ -14,6 +14,7 @@ function download_and_unpack {
 
     if [ ${PACKNAME} = 'libimobiledevice' ]; then
         exec 0</dev/null
+        ls -l
         patch -d "${1}/src" < lockdown-workaround.patch
         patch -d "${1}/tools" < idevicesyslog-autoflush.patch
     fi
