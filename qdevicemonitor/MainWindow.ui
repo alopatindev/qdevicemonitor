@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>QDeviceMonitor</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icons/app_icon.png</normaloff>icons/app_icon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
