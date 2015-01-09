@@ -214,7 +214,9 @@ void MainWindow::checkExternalPrograms()
     static const char* programs[n] = {
         "adb",
         "idevice_id",
+        "ideviceinfo",
         "idevicesyslog"
+        "tail",
     };
 
 #if defined(Q_OS_UNIX)

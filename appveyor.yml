@@ -22,7 +22,7 @@ install:
 
 build_script:
   - cd %PROGRAMNAME%
-  - qmake
+  - qmake "CONFIG += console"
   - mingw32-make -j4
   - dir release
   - cd ..

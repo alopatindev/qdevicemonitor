@@ -88,7 +88,6 @@ void IOSDevice::startLogger()
     QStringList args;
     args.append("-u");
     args.append(m_id);
-    args.append("-d");
     m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
     m_deviceLogProcess.start("idevicesyslog", args);
 }
