@@ -215,7 +215,7 @@ void MainWindow::checkExternalPrograms()
         "adb",
         "idevice_id",
         "ideviceinfo",
-        "idevicesyslog"
+        "idevicesyslog",
         "tail",
     };
 
