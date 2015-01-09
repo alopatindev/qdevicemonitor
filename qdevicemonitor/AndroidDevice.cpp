@@ -73,7 +73,7 @@ void AndroidDevice::startLogger()
             .arg(getPlatformStringStatic())
             .arg(Utils::removeSpecialCharacters(m_humanReadableName))
     );
-    m_currentLogFileName = QFileInfo(currentLogAbsFileName).fileName();
+    m_currentLogFileName = currentLogAbsFileName;
     m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
     m_deviceLogFile.setFileName(currentLogAbsFileName);

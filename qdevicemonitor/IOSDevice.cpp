@@ -77,7 +77,7 @@ void IOSDevice::startLogger()
             .arg(getPlatformStringStatic())
             .arg(Utils::removeSpecialCharacters(m_humanReadableName))
     );
-    m_currentLogFileName = QFileInfo(currentLogAbsFileName).fileName();
+    m_currentLogFileName = currentLogAbsFileName;
     m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
     m_deviceLogFile.setFileName(currentLogAbsFileName);
@@ -97,7 +97,6 @@ void IOSDevice::stopLogger()
     qDebug() << "IOSDevice::stopLogger";
 
     m_deviceLogProcess.close();
-    //m_deviceLogFileStream->flush();
     m_deviceLogFileStream.clear();
     m_deviceLogFile.close();
 }
