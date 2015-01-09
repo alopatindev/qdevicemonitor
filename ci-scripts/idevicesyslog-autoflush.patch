@@ -1,0 +1,11 @@
+--- idevicesyslog.c_orig	2015-01-09 23:41:44.013388904 +0300
++++ idevicesyslog.c	2015-01-09 23:41:56.675388318 +0300
+@@ -46,6 +46,8 @@ static syslog_relay_client_t syslog = NU
+ static void syslog_callback(char c, void *user_data)
+ {
+ 	putchar(c);
++	if (c == '\n')
++		fflush(stdout);
+ }
+ 
+ static int start_logging()
