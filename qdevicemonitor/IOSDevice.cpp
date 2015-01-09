@@ -207,7 +207,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
     static QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
     rx.setMinimal(true);
 
-    qDebug() << "filterAndAddToTextEdit:" << line;
+    //qDebug() << "filterAndAddToTextEdit:" << line;
 
     int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
