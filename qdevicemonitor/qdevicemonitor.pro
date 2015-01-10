@@ -43,5 +43,11 @@ FORMS    += MainWindow.ui \
 
 QMAKE_CXXFLAGS += -std=c++0x -Werror
 
-win32:QMAKE_CXXFLAGS += -std=gnu++0x
-win32:RC_FILE = winicon.rc
+win32 {
+    QMAKE_CXXFLAGS += -std=gnu++0x
+    RC_FILE = winicon.rc
+}
+
+macx {
+    ICON = icons/app_icon.icns
+}
