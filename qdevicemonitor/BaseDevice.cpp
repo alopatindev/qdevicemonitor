@@ -39,6 +39,8 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
 
+    updateLogBufferSpace();
+
     m_deviceWidget = new DeviceWidget(static_cast<QTabWidget*>(m_tabWidget), m_deviceAdapter);
     m_deviceWidget->getFilterLineEdit().setCompleter(&m_deviceAdapter->getFilterCompleter());
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget, humanReadableName);
@@ -117,7 +119,7 @@ void BaseDevice::onTextEditReturnPressed()
 
 void BaseDevice::addToLogBuffer(const QString& text)
 {
-    if (m_logBuffer.size() >= m_deviceAdapter->getVisibleBlocks())
+    if (m_logBuffer.size() >= m_deviceAdapter->getVisibleLines())
     {
         m_logBuffer.removeFirst();
     }
@@ -126,14 +128,14 @@ void BaseDevice::addToLogBuffer(const QString& text)
 
 void BaseDevice::updateLogBufferSpace()
 {
-    qDebug() << "updateLogBufferSpace" << m_deviceAdapter->getVisibleBlocks();
-    int extraLines = m_logBuffer.size() - m_deviceAdapter->getVisibleBlocks();
+    qDebug() << "updateLogBufferSpace" << m_deviceAdapter->getVisibleLines();
+    int extraLines = m_logBuffer.size() - m_deviceAdapter->getVisibleLines();
     if (extraLines > 0)
     {
         qDebug() << "removing" << extraLines << "extra lines from log buffer";
         m_logBuffer.erase(m_logBuffer.begin(), m_logBuffer.begin() + extraLines);
     }
-    m_logBuffer.reserve(m_deviceAdapter->getVisibleBlocks());
+    m_logBuffer.reserve(m_deviceAdapter->getVisibleLines());
 }
 
 void BaseDevice::filterAndAddFromLogBufferToTextEdit()

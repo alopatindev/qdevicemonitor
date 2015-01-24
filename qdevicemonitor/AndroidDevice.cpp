@@ -36,7 +36,6 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     , m_didReadDeviceModel(false)
 {
     qDebug() << "AndroidDevice::AndroidDevice";
-    updateLogBufferSpace();
     updateDeviceModel();
 }
 
@@ -163,7 +162,7 @@ void AndroidDevice::update()
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
                     stream << m_deviceLogProcess.readLine();
-                    QString line = stream.readLine();
+                    const QString line = stream.readLine();
                     *m_deviceLogFileStream << line << "\n";
                     addToLogBuffer(line);
                     filterAndAddToTextEdit(line);

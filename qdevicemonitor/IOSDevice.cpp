@@ -38,7 +38,6 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType 
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts regexes and wildcards. Prefix with text: to limit scope."));
     m_deviceWidget->hideVerbosity();
 
-    updateLogBufferSpace();
     updateDeviceModel();
     connect(&m_deviceInfoProcess, &QProcess::readyReadStandardError, this, &IOSDevice::readStandardError);
 }
@@ -158,7 +157,7 @@ void IOSDevice::update()
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
                     stream << m_deviceLogProcess.readLine();
-                    QString line = stream.readLine();
+                    const QString line = stream.readLine();
                     *m_deviceLogFileStream << line << "\n";
                     addToLogBuffer(line);
                     filterAndAddToTextEdit(line);

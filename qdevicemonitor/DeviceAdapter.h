@@ -70,7 +70,7 @@ public:
     inline int getFontSize() const { return m_fontSize; }
     inline bool isFontBold() const { return m_fontBold; }
     inline int getAutoRemoveFilesHours() const { return m_autoRemoveFilesHours; }
-    inline int getVisibleBlocks() const { return m_visibleBlocks; }
+    inline int getVisibleLines() const { return m_visibleBlocks; }
     inline const QString& getTextEditorPath() const { return m_textEditorPath; }
 
     inline QCompleter& getFilterCompleter() { return m_filterCompleter; }

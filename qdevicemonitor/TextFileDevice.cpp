@@ -53,8 +53,7 @@ void TextFileDevice::startLogger()
     QStringList args;
     args.append("-F");
     args.append("-n");
-    const int n = m_filters.count() > 0 ? 3 : 1;  // FIXME
-    args.append(QString("%1").arg(m_deviceAdapter->getVisibleBlocks() * n));
+    args.append(QString("%1").arg(m_deviceAdapter->getVisibleLines()));
     args.append(m_id);
     m_tailProcess.start("tail", args);
 }
@@ -90,7 +89,9 @@ void TextFileDevice::update()
             for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
             {
                 stream << m_tailProcess.readLine();
-                filterAndAddToTextEdit(stream.readLine());
+                const QString line = stream.readLine();
+                addToLogBuffer(line);
+                filterAndAddToTextEdit(line);
             }
         }
     case QProcess::NotRunning:
@@ -165,8 +166,9 @@ void TextFileDevice::reloadTextEdit()
 {
     qDebug() << "reloadTextEdit";
     m_deviceWidget->clearTextEdit();
-    stopLogger();
-    startLogger();
+
+    updateLogBufferSpace();
+    filterAndAddFromLogBufferToTextEdit();
 }
 
 void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
