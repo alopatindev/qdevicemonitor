@@ -17,6 +17,10 @@ Key Features
     4. Automatic filter history that is used as autocomplete
 4. Backing up to text files automatically. Automatic old files removal
 5. Log color highlighting (two color schemes)
+6. Shortcuts
+    1. Alt+C — clear log
+    2. Ctrl+M — add a mark to log
+    3. Ctrl+E — open in external text editor
 
 ![Main Window](screenshots/mainwindow-osx.png)
 

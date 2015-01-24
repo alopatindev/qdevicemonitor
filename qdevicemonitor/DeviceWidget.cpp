@@ -180,3 +180,13 @@ void DeviceWidget::markLog()
 {
     ui->markLogButton->click();
 }
+
+void DeviceWidget::clearLog()
+{
+    ui->clearLogButton->click();
+}
+
+void DeviceWidget::openLogFile()
+{
+    ui->openLogFileButton->click();
+}

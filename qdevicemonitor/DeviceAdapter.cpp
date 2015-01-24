@@ -316,3 +316,19 @@ void DeviceAdapter::markLog()
     QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
     deviceWidget->markLog();
 }
+
+void DeviceAdapter::clearLog()
+{
+    qDebug() << "clearLog";
+    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
+    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
+    deviceWidget->clearLog();
+}
+
+void DeviceAdapter::openLogFile()
+{
+    qDebug() << "openLogFile";
+    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
+    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
+    deviceWidget->openLogFile();
+}

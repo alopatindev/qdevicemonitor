@@ -55,6 +55,8 @@ public:
     void onLogFileNameChanged(const QString& logFileName);
     void focusFilterInput();
     void markLog();
+    void clearLog();
+    void openLogFile();
 
 signals:
 

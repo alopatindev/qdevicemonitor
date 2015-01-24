@@ -120,7 +120,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
             m_deviceAdapter.focusFilterInput();
             break;
         case Qt::Key_E:
-            //TODO: ui->openLogFilePushButton->click();
+            m_deviceAdapter.openLogFile();
             break;
         case Qt::Key_M:
             m_deviceAdapter.markLog();
@@ -132,7 +132,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
         switch (event->key())
         {
         case Qt::Key_C:
-            //TODO: ui->clearLogPushButton->click();
+            m_deviceAdapter.clearLog();
             break;
         }
     }

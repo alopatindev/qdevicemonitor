@@ -60,6 +60,8 @@ public:
     void removeDeviceByTabIndex(int index);
     void focusFilterInput();
     void markLog();
+    void clearLog();
+    void openLogFile();
 
     void start();
     void stop();
