@@ -16,7 +16,6 @@
 */
 
 #include "BaseDevice.h"
-#include "ThemeColors.h"
 
 #include <QDebug>
 #include <QIcon>

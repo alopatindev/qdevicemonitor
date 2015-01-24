@@ -128,11 +128,15 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
         default:
             break;
         }
-    } else if (event->modifiers() & Qt::AltModifier) {
+    }
+    else if (event->modifiers() & Qt::AltModifier)
+    {
         switch (event->key())
         {
         case Qt::Key_C:
             m_deviceAdapter.clearLog();
+            break;
+        default:
             break;
         }
     }
