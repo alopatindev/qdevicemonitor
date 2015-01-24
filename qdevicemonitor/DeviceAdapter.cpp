@@ -308,3 +308,11 @@ void DeviceAdapter::focusFilterInput()
     QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
     deviceWidget->focusFilterInput();
 }
+
+void DeviceAdapter::markLog()
+{
+    qDebug() << "markLog";
+    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
+    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
+    deviceWidget->markLog();
+}

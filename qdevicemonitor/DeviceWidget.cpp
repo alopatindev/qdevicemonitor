@@ -17,6 +17,7 @@
 
 #include "DeviceWidget.h"
 #include "DataTypes.h"
+#include "ThemeColors.h"
 
 #include <QDebug>
 #include <QPalette>
@@ -24,6 +25,8 @@
 #include <QScrollBar>
 
 using namespace DataTypes;
+
+const char* const MARK_LINE = "========================== MARK ==========================\n";
 
 DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter)
     : QWidget(parent)
@@ -164,4 +167,16 @@ void DeviceWidget::onLogFileNameChanged(const QString& logFileName)
 void DeviceWidget::focusFilterInput()
 {
     ui->filterLineEdit->setFocus();
+}
+
+void DeviceWidget::on_markLogButton_clicked()
+{
+    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], MARK_LINE);
+    //addToLogBuffer(MARK_LINE);
+}
+
+void DeviceWidget::markLog()
+{
+    ui->markLogButton->click();
 }

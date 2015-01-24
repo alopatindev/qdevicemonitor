@@ -112,22 +112,29 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 
 void MainWindow::keyReleaseEvent(QKeyEvent* event)
 {
-    switch (event->key())
+    if (event->modifiers() & Qt::ControlModifier)
     {
-    case Qt::Key_Slash:
-        m_deviceAdapter.focusFilterInput();
-        break;
-    case Qt::Key_F:
-        if (event->modifiers() & Qt::ControlModifier)
+        switch (event->key())
         {
+        case Qt::Key_F:
             m_deviceAdapter.focusFilterInput();
+            break;
+        case Qt::Key_E:
+            //TODO: ui->openLogFilePushButton->click();
+            break;
+        case Qt::Key_M:
+            m_deviceAdapter.markLog();
+            break;
+        default:
+            break;
         }
-        break;
-    case Qt::Key_M:
-        qDebug() << "mark";  // TODO
-        break;
-    default:
-        break;
+    } else if (event->modifiers() & Qt::AltModifier) {
+        switch (event->key())
+        {
+        case Qt::Key_C:
+            //TODO: ui->clearLogPushButton->click();
+            break;
+        }
     }
 }
 

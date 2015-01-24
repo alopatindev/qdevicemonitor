@@ -54,6 +54,7 @@ public:
     void clearTextEdit();
     void onLogFileNameChanged(const QString& logFileName);
     void focusFilterInput();
+    void markLog();
 
 signals:
 
@@ -62,6 +63,7 @@ public slots:
     void on_wrapCheckBox_toggled(bool checked);
     void on_scrollLockCheckBox_toggled(bool checked);
     void on_openLogFileButton_clicked();
+    void on_markLogButton_clicked();
 
 private:
     void scrollTextEditToEnd();
