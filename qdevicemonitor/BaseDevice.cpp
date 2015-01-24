@@ -114,3 +114,32 @@ void BaseDevice::onTextEditReturnPressed()
     m_reloadTextEditTimer.stop();
     reloadTextEdit();
 }
+
+void BaseDevice::addToLogBuffer(const QString& text)
+{
+    if (m_logBuffer.size() >= m_deviceAdapter->getVisibleBlocks())
+    {
+        m_logBuffer.removeFirst();
+    }
+    m_logBuffer.append(text);
+}
+
+void BaseDevice::updateLogBufferSpace()
+{
+    qDebug() << "updateLogBufferSpace" << m_deviceAdapter->getVisibleBlocks();
+    int extraLines = m_logBuffer.size() - m_deviceAdapter->getVisibleBlocks();
+    if (extraLines > 0)
+    {
+        qDebug() << "removing" << extraLines << "extra lines from log buffer";
+        m_logBuffer.erase(m_logBuffer.begin(), m_logBuffer.begin() + extraLines);
+    }
+    m_logBuffer.reserve(m_deviceAdapter->getVisibleBlocks());
+}
+
+void BaseDevice::filterAndAddFromLogBufferToTextEdit()
+{
+    for (const QString& line : m_logBuffer)
+    {
+        filterAndAddToTextEdit(line);
+    }
+}

@@ -67,6 +67,10 @@ public:
 
     inline const QString& getCurrentLogFileName() const { return m_currentLogFileName; }
 
+    void addToLogBuffer(const QString& text);
+    void updateLogBufferSpace();
+    void filterAndAddFromLogBufferToTextEdit();
+
 signals:
 
 public slots:
@@ -90,6 +94,7 @@ protected:
     QString m_currentLogFileName;
     bool m_filtersValid;
     QStringList m_filters;
+    QStringList m_logBuffer;
 
 private:
     QTimer m_reloadTextEditTimer;

@@ -36,6 +36,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, Dev
     , m_didReadDeviceModel(false)
 {
     qDebug() << "AndroidDevice::AndroidDevice";
+    updateLogBufferSpace();
     updateDeviceModel();
 }
 
@@ -164,6 +165,7 @@ void AndroidDevice::update()
                     stream << m_deviceLogProcess.readLine();
                     QString line = stream.readLine();
                     *m_deviceLogFileStream << line << "\n";
+                    addToLogBuffer(line);
                     filterAndAddToTextEdit(line);
                 }
             }
@@ -269,7 +271,8 @@ void AndroidDevice::reloadTextEdit()
     qDebug() << "reloadTextEdit";
     m_deviceWidget->clearTextEdit();
 
-    Utils::seekToLastVisibleLines(m_deviceLogFile, *m_deviceLogFileStream, m_deviceAdapter->getVisibleBlocks());
+    updateLogBufferSpace();
+    filterAndAddFromLogBufferToTextEdit();
 }
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)

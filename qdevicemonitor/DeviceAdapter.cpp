@@ -196,7 +196,7 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("filterCompletions", m_filterCompletions);
 
     QStringList logFiles;
-    for (auto& device : m_devicesMap)
+    for (const auto& device : m_devicesMap)
     {
         if (device->getType() == DeviceType::TextFile)
         {

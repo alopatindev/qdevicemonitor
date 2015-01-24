@@ -38,6 +38,7 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType 
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts regexes and wildcards. Prefix with text: to limit scope."));
     m_deviceWidget->hideVerbosity();
 
+    updateLogBufferSpace();
     updateDeviceModel();
     connect(&m_deviceInfoProcess, &QProcess::readyReadStandardError, this, &IOSDevice::readStandardError);
 }
@@ -159,6 +160,7 @@ void IOSDevice::update()
                     stream << m_deviceLogProcess.readLine();
                     QString line = stream.readLine();
                     *m_deviceLogFileStream << line << "\n";
+                    addToLogBuffer(line);
                     filterAndAddToTextEdit(line);
                 }
             }
@@ -255,7 +257,8 @@ void IOSDevice::reloadTextEdit()
     qDebug() << "reloadTextEdit";
     m_deviceWidget->clearTextEdit();
 
-    Utils::seekToLastVisibleLines(m_deviceLogFile, *m_deviceLogFileStream, m_deviceAdapter->getVisibleBlocks());
+    updateLogBufferSpace();
+    filterAndAddFromLogBufferToTextEdit();
 }
 
 void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
