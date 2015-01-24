@@ -21,6 +21,7 @@
 #include "ui_MainWindow.h"
 #include "DeviceAdapter.h"
 
+#include <QKeyEvent>
 #include <QMainWindow>
 #include <QPointer>
 #include <QSharedPointer>
@@ -50,6 +51,9 @@ public slots:
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
     void on_tabWidget_tabCloseRequested(int index);
+
+protected:
+    void keyReleaseEvent(QKeyEvent* event);
 
 private:
     QSharedPointer<Ui::MainWindow> ui;

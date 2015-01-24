@@ -135,14 +135,14 @@ void AndroidDevice::update()
             if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
             {
                 m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
-                scheduleReloadTextEdit();
+                reloadTextEdit();
             }
             else if (m_lastFilter.compare(filter) != 0)
             {
                 m_filters = filter.split(" ");
                 m_filtersValid = true;
                 m_lastFilter = filter;
-                scheduleReloadTextEdit();
+                reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
             }
             else if (!m_deviceLogFileStream->atEnd())

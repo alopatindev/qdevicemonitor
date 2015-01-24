@@ -53,6 +53,7 @@ public:
     void addText(const QColor& color, const QString& text);
     void clearTextEdit();
     void onLogFileNameChanged(const QString& logFileName);
+    void focusFilterInput();
 
 signals:
 

@@ -300,3 +300,11 @@ void DeviceAdapter::removeDeviceByTabIndex(int index)
 
     Q_ASSERT_X(false, "removeDeviceByTabIndex", "tab is not found");
 }
+
+void DeviceAdapter::focusFilterInput()
+{
+    qDebug() << "focusFilterInput";
+    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
+    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
+    deviceWidget->focusFilterInput();
+}

@@ -160,3 +160,8 @@ void DeviceWidget::onLogFileNameChanged(const QString& logFileName)
 {
     m_currentLogFileName = logFileName;
 }
+
+void DeviceWidget::focusFilterInput()
+{
+    ui->filterLineEdit->setFocus();
+}

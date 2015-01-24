@@ -58,6 +58,7 @@ public:
     ~DeviceAdapter();
 
     void removeDeviceByTabIndex(int index);
+    void focusFilterInput();
 
     void start();
     void stop();

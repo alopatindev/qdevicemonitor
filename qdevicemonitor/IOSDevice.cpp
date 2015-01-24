@@ -137,7 +137,7 @@ void IOSDevice::update()
                 m_filters = filter.split(" ");
                 m_filtersValid = true;
                 m_lastFilter = filter;
-                scheduleReloadTextEdit();
+                reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
             }
             else if (!m_deviceLogFileStream->atEnd())

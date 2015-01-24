@@ -45,7 +45,6 @@ public:
     virtual void filterAndAddToTextEdit(const QString& line) = 0;
     virtual const char* getPlatformString() const = 0;
 
-    void scheduleReloadTextEdit(int timeout = 500);
     void maybeAddCompletionAfterDelay(const QString& filter);
 
     inline const QString& getHumanReadableName() const { return m_humanReadableName; }
@@ -78,7 +77,6 @@ public slots:
 
 private slots:
     void addFilterAsCompletion();
-    void onTextEditReturnPressed();
 
 protected:
     QString m_id;
@@ -97,7 +95,6 @@ protected:
     QStringList m_logBuffer;
 
 private:
-    QTimer m_reloadTextEditTimer;
     bool m_visited;
     QString m_completionToAdd;
     QTimer m_completionAddTimer;

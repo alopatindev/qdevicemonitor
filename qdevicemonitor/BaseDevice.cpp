@@ -46,10 +46,6 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceTyp
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget, humanReadableName);
     m_lastFilter = m_deviceWidget->getFilterLineEdit().text();
 
-    m_reloadTextEditTimer.setSingleShot(true);
-    connect(&m_reloadTextEditTimer, &QTimer::timeout, this, &BaseDevice::reloadTextEdit);
-    connect(&m_deviceWidget->getFilterLineEdit(), &QLineEdit::returnPressed, this, &BaseDevice::onTextEditReturnPressed);
-
     m_completionAddTimer.setSingleShot(true);
     connect(&m_completionAddTimer, &QTimer::timeout, this, &BaseDevice::addFilterAsCompletion);
 }
@@ -58,7 +54,6 @@ BaseDevice::~BaseDevice()
 {
     qDebug() << "~BaseDevice" << m_id;
 
-    disconnect(&m_reloadTextEditTimer, 0, this, 0);
     disconnect(&m_completionAddTimer, 0, this, 0);
     disconnect(&m_deviceWidget->getFilterLineEdit(), 0, this, 0);
 
@@ -91,12 +86,6 @@ void BaseDevice::setOnline(bool online)
     }
 }
 
-void BaseDevice::scheduleReloadTextEdit(int timeout)
-{
-    m_reloadTextEditTimer.stop();
-    m_reloadTextEditTimer.start(timeout);
-}
-
 void BaseDevice::maybeAddCompletionAfterDelay(const QString& filter)
 {
     qDebug() << "BaseDevice::maybeAddCompletionAfterDelay" << filter;
@@ -109,12 +98,6 @@ void BaseDevice::addFilterAsCompletion()
 {
     qDebug() << "BaseDevice::addFilterAsCompletion";
     m_deviceAdapter->addFilterAsCompletion(m_completionToAdd);
-}
-
-void BaseDevice::onTextEditReturnPressed()
-{
-    m_reloadTextEditTimer.stop();
-    reloadTextEdit();
 }
 
 void BaseDevice::addToLogBuffer(const QString& text)

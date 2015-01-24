@@ -77,7 +77,7 @@ void TextFileDevice::update()
                 m_filters = filter.split(" ");
                 m_filtersValid = true;
                 m_lastFilter = filter;
-                scheduleReloadTextEdit();
+                reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
             }
 
