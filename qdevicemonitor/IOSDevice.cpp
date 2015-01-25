@@ -89,7 +89,7 @@ void IOSDevice::startLogger()
     args.append("-u");
     args.append(m_id);
     m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
-    m_deviceLogProcess.start("idevicesyslog", args, QProcess::Unbuffered | QProcess::ReadWrite);
+    m_deviceLogProcess.start("idevicesyslog", args);
 }
 
 void IOSDevice::stopLogger()
