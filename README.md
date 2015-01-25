@@ -15,7 +15,7 @@ Key Features
     2. Prefixes **pid:, tid:, tag: or text:** (Android only)
     3. Verbosity level (Android only)
     4. Automatic filter history that is used as autocomplete
-4. Backing up to text files automatically. Automatic old files removal
+4. Backup to text files automatically. Automatic old files removal
 5. Log color highlighting (two color schemes)
 6. Shortcuts
     1. Alt+C — clear log
