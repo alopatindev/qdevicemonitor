@@ -278,9 +278,13 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
 
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
+        bool deviceListError = false;
+
         if (s_devicesListProcess.exitCode() != 0 ||
             s_devicesListProcess.exitStatus() == QProcess::ExitStatus::CrashExit)
         {
+            deviceListError = true;
+
             QString stringStream;
             QTextStream stream;
             stream.setCodec("UTF-8");
@@ -294,8 +298,16 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
                          << "; exitStatus" << s_devicesListProcess.exitStatus()
                          << "; stderr" << errorText;
             }
+            else
+            {
+#if defined(Q_OS_LINUX)
+                // TODO: if ps uax | grep usbmuxd
+                deviceListError = false;
+#endif
+            }
         }
-        else
+
+        if (!deviceListError)
         {
             for (auto& i : s_removedDeviceByTabClose)
             {
