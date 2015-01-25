@@ -292,95 +292,105 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
-        for (auto& i : s_removedDeviceByTabClose)
+        if (s_devicesListProcess.exitCode() != 0 ||
+            s_devicesListProcess.exitStatus() == QProcess::ExitStatus::CrashExit)
         {
-            i = false;  // not visited
+            qDebug() << "AndroidDevice::s_devicesListProcess exitCode" << s_devicesListProcess.exitCode()
+                     << "; exitStatus" << s_devicesListProcess.exitStatus()
+                     << "; stderr" << s_devicesListProcess.readAllStandardError();
         }
-
-        for (auto& dev : map)
+        else
         {
-            if (dev->getType() == DeviceType::Android)
+            for (auto& i : s_removedDeviceByTabClose)
             {
-                dev->setVisited(false);
+                i = false;  // not visited
             }
-        }
 
-        if (s_devicesListProcess.canReadLine())
-        {
-            QString stringStream;
-            QTextStream stream;
-            stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-            stream << s_devicesListProcess.readAll();
-
-            while (!stream.atEnd())
+            for (auto& dev : map)
             {
-                QString line = stream.readLine();
-                if (!line.contains("List of devices attached"))
+                if (dev->getType() == DeviceType::Android)
                 {
-                    QStringList lineSplit = line.split("\t");
-                    if (lineSplit.count() >= 2)
+                    dev->setVisited(false);
+                }
+            }
+
+            if (s_devicesListProcess.canReadLine())
+            {
+                QString stringStream;
+                QTextStream stream;
+                stream.setCodec("UTF-8");
+                stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
+                stream << s_devicesListProcess.readAll();
+
+                while (!stream.atEnd())
+                {
+                    QString line = stream.readLine();
+                    if (!line.contains("List of devices attached"))
                     {
-                        QString deviceId = lineSplit[0];
-                        QString deviceStatus = lineSplit[1];
-                        //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
-                        if (s_removedDeviceByTabClose.contains(deviceId))
+                        QStringList lineSplit = line.split("\t");
+                        if (lineSplit.count() >= 2)
                         {
-                            s_removedDeviceByTabClose[deviceId] = true;  // visited
-                        }
-                        else
-                        {
-                            auto it = map.find(deviceId);
-                            if (it == map.end())
+                            QString deviceId = lineSplit[0];
+                            QString deviceStatus = lineSplit[1];
+                            //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
+                            if (s_removedDeviceByTabClose.contains(deviceId))
                             {
-                                map[deviceId] = QSharedPointer<BaseDevice>(
-                                    new AndroidDevice(
-                                        parent,
-                                        deviceId,
-                                        DeviceType::Android,
-                                        QString(getPlatformStringStatic()),
-                                        tr("Initializing..."),
-                                        deviceAdapter
-                                    )
-                                );
-                            }
-                            else if ((*it)->getType() != DeviceType::Android)
-                            {
-                                qDebug() << "id collision";
+                                s_removedDeviceByTabClose[deviceId] = true;  // visited
                             }
                             else
                             {
-                                updateDeviceStatus(deviceStatus, *(*it), deviceId);
+                                auto it = map.find(deviceId);
+                                if (it == map.end())
+                                {
+                                    map[deviceId] = QSharedPointer<BaseDevice>(
+                                        new AndroidDevice(
+                                            parent,
+                                            deviceId,
+                                            DeviceType::Android,
+                                            QString(getPlatformStringStatic()),
+                                            tr("Initializing..."),
+                                            deviceAdapter
+                                        )
+                                    );
+                                }
+                                else if ((*it)->getType() != DeviceType::Android)
+                                {
+                                    qDebug() << "id collision";
+                                }
+                                else
+                                {
+                                    updateDeviceStatus(deviceStatus, *(*it), deviceId);
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        for (auto& dev : map)
-        {
-            if (dev->getType() == DeviceType::Android)
+            for (auto& dev : map)
             {
-                if (!dev->isVisited())
+                if (dev->getType() == DeviceType::Android)
                 {
-                    if (!s_removedDeviceByTabClose.contains(dev->getId()))
+                    if (!dev->isVisited())
                     {
-                        updateDeviceStatus("", *dev, dev->getId());
+                        if (!s_removedDeviceByTabClose.contains(dev->getId()))
+                        {
+                            updateDeviceStatus("", *dev, dev->getId());
+                        }
                     }
                 }
             }
-        }
 
-        for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
-        {
-            if (it.value() == false)  // became offline
+            for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
             {
-                it = s_removedDeviceByTabClose.erase(it);
-            }
-            else
-            {
-                ++it;
+                if (it.value() == false)  // became offline
+                {
+                    it = s_removedDeviceByTabClose.erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
             }
         }
 

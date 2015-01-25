@@ -89,7 +89,7 @@ void IOSDevice::startLogger()
     args.append("-u");
     args.append(m_id);
     m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
-    m_deviceLogProcess.start("idevicesyslog", args);
+    m_deviceLogProcess.start("idevicesyslog", args, QProcess::Unbuffered | QProcess::ReadWrite);
 }
 
 void IOSDevice::stopLogger()
@@ -278,86 +278,106 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
 
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
-        for (auto& i : s_removedDeviceByTabClose)
-        {
-            i = false;  // not visited
-        }
-
-        for (auto& dev : map)
-        {
-            if (dev->getType() == DeviceType::IOS)
-            {
-                dev->setVisited(false);
-            }
-        }
-
-        if (s_devicesListProcess.canReadLine())
+        if (s_devicesListProcess.exitCode() != 0 ||
+            s_devicesListProcess.exitStatus() == QProcess::ExitStatus::CrashExit)
         {
             QString stringStream;
             QTextStream stream;
             stream.setCodec("UTF-8");
             stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-            stream << s_devicesListProcess.readAll();
+            stream << s_devicesListProcess.readAllStandardError();
+            const QString errorText = stream.readLine();
 
-            while (!stream.atEnd())
+            if (s_devicesListProcess.exitCode() != 0xFF || errorText != "ERROR: Unable to retrieve device list!")
             {
-                QString deviceId = stream.readLine();
-                //qDebug() << "deviceId" << deviceId;
-                if (s_removedDeviceByTabClose.contains(deviceId))
+                qDebug() << "IOSDevice::s_devicesListProcess exitCode" << s_devicesListProcess.exitCode()
+                         << "; exitStatus" << s_devicesListProcess.exitStatus()
+                         << "; stderr" << errorText;
+            }
+        }
+        else
+        {
+            for (auto& i : s_removedDeviceByTabClose)
+            {
+                i = false;  // not visited
+            }
+
+            for (auto& dev : map)
+            {
+                if (dev->getType() == DeviceType::IOS)
                 {
-                    s_removedDeviceByTabClose[deviceId] = true;  // visited
+                    dev->setVisited(false);
                 }
-                else
+            }
+
+            if (s_devicesListProcess.canReadLine())
+            {
+                QString stringStream;
+                QTextStream stream;
+                stream.setCodec("UTF-8");
+                stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
+                stream << s_devicesListProcess.readAll();
+
+                while (!stream.atEnd())
                 {
-                    auto it = map.find(deviceId);
-                    if (it == map.end())
+                    const QString deviceId = stream.readLine();
+                    //qDebug() << "deviceId" << deviceId;
+                    if (s_removedDeviceByTabClose.contains(deviceId))
                     {
-                        map[deviceId] = QSharedPointer<BaseDevice>(
-                            new IOSDevice(
-                                parent,
-                                deviceId,
-                                DeviceType::IOS,
-                                QString(getPlatformStringStatic()),
-                                tr("Initializing..."),
-                                deviceAdapter
-                            )
-                        );
-                    }
-                    else if ((*it)->getType() != DeviceType::IOS)
-                    {
-                        qDebug() << "id collision";
+                        s_removedDeviceByTabClose[deviceId] = true;  // visited
                     }
                     else
                     {
-                        updateDeviceStatus("device", *(*it), deviceId);
+                        auto it = map.find(deviceId);
+                        if (it == map.end())
+                        {
+                            map[deviceId] = QSharedPointer<BaseDevice>(
+                                new IOSDevice(
+                                    parent,
+                                    deviceId,
+                                    DeviceType::IOS,
+                                    QString(getPlatformStringStatic()),
+                                    tr("Initializing..."),
+                                    deviceAdapter
+                                )
+                            );
+                        }
+                        else if ((*it)->getType() != DeviceType::IOS)
+                        {
+                            qDebug() << "id collision";
+                        }
+                        else
+                        {
+                            updateDeviceStatus("device", *(*it), deviceId);
+                        }
                     }
                 }
             }
-        }
 
-        for (auto& dev : map)
-        {
-            if (dev->getType() == DeviceType::IOS)
+            for (auto& dev : map)
             {
-                if (!dev->isVisited())
+                if (dev->getType() == DeviceType::IOS)
                 {
-                    if (!s_removedDeviceByTabClose.contains(dev->getId()))
+                    if (!dev->isVisited())
                     {
-                        updateDeviceStatus("", *dev, dev->getId());
+                        if (!s_removedDeviceByTabClose.contains(dev->getId()))
+                        {
+                            updateDeviceStatus("", *dev, dev->getId());
+                        }
                     }
                 }
             }
-        }
 
-        for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
-        {
-            if (it.value() == false)  // became offline
+            for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
             {
-                it = s_removedDeviceByTabClose.erase(it);
-            }
-            else
-            {
-                ++it;
+                if (it.value() == false)  // became offline
+                {
+                    it = s_removedDeviceByTabClose.erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
             }
         }
 
