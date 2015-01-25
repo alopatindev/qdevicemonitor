@@ -72,7 +72,7 @@ void TextFileDevice::update()
     case QProcess::Running:
         {
             const QString filter = m_deviceWidget->getFilterLineEdit().text();
-            if (m_lastFilter.compare(filter) != 0)
+            if (m_lastFilter != filter)
             {
                 m_filters = filter.split(" ");
                 m_filtersValid = true;

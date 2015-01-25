@@ -137,7 +137,7 @@ void AndroidDevice::update()
                 m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
                 reloadTextEdit();
             }
-            else if (m_lastFilter.compare(filter) != 0)
+            else if (m_lastFilter != filter)
             {
                 m_filters = filter.split(" ");
                 m_filtersValid = true;
