@@ -37,11 +37,17 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     , m_darkTheme(false)
     , m_autoRemoveFilesHours(48)
 {
+    qDebug() << "DeviceAdapter";
     m_filterCompleter.setModel(&m_filterCompleterModel);
+
+    connect(&m_filesRemovalTimer, &QTimer::timeout, this, &DeviceAdapter::removeOldLogFiles);
+    m_filesRemovalTimer.start(LOG_REMOVAL_FREQUENCY);
 }
 
 DeviceAdapter::~DeviceAdapter()
 {
+    qDebug() << "~DeviceAdapter";
+    disconnect(&m_filesRemovalTimer, 0, this, 0);
 }
 
 void DeviceAdapter::start()

@@ -36,6 +36,7 @@ class DeviceAdapter : public QObject
 private:
     DataTypes::DevicesMap m_devicesMap;
     QTimer m_updateTimer;
+    QTimer m_filesRemovalTimer;
 
     int m_visibleBlocks;
     QString m_font;
@@ -50,6 +51,7 @@ private:
 
 public:
     static const int UPDATE_FREQUENCY = 20;
+    static const int LOG_REMOVAL_FREQUENCY = 30 * 60 * 1000;
     static const int MAX_FILTER_COMPLETIONS = 60;
     static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
     static const int MAX_LINES_UPDATE = 30;
@@ -84,10 +86,10 @@ signals:
 
 public slots:
     void update();
+    void removeOldLogFiles();
 
 private:
     void updateDevicesMap();
-    void removeOldLogFiles();
 };
 
 #endif // DEVICEADAPTER_H
