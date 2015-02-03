@@ -24,7 +24,7 @@ function build_and_install {
     cd "$1"
     exec 0</dev/null
     NOCONFIGURE=1 ./autogen.sh
-    ./configure --prefix "$(pwd)/../${THIRD_PARTY_DIR}"
+    ./configure --prefix "$(pwd)/../${THIRD_PARTY_DIR}" || cat config.log
     make -j2
     make install
     cd ..
