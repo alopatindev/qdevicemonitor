@@ -16,7 +16,6 @@ function download_and_unpack {
         exec 0</dev/null
         ls -l
         patch -d "${1}/src" < lockdown-workaround.patch
-        patch -d "${1}/tools" < idevicesyslog-autoflush.patch
     fi
 }
 
@@ -30,7 +29,7 @@ function build_and_install {
     cd ..
 }
 
-for i in libplist-1.12 libusbmuxd-1.0.10 libimobiledevice-1.1.7 ; do
+for i in libplist-1.12 libusbmuxd-1.0.10 libimobiledevice-1.2.0 ; do
     download_and_unpack "$i"
     build_and_install "$i"
 done
