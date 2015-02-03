@@ -36,7 +36,7 @@ class DeviceWidget : public QWidget
 
     QSharedPointer<Ui::DeviceWidget> ui;
     QPointer<DeviceAdapter> m_deviceAdapter;
-    QTextStream m_textStream;
+    QSharedPointer<QTextStream> m_textStream;
     QString m_stringStream;
     QString m_currentLogFileName;
 

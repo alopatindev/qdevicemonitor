@@ -35,14 +35,12 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
 {
     ui->setupUi(this);
 
-    m_textStream.setCodec("UTF-8");
-    m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
-
-    clearTextEdit();
-
     //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     //ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
+    ui->textEdit->setUndoRedoEnabled(false);
     ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleLines());
+
+    clearTextEdit();
 
     ui->verbositySlider->valueChanged(ui->verbositySlider->value());
     ui->wrapCheckBox->setCheckState(ui->wrapCheckBox->isChecked() ? Qt::Checked : Qt::Unchecked);
@@ -96,24 +94,31 @@ void DeviceWidget::maybeScrollTextEditToEnd()
 
 void DeviceWidget::addText(const QColor& color, const QString& text)
 {
-    QString out("<font style=\"font-family: %1; font-size: %2pt; font-weight: %3;\" color=\"%4\">%5</font>");
-    out = out
+    static const QString initialString("<font style=\"font-family: %1; font-size: %2pt; font-weight: %3;\" color=\"%4\">%5</font>");
+
+    const QString out = initialString
         .arg(m_deviceAdapter->getFont())
         .arg(m_deviceAdapter->getFontSize())
-        .arg(m_deviceAdapter->isFontBold() ? "bold" : "none");
+        .arg(m_deviceAdapter->isFontBold() ? "bold" : "none")
+        .arg(color.name())
+        .arg(text);
+
+    if (m_textStream.isNull())
+    {
+        m_textStream = QSharedPointer<QTextStream>(new QTextStream());
+        m_textStream->setCodec("UTF-8");
+        m_textStream->setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
+    }
+
+    *m_textStream << out;
 
     if (text.endsWith("\n"))
     {
-        m_textStream << out
-            .arg(color.name())
-            .arg(text.left(text.length() - 1));
-        ui->textEdit->append(m_textStream.readLine());
-    }
-    else
-    {
-        m_textStream << out
-            .arg(color.name())
-            .arg(text);
+        ui->textEdit->setUpdatesEnabled(false);
+        ui->textEdit->append(m_textStream->readLine());
+        ui->textEdit->setUpdatesEnabled(true);
+        m_textStream.clear();
+        m_stringStream.clear();
     }
 }
 

@@ -139,7 +139,6 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         qDebug() << "hostname" << hostname;
         qDebug() << "text" << text;*/
 
-        bool filtersMatch = true;
         checkFilters(filtersMatch, m_filtersValid, m_filters, text);
 
         if (filtersMatch)
