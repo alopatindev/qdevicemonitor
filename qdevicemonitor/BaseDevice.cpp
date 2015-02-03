@@ -83,6 +83,8 @@ void BaseDevice::setOnline(bool online)
         {
             reloadTextEdit();
         }
+
+        onOnlineChange(online);
     }
 }
 

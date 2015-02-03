@@ -55,6 +55,7 @@ public:
 
     inline bool isOnline() const { return m_online; }
     void setOnline(bool online);
+    virtual void onOnlineChange(bool online) { (void)online; }
 
     inline void setVisited(bool visited) { m_visited = visited; }
     inline bool isVisited() const { return m_visited; }

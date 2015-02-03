@@ -32,6 +32,7 @@ class AndroidDevice : public BaseDevice
 
     QProcess m_deviceInfoProcess;
     QProcess m_deviceLogProcess;
+    QProcess m_deviceClearLogProcess;
     QFile m_deviceLogFile;
     QSharedPointer<QTextStream> m_deviceLogFileStream;
     int m_lastVerbosityLevel;
@@ -49,11 +50,13 @@ public:
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
     static void removedDeviceByTabClose(const QString& id);
+    virtual void onOnlineChange(bool online);
 
 private:
     void updateDeviceModel();
     void startLogger();
     void stopLogger();
+    void maybeClearAdbLog();
 
     bool columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound) const;
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters,

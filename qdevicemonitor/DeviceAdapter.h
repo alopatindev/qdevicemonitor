@@ -43,6 +43,7 @@ private:
     int m_fontSize;
     bool m_fontBold;
     bool m_darkTheme;
+    bool m_clearAndroidLog;
     int m_autoRemoveFilesHours;
     QStandardItemModel m_filterCompleterModel;
     QCompleter m_filterCompleter;
@@ -72,6 +73,7 @@ public:
     void allDevicesReloadText();
 
     inline bool isDarkTheme() const { return m_darkTheme; }
+    inline bool getClearAndroidLog() const { return m_clearAndroidLog; }
     inline const QString& getFont() const { return m_font; }
     inline int getFontSize() const { return m_fontSize; }
     inline bool isFontBold() const { return m_fontBold; }

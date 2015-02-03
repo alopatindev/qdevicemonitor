@@ -274,6 +274,32 @@ void AndroidDevice::reloadTextEdit()
     filterAndAddFromLogBufferToTextEdit();
 }
 
+void AndroidDevice::onOnlineChange(bool online)
+{
+    if (online)
+    {
+        maybeClearAdbLog();
+    }
+}
+
+void AndroidDevice::maybeClearAdbLog()
+{
+    if (m_deviceAdapter->getClearAndroidLog() && isOnline())
+    {
+        qDebug() << "clearing adb log";
+
+        QStringList args;
+        args.append("-s");
+        args.append(m_id);
+        args.append("logcat");
+        args.append("-c");
+        m_deviceClearLogProcess.setReadChannel(QProcess::StandardOutput);
+        m_deviceClearLogProcess.start("adb", args);
+        m_deviceClearLogProcess.waitForFinished(1000);
+        m_deviceClearLogProcess.close();
+    }
+}
+
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
     auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)

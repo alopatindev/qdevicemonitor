@@ -35,6 +35,7 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     , m_fontSize(12)
     , m_fontBold(false)
     , m_darkTheme(false)
+    , m_clearAndroidLog(true)
     , m_autoRemoveFilesHours(48)
 {
     qDebug() << "DeviceAdapter";
@@ -142,6 +143,12 @@ void DeviceAdapter::loadSettings(const QSettings& s)
         m_darkTheme = darkTheme.toBool();
     }
 
+    QVariant clearAndroidLog = s.value("clearAndroidLog");
+    if (clearAndroidLog.isValid())
+    {
+        m_clearAndroidLog = clearAndroidLog.toBool();
+    }
+
     QVariant autoRemoveFilesHours = s.value("autoRemoveFilesHours");
     if (autoRemoveFilesHours.isValid())
     {
@@ -197,6 +204,7 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("fontSize", m_fontSize);
     s.setValue("fontBold", m_fontBold);
     s.setValue("darkTheme", m_darkTheme);
+    s.setValue("clearAndroidLog", m_clearAndroidLog);
     s.setValue("autoRemoveFilesHours", m_autoRemoveFilesHours);
     s.setValue("textEditorPath", m_textEditorPath);
     s.setValue("filterCompletions", m_filterCompletions);

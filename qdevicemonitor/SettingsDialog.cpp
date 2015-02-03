@@ -39,6 +39,7 @@ void SettingsDialog::loadSettings(const QSettings& s)
     ui->fontSizeSpinBox->setValue(s.value("fontSize").toInt());
     ui->fontBoldCheckBox->setChecked(s.value("fontBold").toBool());
     ui->darkThemeCheckBox->setChecked(s.value("darkTheme").toBool());
+    ui->clearAndroidLogCheckBox->setChecked(s.value("clearAndroidLog").toBool());
     ui->autoRemoveFilesOlderThanSpinBox->setValue(s.value("autoRemoveFilesHours").toInt());
     ui->editorLineEdit->setText(s.value("textEditorPath").toString());
 }
@@ -50,6 +51,7 @@ void SettingsDialog::saveSettings(QSettings& s)
     s.setValue("fontSize", ui->fontSizeSpinBox->value());
     s.setValue("fontBold", ui->fontBoldCheckBox->isChecked());
     s.setValue("darkTheme", ui->darkThemeCheckBox->isChecked());
+    s.setValue("clearAndroidLog", ui->clearAndroidLogCheckBox->isChecked());
     s.setValue("autoRemoveFilesHours", ui->autoRemoveFilesOlderThanSpinBox->value());
     s.setValue("textEditorPath", ui->editorLineEdit->text());
     s.sync();
