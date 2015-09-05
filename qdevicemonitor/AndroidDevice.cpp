@@ -20,7 +20,6 @@
 #include "ThemeColors.h"
 
 #include <QDebug>
-#include <QFileInfo>
 #include <QHash>
 #include <QRegExp>
 
@@ -164,6 +163,7 @@ void AndroidDevice::update()
                     stream << m_deviceLogProcess.readLine();
                     const QString line = stream.readLine();
                     *m_deviceLogFileStream << line << "\n";
+                    m_deviceLogFileStream->flush();
                     addToLogBuffer(line);
                     filterAndAddToTextEdit(line);
                 }
