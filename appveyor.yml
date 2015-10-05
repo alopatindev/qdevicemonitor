@@ -13,12 +13,12 @@ install:
   - dir %QTDIR%\lib
   - dir %QTDIR%\bin
   - dir %MINGW%\bin
-  - dir %CYG_ROOT%
-  - dir %CYG_ROOT%\bin
-  - dir %CYG_ROOT%\usr\bin
+  - dir %CYG_ROOT_WIN%
+  - dir %CYG_ROOT_WIN%\bin
+  - dir %CYG_ROOT_WIN%\usr\bin
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
-  - cd %CYG_ROOT%
+  - cd %CYG_ROOT_WIN%
   - del /Q %CYG_INSTALLER%
   - ps: Start-FileDownload 'http://www.cygwin.com/setup-x86.exe'
   - '%CYG_ROOT%\%CYG_INSTALLER% -qnNdO -R "%CYG_ROOT%" -s "%CYG_MIRROR%" -l "%CYG_CACHE%" -P autoconf -P automake -P bison -P libtool -P make -P python -P gettext-devel -P gettext -P intltool -P libiconv -P pkg-config -P git -P wget -P curl -P libusb1.0 -P libusb1.0-devel -P libxml2 -P libxml2-devel -P openssl-devel -P dos2unix'

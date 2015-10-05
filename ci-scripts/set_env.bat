@@ -2,6 +2,7 @@ set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
 set MINGW=C:\MinGW
 
 set CYG_ROOT=C:/cygwin
+set CYG_ROOT_WIN=C:\cygwin
 set CYG_MIRROR=http://cygwin.mirror.constant.com
 set CYG_CACHE=C:/cygwin/var/cache/setup
 set CYG_HOMEDIR=C:\cygwin\tmp
