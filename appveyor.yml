@@ -15,7 +15,6 @@ install:
   - dir %MINGW%\bin
   - dir %CYG_ROOT_WIN%
   - dir %CYG_ROOT_WIN%\bin
-  - dir %CYG_ROOT_WIN%\usr\bin
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
   - cd %CYG_ROOT_WIN%
