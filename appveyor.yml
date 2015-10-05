@@ -13,7 +13,9 @@ install:
   - dir %QTDIR%\lib
   - dir %QTDIR%\bin
   - dir %MINGW%\bin
-  - dir %MINGW%\usr\bin
+  - dir %CYG_ROOT%
+  - dir %CYG_ROOT%\bin
+  - dir %CYG_ROOT%\usr\bin
   - dir "C:\Program Files"
   - dir "C:\Program Files (x86)"
   - cd %CYG_ROOT%
