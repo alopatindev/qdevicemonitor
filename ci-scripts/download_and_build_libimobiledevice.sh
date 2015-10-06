@@ -1,14 +1,17 @@
 #!/bin/bash
 
-set -e -v
+set -e -v -x
 
 export THIRD_PARTY_DIR="3rdparty"
 export PKG_CONFIG_PATH="$(pwd)/${THIRD_PARTY_DIR}/lib/pkgconfig"
 
 function download_and_unpack {
     PACKNAME=$(echo "$1" | sed 's/-.*//')
+    echo "${PACKNAME}"
     VERSION=$(echo "$1" | sed 's/.*-//')
+    echo "${VERSION}"
     TARBALL="${PACKNAME}-${VERSION}.tar.gz"
+    echo "${TARBALL}"
     wget -c -v --tries=10 --timeout=30 "https://github.com/libimobiledevice/${PACKNAME}/archive/${VERSION}.tar.gz" -O "${TARBALL}"
     tar xzvf "${TARBALL}"
 
