@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -v
 
 export THIRD_PARTY_DIR="3rdparty"
 export PKG_CONFIG_PATH="$(pwd)/${THIRD_PARTY_DIR}/lib/pkgconfig"

@@ -22,7 +22,7 @@ install:
   - '%CYG_ROOT%\%CYG_INSTALLER% -qnNdO -R "%CYG_ROOT%" -s "%CYG_MIRROR%" -l "%CYG_CACHE%" -P autoconf -P automake -P bison -P libtool -P make -P python -P gettext-devel -P gettext -P intltool -P libiconv -P pkg-config -P git -P wget -P curl -P libusb1.0 -P libusb1.0-devel -P libxml2 -P libxml2-devel -P openssl-devel -P dos2unix'
   - copy ci-scripts\download_and_build_libimobiledevice.sh "%CYG_HOMEDIR%"
   - copy ci-scripts\*.patch "%CYG_HOMEDIR%"
-  - '%CYG_ROOT%/bin/bash -lc "cygcheck -dc cygwin && cd /tmp && ./download_and_build_libimobiledevice.sh"'
+  - '%CYG_ROOT%/bin/bash -lc "set -v ; cygcheck -dc cygwin ; cd /tmp && ./download_and_build_libimobiledevice.sh"'
 
 build_script:
   - mkdir "%OUTPUT_DIRECTORY%"
