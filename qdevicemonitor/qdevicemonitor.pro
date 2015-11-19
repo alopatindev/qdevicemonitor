@@ -43,13 +43,14 @@ FORMS    += MainWindow.ui \
 
 CONFIG += c++11
 
-QMAKE_CXXFLAGS += -std=c++11 -Werror -Wfatal-errors -stdlib=libc++
+QMAKE_CXXFLAGS += -Werror -Wfatal-errors
 
 win32 {
-    QMAKE_CXXFLAGS += -std=gnu++0x
+    # QMAKE_CXXFLAGS += -std=gnu++0x
     RC_FILE = winicon.rc
 }
 
 macx {
+    QMAKE_CXXFLAGS += -stdlib=libc++
     ICON = icons/app_icon.icns
 }

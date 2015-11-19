@@ -1,3 +1,5 @@
+sudo: false
+
 language: cpp
 compiler:
   - gcc
@@ -13,6 +15,24 @@ env:
 addons:
   ssh_known_hosts:
     - ${STORAGE_HOSTNAME}
+  apt:
+    sources:
+      - ubuntu-sdk-team
+    packages:
+      - qtbase5-dev
+      - qtdeclarative5-dev
+      - libqt5webkit5-dev
+      - libsqlite3-dev
+      - qt5-default
+      - qttools5-dev-tools
+      - fakeroot
+      - libimobiledevice-dev
+      - libimobiledevice-utils
+      - g++-5-multilib
+      - g++-multilib
+      - gcc-5-multilib
+      - gcc-multilib
+      - clang-3.6
 
 matrix:
   exclude:
@@ -26,9 +46,6 @@ before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
         cat /proc/cpuinfo;
-
-        sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa;
-        sudo apt-get update -qq;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         brew update;
         ci-scripts/fix_brew.sh;
@@ -37,16 +54,6 @@ before_install:
 
 install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev;
-        sudo apt-get install qt5-default qttools5-dev-tools;
-        sudo apt-get install fakeroot;
-        sudo apt-get install libimobiledevice-dev libimobiledevice-utils;
-        if [ $CXX = "g++" ]; then
-            sudo apt-get install -qq g++-4.8;
-        fi;
-        if [ $CXX = "clang++" ]; then
-            sudo apt-get install -qq clang-3.4;
-        fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 

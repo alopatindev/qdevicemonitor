@@ -222,7 +222,7 @@ void MainWindow::setupEnvironment()
         const char* pPath = std::getenv("PATH");
         pPath = pPath ? pPath : "";
         QString path(pPath);
-        const QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
+        QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
         for (const auto& i : thirdPartyProgramDirs)
         {
             const QString prefix(path.isEmpty() ? "" : ":");
