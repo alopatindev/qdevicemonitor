@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -e
+
+ln -sf ../../.pre-commit.sh .git/hooks/pre-commit
+
 OSX=0
 if [ "$(uname)" = Darwin ]; then
     OSX=1
