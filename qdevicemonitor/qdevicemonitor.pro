@@ -46,7 +46,7 @@ CONFIG += c++11
 QMAKE_CXXFLAGS += -Werror -Wfatal-errors
 
 win32 {
-    # QMAKE_CXXFLAGS += -std=gnu++0x
+    QMAKE_CXXFLAGS += -std=gnu++0x
     RC_FILE = winicon.rc
 }
 

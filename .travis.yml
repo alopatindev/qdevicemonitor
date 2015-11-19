@@ -1,4 +1,4 @@
-sudo: false
+# sudo: false
 
 language: cpp
 compiler:
@@ -53,7 +53,9 @@ before_install:
   - $CXX --version;
 
 install:
-  - if [ $TRAVIS_OS_NAME = osx ]; then
+  - if [ $TRAVIS_OS_NAME = linux ]; then
+        sudo apt-get install libimobiledevice-dev libimobiledevice-utils;
+    elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 
         ls -al ~;
@@ -124,7 +126,7 @@ after_success:
     elif [ $TRAVIS_OS_NAME = osx ]; then
         md5 "${OUTPUT_FILENAME}";
         shasum -a 512 "${OUTPUT_FILENAME}";
-        scp -B "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
+        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
 
 # vim: textwidth=0
