@@ -127,7 +127,7 @@ after_success:
         echo "sha512: "$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
+        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
         echo "md5: "$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
         echo "sha1: "$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
