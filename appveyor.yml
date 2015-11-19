@@ -20,6 +20,9 @@ install:
   - del /Q %CYG_ROOT_WIN%\%CYG_INSTALLER%
   - ps: Start-FileDownload 'http://www.cygwin.com/setup-x86.exe' -FileName 'C:\cygwin\setup-x86.exe'
   - '%CYG_ROOT%\%CYG_INSTALLER% -qnNdO -R "%CYG_ROOT%" -s "%CYG_MIRROR%" -l "%CYG_CACHE%" -P autoconf -P automake -P bison -P libtool -P make -P python -P gettext-devel -P gettext -P intltool -P libiconv -P pkg-config -P git -P wget -P curl -P libusb1.0 -P libusb1.0-devel -P libxml2 -P libxml2-devel -P openssl-devel -P dos2unix'
+  - perl -V
+  - cpan -l
+  - cpan threads
   - copy ci-scripts\download_and_build_libimobiledevice.sh "%CYG_HOMEDIR%"
   - copy ci-scripts\*.patch "%CYG_HOMEDIR%"
   - '%CYG_ROOT%/bin/bash -lc "set -v -x ; cygcheck -dc cygwin ; cd /tmp && ./download_and_build_libimobiledevice.sh"'
