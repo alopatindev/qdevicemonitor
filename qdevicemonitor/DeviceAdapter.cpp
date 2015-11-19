@@ -333,6 +333,7 @@ void DeviceAdapter::fixTabIndexes(const int removedTabIndex)
     for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
     {
         const int tabIndex = it.value()->getTabIndex();
+        Q_ASSERT_X(tabIndex != removedTabIndex, "fixTabIndexes", "tab removal failed");
         if (tabIndex > removedTabIndex)
         {
             qDebug() << "decrementing tabIndex" << tabIndex;

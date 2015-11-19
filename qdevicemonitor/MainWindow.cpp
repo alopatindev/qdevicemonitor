@@ -221,7 +221,7 @@ void MainWindow::setupEnvironment()
         const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
         const char* pPath = std::getenv("PATH");
         pPath = pPath ? pPath : "";
-        const QString path(pPath);
+        QString path(pPath);
         const QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
         for (const auto& i : thirdPartyProgramDirs)
         {
@@ -245,7 +245,7 @@ void MainWindow::setupEnvironment()
     {
         const char* pPath = std::getenv("Path");
         pPath = pPath ? pPath : "";
-        const QString path(pPath);
+        QString path(pPath);
         const QString prefix(path.isEmpty() ? "" : ";");
         path = QString("Path=%1%2%3").arg(path).arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
