@@ -55,13 +55,13 @@ before_install:
 install:
   - ls -al ~;
     ls -al ~/.ssh;
-    cat ~/.ssh_host_rsa_key.pub;
   - if [ $TRAVIS_OS_NAME = linux ]; then
         sudo apt-get install -y --force-yes --no-install-suggests --no-install-recommends libimobiledevice-dev libimobiledevice-utils;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 
         ls -al /Applications;
+        cat ~/.ssh_host_rsa_key.pub;
 
         brew install -v android-platform-tools libimobiledevice libusb p7zip qt5;
 
@@ -127,14 +127,14 @@ after_success:
         SHA512_SUM=$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
+        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
         MD5_SUM=$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
         SHA1_SUM=$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B -v -i ~/.ssh_host_rsa_key "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
+        scp -B -v -i ~/.ssh_host_rsa_key -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
   - echo "md5: ${MD5_SUM}";
   - echo "sha1: ${SHA1_SUM}";
