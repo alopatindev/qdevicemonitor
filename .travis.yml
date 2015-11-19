@@ -58,7 +58,8 @@ install:
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 
-        ls -alR ~;
+        ls -al ~;
+        ls -al ~/.ssh;
         ls -al /Applications;
 
         brew install -v android-platform-tools libimobiledevice libusb p7zip qt5;
@@ -96,7 +97,7 @@ script:
   - ls -l "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
         file "${PROGRAMNAME}/${PROGRAMNAME}";
-        OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.deb";
+        export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.deb";
         ./ci-scripts/build_deb.sh;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         function copy_3rdparty() {
@@ -121,10 +122,12 @@ script:
 after_success:
   - if [ $TRAVIS_OS_NAME = linux ]; then
         md5sum "${OUTPUT_FILENAME}";
+        sha1sum "${OUTPUT_FILENAME}";
         sha512sum "${OUTPUT_FILENAME}";
         scp -B "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
         md5 "${OUTPUT_FILENAME}";
+        shasum -a 1 "${OUTPUT_FILENAME}";
         shasum -a 512 "${OUTPUT_FILENAME}";
         cat ~/.ssh_host_rsa_key.pub;
         cat ~/.ssh/id_rsa.pub;
