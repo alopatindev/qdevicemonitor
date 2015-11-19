@@ -12,6 +12,8 @@ install:
   - dir %QTDIR%\
   - dir %QTDIR%\lib
   - dir %QTDIR%\bin
+  - dir %QTDIR%\plugins
+  - dir %QTDIR%\platforms
   - dir %MINGW%\bin
   - dir %CYG_ROOT_WIN%
   - dir %CYG_ROOT_WIN%\bin
@@ -33,9 +35,9 @@ build_script:
   - copy "%QTDIR%\bin\libgcc_s_dw2-1.dll" .
   - copy "%QTDIR%\bin\libstdc++-6.dll" .
   - copy "%QTDIR%\bin\libwinpthread-1.dll" .
-  - copy "%QTDIR%\bin\icuin52.dll" .
-  - copy "%QTDIR%\bin\icuuc52.dll" .
-  - copy "%QTDIR%\bin\icudt52.dll" .
+  - copy "%QTDIR%\bin\icuin54.dll" .
+  - copy "%QTDIR%\bin\icuuc54.dll" .
+  - copy "%QTDIR%\bin\icudt54.dll" .
   - copy "%QTDIR%\bin\Qt5Core.dll" .
   - copy "%QTDIR%\bin\Qt5Gui.dll" .
   - copy "%QTDIR%\bin\Qt5Widgets.dll" .
