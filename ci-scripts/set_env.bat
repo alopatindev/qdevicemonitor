@@ -1,4 +1,4 @@
-set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
+set QTDIR=C:\Qt\5.5\mingw492_32
 set MINGW=C:\MinGW
 
 set CYG_ROOT=C:/cygwin

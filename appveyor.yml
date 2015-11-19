@@ -1,6 +1,6 @@
 version: 0.0.{build}
 
-os: unstable
+# os: unstable
 
 install:
   - ci-scripts\set_env.bat
