@@ -54,13 +54,14 @@ public:
     inline void setHumanReadableDescription(const QString& text) { m_humanReadableDescription = text; }
 
     inline bool isOnline() const { return m_online; }
-    void setOnline(bool online);
-    virtual void onOnlineChange(bool online) { (void)online; }
+    void setOnline(const bool online);
+    virtual void onOnlineChange(const bool online) { (void) online; }
 
-    inline void setVisited(bool visited) { m_visited = visited; }
+    inline void setVisited(const bool visited) { m_visited = visited; }
     inline bool isVisited() const { return m_visited; }
 
     inline int getTabIndex() const { return m_tabIndex; }
+    inline void setTabIndex(const int tabIndex) { m_tabIndex = tabIndex; }
 
     inline const QString& getId() const { return m_id; }
     inline DeviceType getType() const { return m_type; }

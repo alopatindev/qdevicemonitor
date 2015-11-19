@@ -289,11 +289,14 @@ void DeviceAdapter::allDevicesReloadText()
     }
 }
 
-void DeviceAdapter::removeDeviceByTabIndex(int index)
+void DeviceAdapter::removeDeviceByTabIndex(const int index)
 {
     qDebug() << "removeDeviceByTabIndex" << index;
+
+    bool success = false;
     for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
     {
+        qDebug() << "tabIndex" << it.value()->getTabIndex();
         if (it.value()->getTabIndex() == index)
         {
             const QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
@@ -315,11 +318,27 @@ void DeviceAdapter::removeDeviceByTabIndex(int index)
             }
 
             m_devicesMap.remove(it.key());
-            return;
+            success = true;
+            break;
         }
     }
 
-    Q_ASSERT_X(false, "removeDeviceByTabIndex", "tab is not found");
+    Q_ASSERT_X(success, "removeDeviceByTabIndex", "tab is not found");
+
+    fixTabIndexes(index);
+}
+
+void DeviceAdapter::fixTabIndexes(const int removedTabIndex)
+{
+    for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
+    {
+        const int tabIndex = it.value()->getTabIndex();
+        if (tabIndex > removedTabIndex)
+        {
+            qDebug() << "decrementing tabIndex" << tabIndex;
+            it.value()->setTabIndex(tabIndex - 1);
+        }
+    }
 }
 
 void DeviceAdapter::focusFilterInput()

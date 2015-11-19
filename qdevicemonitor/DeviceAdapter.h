@@ -60,7 +60,7 @@ public:
     explicit DeviceAdapter(QPointer<QTabWidget> parent = 0);
     ~DeviceAdapter();
 
-    void removeDeviceByTabIndex(int index);
+    void removeDeviceByTabIndex(const int index);
     void focusFilterInput();
     void markLog();
     void clearLog();
@@ -92,6 +92,7 @@ public slots:
 
 private:
     void updateDevicesMap();
+    void fixTabIndexes(const int removedTabIndex);
 };
 
 #endif // DEVICEADAPTER_H

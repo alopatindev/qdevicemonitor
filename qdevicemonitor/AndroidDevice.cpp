@@ -274,7 +274,7 @@ void AndroidDevice::reloadTextEdit()
     filterAndAddFromLogBufferToTextEdit();
 }
 
-void AndroidDevice::onOnlineChange(bool online)
+void AndroidDevice::onOnlineChange(const bool online)
 {
     if (online)
     {

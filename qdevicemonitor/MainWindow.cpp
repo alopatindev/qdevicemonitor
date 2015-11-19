@@ -107,7 +107,7 @@ void MainWindow::on_actionAboutQt_triggered()
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
     qDebug() << "MainWindow::on_tabWidget_tabCloseRequested" << index;
-    if (index > 0)
+    if (index != -1)
     {
         m_deviceAdapter.removeDeviceByTabIndex(index);
     }

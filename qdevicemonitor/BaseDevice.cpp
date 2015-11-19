@@ -71,7 +71,7 @@ void BaseDevice::updateTabWidget()
     m_tabWidget->setTabIcon(m_tabIndex, icon);
 }
 
-void BaseDevice::setOnline(bool online)
+void BaseDevice::setOnline(const bool online)
 {
     if (online != m_online)
     {
@@ -114,7 +114,7 @@ void BaseDevice::addToLogBuffer(const QString& text)
 void BaseDevice::updateLogBufferSpace()
 {
     qDebug() << "updateLogBufferSpace" << m_deviceAdapter->getVisibleLines();
-    const int extraLines = m_logBuffer.size() - m_deviceAdapter->getVisibleLines();
+    const int64_t extraLines = static_cast<int64_t>(m_logBuffer.size()) - m_deviceAdapter->getVisibleLines();
     if (extraLines > 0)
     {
         qDebug() << "removing" << extraLines << "extra lines from log buffer";

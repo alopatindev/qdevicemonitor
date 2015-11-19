@@ -50,7 +50,7 @@ public:
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
     static void removedDeviceByTabClose(const QString& id);
-    virtual void onOnlineChange(bool online);
+    virtual void onOnlineChange(const bool online);
 
 private:
     void updateDeviceModel();
