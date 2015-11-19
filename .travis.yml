@@ -51,6 +51,10 @@ install:
         set -e;
 
         echo "${PATH}";
+        export QTDIR="/usr/local/Cellar/qt5/5.*";
+        export PATH="${QTDIR}/bin:${PATH}";
+        echo "${PATH}";
+        ls -l "${QTDIR}";
 
         ls -al ~;
         ls -al /Applications;
