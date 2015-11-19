@@ -122,19 +122,22 @@ script:
 
 after_success:
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        echo "md5: "$(md5sum "${OUTPUT_FILENAME}" | awk '{print $1}');
-        echo "sha1: "$(sha1sum "${OUTPUT_FILENAME}" | awk '{print $1}');
-        echo "sha512: "$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
+        MD5_SUM=$(md5sum "${OUTPUT_FILENAME}" | awk '{print $1}');
+        SHA1_SUM=$(sha1sum "${OUTPUT_FILENAME}" | awk '{print $1}');
+        SHA512_SUM=$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
         scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        echo "md5: "$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
-        echo "sha1: "$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
-        echo "sha512: "$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
+        MD5_SUM=$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
+        SHA1_SUM=$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
+        SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
         scp -B -v -i ~/.ssh_host_rsa_key "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
+  - echo "md5: ${MD5_SUM}";
+  - echo "sha1: ${SHA1_SUM}";
+  - echo "sha512: ${SHA512_SUM}";
 
 # vim: textwidth=0
