@@ -41,7 +41,9 @@ FORMS    += MainWindow.ui \
     DeviceWidget.ui \
     SettingsDialog.ui
 
-QMAKE_CXXFLAGS += -std=c++0x -Werror
+CONFIG += c++11
+
+QMAKE_CXXFLAGS += -std=c++11 -Werror -Wfatal-errors -stdlib=libc++
 
 win32 {
     QMAKE_CXXFLAGS += -std=gnu++0x
