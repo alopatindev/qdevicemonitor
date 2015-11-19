@@ -263,8 +263,10 @@ void DeviceAdapter::removeOldLogFiles()
     for (const auto& fileInfo : list)
     {
         const QString& fileName = fileInfo.fileName();
-        const QString dateString = fileName.mid(fileName.length() - dateLength - logExtLength, dateLength);
+        const size_t dateFileNameOffset = fileName.length() - dateLength - logExtLength;
+        const QString dateString = fileName.mid(dateFileNameOffset, dateLength);
         const QDateTime dateTime = QDateTime::fromString(dateString, Utils::DATE_FORMAT).toUTC();
+
         const int dt = dateTime.secsTo(currentDateTime);
         const int autoRemoveFilesSeconds = m_autoRemoveFilesHours * 60 * 60;
         const bool oldFile = dt > autoRemoveFilesSeconds;
