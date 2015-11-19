@@ -53,10 +53,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), m_lastLogDirectory, tr("Logs (*.log *.log.*);;All Files (*)"));
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), m_lastLogDirectory, tr("Logs (*.log *.log.*);;All Files (*)"));
     if (!fileName.isNull())
     {
-        QFileInfo fi(fileName);
+        const QFileInfo fi(fileName);
         m_lastLogDirectory = fi.absolutePath();
         TextFileDevice::openLogFile(fi.absoluteFilePath());
     }
@@ -107,7 +107,10 @@ void MainWindow::on_actionAboutQt_triggered()
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
     qDebug() << "MainWindow::on_tabWidget_tabCloseRequested" << index;
-    m_deviceAdapter.removeDeviceByTabIndex(index);
+    if (index > 0)
+    {
+        m_deviceAdapter.removeDeviceByTabIndex(index);
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent* event)
@@ -142,10 +145,21 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
     }
 }
 
+void MainWindow::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::MidButton)
+    {
+        const QPointer<QTabBar> tabBar = ui->tabWidget->tabBar();
+        const QPoint mousePos = tabBar->mapFrom(this, event->pos());
+        const int index = tabBar->tabAt(mousePos);
+        on_tabWidget_tabCloseRequested(index);
+    }
+}
+
 void MainWindow::loadSettings()
 {
     qDebug() << "loadSettings";
-    QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
+    const QSettings s(Utils::getConfigPath(), QSettings::IniFormat);
     qDebug() << "config path" << s.fileName();
 
     QVariant geom = s.value("geometry");
@@ -165,7 +179,7 @@ void MainWindow::loadSettings()
         setGeometry(geom);
     }
 
-    QVariant lastLogDirectory = s.value("lastLogDirectory");
+    const QVariant lastLogDirectory = s.value("lastLogDirectory");
     if (lastLogDirectory.isValid())
     {
         m_lastLogDirectory = lastLogDirectory.toString();
@@ -198,17 +212,17 @@ void MainWindow::setupEnvironment()
 {
     qDebug() << "MainWindow::setupEnvironment";
 
-    (void)Utils::getLogsPath();
+    (void) Utils::getLogsPath();
 
 #if defined(Q_OS_MAC)
-    QString thirdPartyDir(QCoreApplication::applicationDirPath() + "/3rdparty");
+    const QString thirdPartyDir(QCoreApplication::applicationDirPath() + "/3rdparty");
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
         const char* pPath = std::getenv("PATH");
         pPath = pPath ? pPath : "";
-        QString path(pPath);
-        QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
+        const QString path(pPath);
+        const QString dyldFallbackLibraryPath(std::getenv("DYLD_FALLBACK_LIBRARY_PATH"));
         for (const auto& i : thirdPartyProgramDirs)
         {
             const QString prefix(path.isEmpty() ? "" : ":");
@@ -226,12 +240,12 @@ void MainWindow::setupEnvironment()
         (void) ::setenv("DYLD_FALLBACK_LIBRARY_PATH", dyldFallbackLibraryPath.toStdString().c_str(), 1);
     }
 #elif defined(Q_OS_WIN32)
-    QString thirdPartyDir(QCoreApplication::applicationDirPath() + "\\3rdparty\\bin");
+    const QString thirdPartyDir(QCoreApplication::applicationDirPath() + "\\3rdparty\\bin");
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const char* pPath = std::getenv("Path");
         pPath = pPath ? pPath : "";
-        QString path(pPath);
+        const QString path(pPath);
         const QString prefix(path.isEmpty() ? "" : ";");
         path = QString("Path=%1%2%3").arg(path).arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
