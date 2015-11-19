@@ -50,16 +50,17 @@ install:
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 
-        echo "${PATH}";
-        export QTDIR="/usr/local/Cellar/qt5/5.*";
-        export PATH="${QTDIR}/bin:${PATH}";
-        echo "${PATH}";
-        ls -l "${QTDIR}";
-
         ls -al ~;
         ls -al /Applications;
 
         brew install -v android-platform-tools libimobiledevice libusb p7zip qt5;
+
+        echo "${PATH}";
+        QTDIR=$(brew info qt5 | grep '/Cellar/' | awk '{print $1}');
+        PATH="${QTDIR}/bin:${PATH}";
+        echo "${PATH}";
+        ls -l "${QTDIR}";
+        ls -l "${QTDIR}/bin";
     fi;
 
 script:

@@ -45,13 +45,13 @@ build_script:
   - move "%CYG_HOMEDIR%\3rdparty" .
   - cd ..
   - cd %PROGRAMNAME%
-  - qmake 'QMAKE_CXXFLAGS += -Wfatal-errors'
+  - qmake "QMAKE_CXXFLAGS += -Wfatal-errors"
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%.exe"
   - rmdir /S /Q release
   - mingw32-make clean
-  - qmake "CONFIG += console"
+  - qmake "CONFIG += console" "QMAKE_CXXFLAGS += -Wfatal-errors"
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"
