@@ -17,7 +17,10 @@ addons:
     - ${STORAGE_HOSTNAME}
   apt:
     sources:
+      - wily
       - ubuntu-sdk-team
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.6
     packages:
       - qtbase5-dev
       - qtdeclarative5-dev
@@ -28,10 +31,7 @@ addons:
       - fakeroot
       - libimobiledevice-dev
       - libimobiledevice-utils
-      - g++-5-multilib
-      - g++-multilib
-      - gcc-5-multilib
-      - gcc-multilib
+      - g++-5
       - clang-3.6
 
 matrix:
@@ -54,11 +54,11 @@ before_install:
 
 install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        sudo apt-get install libimobiledevice-dev libimobiledevice-utils;
+        sudo apt-get install -y --force-yes libimobiledevice-dev libimobiledevice-utils;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 
-        ls -al ~;
+        ls -alR ~;
         ls -al /Applications;
 
         brew install -v android-platform-tools libimobiledevice libusb p7zip qt5;
@@ -126,7 +126,9 @@ after_success:
     elif [ $TRAVIS_OS_NAME = osx ]; then
         md5 "${OUTPUT_FILENAME}";
         shasum -a 512 "${OUTPUT_FILENAME}";
-        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
+        cat ~/.ssh_host_rsa_key.pub;
+        cat ~/.ssh/id_rsa.pub;
+        scp -B -v -i ~/.ssh_host_rsa_key "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
 
 # vim: textwidth=0
