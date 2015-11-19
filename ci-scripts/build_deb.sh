@@ -25,6 +25,6 @@ Description: Crossplatform Android, iOS and text file log viewer
  Also it is a GUI for tailf command-line tool." > debian/DEBIAN/control
 
 fakeroot dpkg-deb --build debian
-mv debian.deb "${OUTPUT_ARCHIVE_NAME}.deb"
+mv debian.deb "${OUTPUT_FILENAME}.deb"
 
 # vim: textwidth=0
