@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 against=HEAD
 allownonascii="false"
 
@@ -24,13 +22,19 @@ EOF
     exit 1
 fi
 
-# If there are whitespace errors, print the offending file names and fail.
+source ci-scripts/set_env.sh
+
+egrep -r "(TODO|FIXME)" "${PROGRAMNAME}"
+echo
+
+set -e
 
 echo "rebuilding..."
-cd qdevicemonitor && make -j8 && cd ..
+cd "${PROGRAMNAME}" && make -j8 && cd ..
 
 echo "checking travis config..."
-travis lint | grep 'syntax error' && exit 1
+travis lint | grep "syntax error" && exit 1
 
+# If there are whitespace errors, print the offending file names and fail.
 git diff-index --check --cached $against --
 git diff $against
