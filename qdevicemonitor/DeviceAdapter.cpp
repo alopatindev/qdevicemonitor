@@ -259,18 +259,23 @@ void DeviceAdapter::removeOldLogFiles()
     }
 
     const QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
-    const QStringList& list = QDir(Utils::getLogsPath()).entryList(nameFilters, QDir::Files);
-    for (const auto& i : list)
+    const QFileInfoList& list = QDir(Utils::getLogsPath()).entryInfoList(nameFilters, QDir::Files);
+    for (const auto& fileInfo : list)
     {
-        const QString d = i.mid(i.length() - dateLength - logExtLength, dateLength);
-        QDateTime dateTime = QDateTime::fromString(d, Utils::DATE_FORMAT);
+        const QString& fileName = fileInfo.fileName();
+        const QString dateString = fileName.mid(fileName.length() - dateLength - logExtLength, dateLength);
+        QDateTime dateTime = QDateTime::fromString(dateString, Utils::DATE_FORMAT);
         dateTime.setTimeSpec(Qt::UTC);
         const int dt = dateTime.secsTo(currentDateTime);
         const int autoRemoveFilesSeconds = m_autoRemoveFilesHours * 60 * 60;
-        if (dt > autoRemoveFilesSeconds && !currentLogFileNames.contains(i))
+        const bool oldFile = dt > autoRemoveFilesSeconds;
+        const bool emptyFile = fileInfo.size() == 0ULL;
+        const bool currentLogFile = currentLogFileNames.contains(fileName);
+        const bool shouldRemove = (oldFile || emptyFile) && !currentLogFile;
+        if (shouldRemove)
         {
-            const bool result = QDir(Utils::getLogsPath()).remove(i);
-            qDebug() << "removing" << i << "=>" << result;
+            const bool result = QDir(Utils::getLogsPath()).remove(fileName);
+            qDebug() << "removing" << fileName << "=>" << result;
         }
     }
 }
