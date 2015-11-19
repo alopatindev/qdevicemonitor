@@ -46,7 +46,7 @@ CONFIG += c++11
 QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall
 
 win32 {
-    QMAKE_CXXFLAGS += -D__NO_INLINE__
+    QMAKE_CXXFLAGS += -D__NO_INLINE__  # FIXME: MinGW math compilation bug
     RC_FILE = winicon.rc
 }
 
