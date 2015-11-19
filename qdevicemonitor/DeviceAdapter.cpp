@@ -77,7 +77,7 @@ void DeviceAdapter::updateDevicesMap()
 {
     for (int t = 0; t != static_cast<int>(DeviceType::DeviceTypeEnd); ++t)
     {
-        DeviceType type = static_cast<DeviceType>(t);
+        const DeviceType type = static_cast<DeviceType>(t);
 
         switch (type)
         {
@@ -103,13 +103,13 @@ void DeviceAdapter::updateDevicesMap()
 
 void DeviceAdapter::loadSettings(const QSettings& s)
 {
-    QVariant visibleBlocks = s.value("visibleBlocks");
+    const QVariant visibleBlocks = s.value("visibleBlocks");
     if (visibleBlocks.isValid())
     {
         m_visibleBlocks = visibleBlocks.toInt();
     }
 
-    QVariant font = s.value("font");
+    const QVariant font = s.value("font");
     if (font.isValid())
     {
         m_font = font.toString();
@@ -125,31 +125,31 @@ void DeviceAdapter::loadSettings(const QSettings& s)
 #endif
     }
 
-    QVariant fontSize = s.value("fontSize");
+    const QVariant fontSize = s.value("fontSize");
     if (fontSize.isValid())
     {
         m_fontSize = fontSize.toInt();
     }
 
-    QVariant fontBold = s.value("fontBold");
+    const QVariant fontBold = s.value("fontBold");
     if (fontBold.isValid())
     {
         m_fontBold = fontBold.toBool();
     }
 
-    QVariant darkTheme = s.value("darkTheme");
+    const QVariant darkTheme = s.value("darkTheme");
     if (darkTheme.isValid())
     {
         m_darkTheme = darkTheme.toBool();
     }
 
-    QVariant clearAndroidLog = s.value("clearAndroidLog");
+    const QVariant clearAndroidLog = s.value("clearAndroidLog");
     if (clearAndroidLog.isValid())
     {
         m_clearAndroidLog = clearAndroidLog.toBool();
     }
 
-    QVariant autoRemoveFilesHours = s.value("autoRemoveFilesHours");
+    const QVariant autoRemoveFilesHours = s.value("autoRemoveFilesHours");
     if (autoRemoveFilesHours.isValid())
     {
         m_autoRemoveFilesHours = autoRemoveFilesHours.toInt();
@@ -157,7 +157,7 @@ void DeviceAdapter::loadSettings(const QSettings& s)
 
     removeOldLogFiles();
 
-    QVariant textEditorPath = s.value("textEditorPath");
+    const QVariant textEditorPath = s.value("textEditorPath");
     if (textEditorPath.isValid())
     {
         m_textEditorPath = textEditorPath.toString();
@@ -174,7 +174,7 @@ void DeviceAdapter::loadSettings(const QSettings& s)
 #endif
     }
 
-    QVariant filterCompletions = s.value("filterCompletions");
+    const QVariant filterCompletions = s.value("filterCompletions");
     if (filterCompletions.isValid())
     {
         m_filterCompletions = filterCompletions.toStringList();
@@ -185,7 +185,7 @@ void DeviceAdapter::loadSettings(const QSettings& s)
         }
     }
 
-    QVariant logFiles = s.value("logFiles");
+    const QVariant logFiles = s.value("logFiles");
     if (logFiles.isValid())
     {
         const QStringList lf = logFiles.toStringList();
@@ -258,17 +258,18 @@ void DeviceAdapter::removeOldLogFiles()
         currentLogFileNames.insert(device->getCurrentLogFileName());
     }
 
-    QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
+    const QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
     const QStringList& list = QDir(Utils::getLogsPath()).entryList(nameFilters, QDir::Files);
     for (const auto& i : list)
     {
         const QString d = i.mid(i.length() - dateLength - logExtLength, dateLength);
         QDateTime dateTime = QDateTime::fromString(d, Utils::DATE_FORMAT);
         dateTime.setTimeSpec(Qt::UTC);
-        int dt = dateTime.secsTo(currentDateTime);
-        if (dt > m_autoRemoveFilesHours * 60 * 60 && !currentLogFileNames.contains(i))
+        const int dt = dateTime.secsTo(currentDateTime);
+        const int autoRemoveFilesSeconds = m_autoRemoveFilesHours * 60 * 60;
+        if (dt > autoRemoveFilesSeconds && !currentLogFileNames.contains(i))
         {
-            bool result = QDir(Utils::getLogsPath()).remove(i);
+            const bool result = QDir(Utils::getLogsPath()).remove(i);
             qDebug() << "removing" << i << "=>" << result;
         }
     }
@@ -289,7 +290,7 @@ void DeviceAdapter::removeDeviceByTabIndex(int index)
     {
         if (it.value()->getTabIndex() == index)
         {
-            QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
+            const QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
             tabWidget->removeTab(index);
             if (it.value()->isOnline())
             {

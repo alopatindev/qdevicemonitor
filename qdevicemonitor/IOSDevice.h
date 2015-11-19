@@ -37,7 +37,7 @@ class IOSDevice : public BaseDevice
     bool m_didReadDeviceModel;
 
 public:
-    explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+    explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                        const QString& humanReadableName, const QString& humanReadableDescription,
                        QPointer<DeviceAdapter> deviceAdapter);
     virtual ~IOSDevice();

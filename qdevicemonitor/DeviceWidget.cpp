@@ -176,7 +176,7 @@ void DeviceWidget::focusFilterInput()
 
 void DeviceWidget::on_markLogButton_clicked()
 {
-    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], MARK_LINE);
     //addToLogBuffer(MARK_LINE);
 }

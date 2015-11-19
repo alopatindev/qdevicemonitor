@@ -35,7 +35,7 @@ class BaseDevice : public QObject
     Q_OBJECT
 
 public:
-    explicit BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+    explicit BaseDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                         const QString& humanReadableName, const QString& humanReadableDescription,
                         QPointer<DeviceAdapter> deviceAdapter);
     virtual ~BaseDevice();
@@ -80,7 +80,7 @@ private slots:
     void addFilterAsCompletion();
 
 protected:
-    QString m_id;
+    const QString m_id;
     DeviceType m_type;
     QString m_humanReadableName;
     QString m_humanReadableDescription;

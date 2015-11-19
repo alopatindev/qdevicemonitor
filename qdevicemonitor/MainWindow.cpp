@@ -149,9 +149,9 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::MidButton)
     {
-        const QPointer<QTabBar> tabBar = ui->tabWidget->tabBar();
-        const QPoint mousePos = tabBar->mapFrom(this, event->pos());
-        const int index = tabBar->tabAt(mousePos);
+        const QTabBar& tabBar = *(ui->tabWidget->tabBar());
+        const QPoint mousePos = tabBar.mapFrom(this, event->pos());
+        const int index = tabBar.tabAt(mousePos);
         on_tabWidget_tabCloseRequested(index);
     }
 }

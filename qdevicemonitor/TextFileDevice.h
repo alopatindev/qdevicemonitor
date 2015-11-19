@@ -33,7 +33,7 @@ class TextFileDevice : public BaseDevice
     QProcess m_tailProcess;
 
 public:
-    explicit TextFileDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+    explicit TextFileDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                            const QString& humanReadableName, const QString& humanReadableDescription,
                            QPointer<DeviceAdapter> deviceAdapter);
     virtual ~TextFileDevice();

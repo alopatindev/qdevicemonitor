@@ -22,7 +22,7 @@
 
 using namespace DataTypes;
 
-BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                        const QString& humanReadableName, const QString& humanReadableDescription,
                        QPointer<DeviceAdapter> deviceAdapter)
     : QObject(parent)
@@ -65,7 +65,7 @@ void BaseDevice::updateTabWidget()
     m_tabWidget->setTabText(m_tabIndex, m_humanReadableName);
     m_tabWidget->setTabToolTip(m_tabIndex, m_humanReadableDescription);
 
-    QIcon icon(QString(":/icons/%1_%2.png")
+    const QIcon icon(QString(":/icons/%1_%2.png")
         .arg(getPlatformString())
         .arg(m_online ? "online" : "offline"));
     m_tabWidget->setTabIcon(m_tabIndex, icon);
@@ -114,7 +114,7 @@ void BaseDevice::addToLogBuffer(const QString& text)
 void BaseDevice::updateLogBufferSpace()
 {
     qDebug() << "updateLogBufferSpace" << m_deviceAdapter->getVisibleLines();
-    int extraLines = m_logBuffer.size() - m_deviceAdapter->getVisibleLines();
+    const int extraLines = m_logBuffer.size() - m_deviceAdapter->getVisibleLines();
     if (extraLines > 0)
     {
         qDebug() << "removing" << extraLines << "extra lines from log buffer";

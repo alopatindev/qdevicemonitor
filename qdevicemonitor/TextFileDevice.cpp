@@ -28,7 +28,7 @@ using namespace DataTypes;
 
 static QStringList s_filesToOpen;
 
-TextFileDevice::TextFileDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+TextFileDevice::TextFileDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                                const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
 {
@@ -127,8 +127,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
     static QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
     rx.setMinimal(true);
 
-
-    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
     {
         const QString prefix = rx.cap(1);
@@ -174,10 +173,10 @@ void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, D
 {
     for (const auto& logFile : s_filesToOpen)
     {
-        auto it = map.find(logFile);
+        const auto it = map.find(logFile);
         if (it == map.end())
         {
-            QString fileName = QFileInfo(logFile).fileName();
+            const QString fileName = QFileInfo(logFile).fileName();
             map[logFile] = QSharedPointer<BaseDevice>(
                 new TextFileDevice(
                     parent,

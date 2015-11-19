@@ -39,7 +39,7 @@ const QString& Utils::getLogsPath()
     static bool initialized = false;
     if (!initialized)
     {
-        bool success = QDir(getDataPath()).mkpath(LOGS_DIR);
+        const bool success = QDir(getDataPath()).mkpath(LOGS_DIR);
         qDebug() << "creating directory" << d << "=>" << success;
         initialized = true;
     }
@@ -60,7 +60,7 @@ const QString& Utils::getConfigPath()
 QString Utils::removeSpecialCharacters(const QString& text)
 {
     QString out(text);
-    static QRegExp regexp("[^a-zA-Z\\d\\s]");
+    static const QRegExp regexp("[^a-zA-Z\\d\\s]");
     out.remove(regexp);
     out.replace(" ", "_");
     return out;
@@ -71,7 +71,7 @@ QString Utils::getCurrentDateTimeUtc()
     return QDateTime::currentDateTimeUtc().toString(DATE_FORMAT);
 }
 
-int Utils::verbosityCharacterToInt(char character)
+int Utils::verbosityCharacterToInt(const char character)
 {
     switch (character)
     {

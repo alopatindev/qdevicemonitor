@@ -29,7 +29,7 @@ using namespace DataTypes;
 static QProcess s_devicesListProcess;
 static QHash<QString, bool> s_removedDeviceByTabClose;
 
-IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                      const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_didReadDeviceModel(false)
@@ -107,7 +107,7 @@ void IOSDevice::update()
     {
         if (m_deviceInfoProcess.canReadLine())
         {
-            QString model = m_deviceInfoProcess.readLine().trimmed();
+            const QString model = m_deviceInfoProcess.readLine().trimmed();
             if (!model.isEmpty())
             {
                 qDebug() << "updateDeviceModel" << m_id << "=>" << model;
@@ -210,7 +210,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
     //qDebug() << "filterAndAddToTextEdit:" << line;
 
-    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
     {
         const QString prefix = rx.cap(1);
@@ -265,7 +265,7 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
 {
     auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
     {
-        bool online = deviceStatus == "device";
+        const bool online = deviceStatus == "device";
         device.setHumanReadableDescription(
             tr("%1\nStatus: %2\nID: %3")
                 .arg(tr(getPlatformStringStatic()))
@@ -422,10 +422,10 @@ void IOSDevice::readStandardError()
     stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
     stream << m_deviceInfoProcess.readAllStandardError();
 
-    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !stream.atEnd(); ++i)
     {
-        QString line = stream.readLine();
+        const QString line = stream.readLine();
         m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityFatal], line + "\n");
     }
 }

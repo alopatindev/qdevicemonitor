@@ -43,7 +43,7 @@ namespace ThemeColors
         Tag
     };
 
-    static Qt::GlobalColor Colors[][10] = {
+    static const Qt::GlobalColor Colors[][10] = {
         {
             Qt::red,
             Qt::red,

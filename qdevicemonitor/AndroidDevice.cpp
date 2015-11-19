@@ -28,7 +28,7 @@ using namespace DataTypes;
 static QProcess s_devicesListProcess;
 static QHash<QString, bool> s_removedDeviceByTabClose;
 
-AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
@@ -106,7 +106,7 @@ void AndroidDevice::update()
     {
         if (m_deviceInfoProcess.canReadLine())
         {
-            QString model = m_deviceInfoProcess.readLine().trimmed();
+            const QString model = m_deviceInfoProcess.readLine().trimmed();
             if (!model.isEmpty())
             {
                 qDebug() << "updateDeviceModel" << m_id << "=>" << model;
@@ -202,12 +202,12 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         const QString text = line.mid(rx.pos(6) + rx.cap(6).length() + 2); // the rest of the line after "foo: "
         //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
 
-        VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity[0].toLatin1()));
+        const VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity[0].toLatin1()));
         checkFilters(filtersMatch, m_filtersValid, m_filters, verbosityLevel, pid, tid, tag, text);
 
         if (filtersMatch)
         {
-            QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
+            const QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
             m_deviceWidget->addText(verbosityColor, verbosity + " ");
             m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], date + " " + time + " ");
@@ -240,7 +240,7 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
         return;
     }
 
-    for (auto& filter : filters)
+    for (const auto& filter : filters)
     {
         bool columnFound = false;
         if (!Utils::columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
@@ -304,7 +304,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 {
     auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
     {
-        bool online = deviceStatus == "device";
+        const bool online = deviceStatus == "device";
         device.setHumanReadableDescription(
             tr("%1\nStatus: %2\nID: %3%4")
                 .arg(tr(getPlatformStringStatic()))
@@ -350,14 +350,14 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
                 while (!stream.atEnd())
                 {
-                    QString line = stream.readLine();
+                    const QString line = stream.readLine();
                     if (!line.contains("List of devices attached"))
                     {
-                        QStringList lineSplit = line.split("\t");
+                        const QStringList lineSplit = line.split("\t");
                         if (lineSplit.count() >= 2)
                         {
-                            QString deviceId = lineSplit[0];
-                            QString deviceStatus = lineSplit[1];
+                            const QString deviceId = lineSplit[0];
+                            const QString deviceStatus = lineSplit[1];
                             //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
                             if (s_removedDeviceByTabClose.contains(deviceId))
                             {

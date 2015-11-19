@@ -39,7 +39,7 @@ class AndroidDevice : public BaseDevice
     bool m_didReadDeviceModel;
 
 public:
-    explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, DeviceType type,
+    explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                            const QString& humanReadableName, const QString& humanReadableDescription,
                            QPointer<DeviceAdapter> deviceAdapter);
     virtual ~AndroidDevice();
@@ -60,7 +60,7 @@ private:
 
     bool columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound) const;
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters,
-                      VerbosityEnum verbosityLevel = Verbose,
+                      const VerbosityEnum verbosityLevel = Verbose,
                       const QString& pid = QString(),
                       const QString& tid = QString(),
                       const QString& tag = QString(),
