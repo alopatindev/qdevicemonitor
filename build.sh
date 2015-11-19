@@ -4,7 +4,6 @@ set -e
 OSX=0
 if [ "$(uname)" = Darwin ]; then
     OSX=1
-    export PATH=~/Qt5.4.0/5.4/clang_64/bin/:${PATH}
 fi
 
 ctags -R .

@@ -8,9 +8,11 @@ os:
   - osx
 
 env:
-  global:
-    - secure: "n0nANhPJX/N32Rnns0e3Oc2dje24iZl25oPo+hSUC1cho4jl3LE+CwZUy1BH72lw9Xbve/R2k9BfkInstGD0dyeNS2Fi5nfSFQwYnFvAa7N2G/AMrwI+OeUgiZEwCZ2o6qcDaKTa95PTkKgvk4bkN2zNjUvCS7bjUz0o6TFRWCA="
-    - secure: "fiDJGTfJm+4DP1GkgqmqifVYTDrURb/1r+Flx7OVwY7zbqs4xKfHkf2zDjqcFNyHeSj4+ekqba7x+5zKyjDuC9QNlSu4dZPrDyjLBxA262CHQLqYvP0FdG0aNjR3/PBMqUDPzsY0If26n7xlzJRlAJv5mFpwx0mya46UnTIrpIk="
+  - STORAGE_HOSTNAME=frs.sourceforge.net
+
+addons:
+  ssh_known_hosts:
+    - ${STORAGE_HOSTNAME}
 
 matrix:
   exclude:
@@ -48,61 +50,12 @@ install:
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 
-        DEPS_URL="http://qdevicemonitor.uhostall.com/dependencies";
-
-        function checksum_sha1() {
-            OUR_CHECKSUM=$(openssl sha1 "$1" | cut -d " " -f 2);
-            ORIG_CHECKSUM="$2";
-            echo "${OUR_CHECKSUM}";
-            echo "${ORIG_CHECKSUM}";
-            if [ "${OUR_CHECKSUM}" = "${ORIG_CHECKSUM}" ]; then
-                echo 'checksum is ok';
-            else
-                exit 1;
-            fi;
-        };
-
-        function install_qt5() {
-            QT_PV="Qt5.4.0";
-            QT_DISTRO_FILE="${QT_PV}_osx.7z";
-            QT_DISTRO_SHA1_FILE="${QT_DISTRO_FILE}.sha1";
-            CURRENT_DIR="$(pwd)";
-
-            sudo ln -s "${HOME}" "/Users/sbar";
-            mkdir -p "${HOME}/${QT_PV}";
-            cd "${HOME}/${QT_PV}";
-
-            wget -c --timeout=30 --tries=10 "${DEPS_URL}/${QT_DISTRO_SHA1_FILE}";
-            wget -c --timeout=30 --tries=10 "${DEPS_URL}/${QT_DISTRO_FILE}";
-            checksum_sha1 "${QT_DISTRO_FILE}" $(cat "${QT_DISTRO_SHA1_FILE}");
-            7z x "${QT_DISTRO_FILE}";
-            export QTDIR="/Users/sbar/${QT_PV}/5.4/clang_64";
-            export PATH="${QTDIR}/bin:${PATH}";
-            echo "${PATH}";
-            cd "${CURRENT_DIR}";
-        };
-
-        function install_tor() {
-            for i in "tor-0.2.5.10.yosemite.bottle.tar.gz" "torsocks-2.0.0.yosemite.bottle.tar.gz" "openssl-1.0.1j_1.mavericks.bottle.tar.gz" "libevent-2.0.21_1.mavericks.bottle.tar.gz" "openssl-1.0.1j_1.mavericks.bottle.tar.gz" "libevent-2.0.21_1.mavericks.bottle.tar.gz" "tor-0.2.5.10.mavericks.bottle.tar.gz"; do
-                wget -v "${DEPS_URL}/${i}" -O "/Library/Caches/Homebrew/${i}";
-            done;
-            curl http://cmyip.com | grep 'My IP';
-            brew install -v tor torsocks;
-            ln -sfv /usr/local/opt/tor/*.plist ~/Library/LaunchAgents;
-            echo 'running tor...';
-            launchctl load ~/Library/LaunchAgents/homebrew.mxcl.tor.plist;
-            export TORIFY=/usr/local/Cellar/tor/*/bin/torify;
-            $TORIFY curl http://cmyip.com | grep 'My IP';
-        };
+        echo "${PATH}";
 
         ls -al ~;
         ls -al /Applications;
 
-        install_tor;
-        $TORIFY brew install -v android-platform-tools libimobiledevice p7zip;
-
-        install_qt5;
-        echo "${PATH}";
+        brew install -v android-platform-tools libimobiledevice libusb p7zip qt5;
     fi;
 
 script:
@@ -146,15 +99,19 @@ script:
 
         mkdir "${OUTPUT_ARCHIVE_NAME}";
         mv "${PROGRAMNAME}/${PROGRAMNAME}.app" "${OUTPUT_ARCHIVE_NAME}/${PROGRAMNAME}.app";
-        7z a -mx=9 "${OUTPUT_ARCHIVE_NAME}.zip" "${OUTPUT_ARCHIVE_NAME}";
+        7z a -mx=9 "${OUTPUT_FULL_ARCHIVE_NAME}" "${OUTPUT_ARCHIVE_NAME}";
     fi
   - ls -l;
 
 after_success:
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        curl --ftp-create-dirs -T *.deb -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/ubuntu/ ;
+        md5sum "${OUTPUT_FULL_ARCHIVE_NAME}";
+        sha512sum "${OUTPUT_FULL_ARCHIVE_NAME}";
+        scp -B "${OUTPUT_FULL_ARCHIVE_NAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        curl --ftp-create-dirs -T *.zip -u $FTP_USER:$FTP_PASSWORD ftp://qdevicemonitor.uhostall.com/osx/ ;
+        md5 "${OUTPUT_FULL_ARCHIVE_NAME}";
+        shasum -a 512 "${OUTPUT_FULL_ARCHIVE_NAME}";
+        scp -B "${OUTPUT_FULL_ARCHIVE_NAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
 
 # vim: textwidth=0
