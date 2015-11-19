@@ -53,13 +53,14 @@ before_install:
   - $CXX --version;
 
 install:
+  - ls -al ~;
+    ls -al ~/.ssh;
+    cat ~/.ssh_host_rsa_key.pub;
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        sudo apt-get install -y --force-yes libimobiledevice-dev libimobiledevice-utils;
+        sudo apt-get install -y --force-yes --no-install-suggests --no-install-recommends libimobiledevice-dev libimobiledevice-utils;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
 
-        ls -al ~;
-        ls -al ~/.ssh;
         ls -al /Applications;
 
         brew install -v android-platform-tools libimobiledevice libusb p7zip qt5;
@@ -114,23 +115,25 @@ script:
 
         mkdir "${OUTPUT_DIRECTORY}";
         mv "${PROGRAMNAME}/${PROGRAMNAME}.app" "${OUTPUT_DIRECTORY}/${PROGRAMNAME}.app";
-        OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.zip";
+        export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.zip";
         7z a -mx=9 "${OUTPUT_FILENAME}" "${OUTPUT_DIRECTORY}";
     fi
   - ls -l;
 
 after_success:
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        md5sum "${OUTPUT_FILENAME}";
-        sha1sum "${OUTPUT_FILENAME}";
-        sha512sum "${OUTPUT_FILENAME}";
+        echo "md5: "$(md5sum "${OUTPUT_FILENAME}" | awk '{print $1}');
+        echo "sha1: "$(sha1sum "${OUTPUT_FILENAME}" | awk '{print $1}');
+        echo "sha512: "$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
+
+        set -e;
         scp -B "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        md5 "${OUTPUT_FILENAME}";
-        shasum -a 1 "${OUTPUT_FILENAME}";
-        shasum -a 512 "${OUTPUT_FILENAME}";
-        cat ~/.ssh_host_rsa_key.pub;
-        cat ~/.ssh/id_rsa.pub;
+        echo "md5: "$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
+        echo "sha1: "$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
+        echo "sha512: "$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
+
+        set -e;
         scp -B -v -i ~/.ssh_host_rsa_key "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
 
