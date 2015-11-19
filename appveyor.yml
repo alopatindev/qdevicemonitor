@@ -13,7 +13,7 @@ install:
   - dir %QTDIR%\lib
   - dir %QTDIR%\bin
   - dir %QTDIR%\plugins
-  - dir %QTDIR%\platforms
+  - dir %QTDIR%\plugins\platforms
   - dir %MINGW%\bin
   - dir %CYG_ROOT_WIN%
   - dir %CYG_ROOT_WIN%\bin
