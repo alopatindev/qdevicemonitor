@@ -10,12 +10,12 @@ ctags -R .
 cd qdevicemonitor
 
 if [ $OSX = 1 ]; then
-    qmake 'CONFIG += debug'
+    qmake 'CONFIG += debug' 'QMAKE_CXXFLAGS += -Wfatal-errors'
     time make -j8
     lldb qdevicemonitor.app/Contents/MacOS/qdevicemonitor
 else
-    #qmake -spec linux-g++ 'CONFIG += debug'
-    qmake -spec linux-clang 'CONFIG += debug'
+    #qmake -spec linux-g++ 'CONFIG += debug' 'QMAKE_CXXFLAGS += -Wfatal-errors'
+    qmake -spec linux-clang 'CONFIG += debug' 'QMAKE_CXXFLAGS += -Wfatal-errors'
     time make -j16
     gdb ./qdevicemonitor
 fi

@@ -294,7 +294,7 @@ void DeviceAdapter::removeDeviceByTabIndex(const int index)
     qDebug() << "removeDeviceByTabIndex" << index;
 
     bool success = false;
-    for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
+    for (auto it = m_devicesMap.begin(); !success && it != m_devicesMap.end(); ++it)
     {
         qDebug() << "tabIndex" << it.value()->getTabIndex();
         if (it.value()->getTabIndex() == index)
@@ -318,14 +318,13 @@ void DeviceAdapter::removeDeviceByTabIndex(const int index)
             }
 
             m_devicesMap.remove(it.key());
+            fixTabIndexes(index);
             success = true;
             break;
         }
     }
 
     Q_ASSERT_X(success, "removeDeviceByTabIndex", "tab is not found");
-
-    fixTabIndexes(index);
 }
 
 void DeviceAdapter::fixTabIndexes(const int removedTabIndex)
