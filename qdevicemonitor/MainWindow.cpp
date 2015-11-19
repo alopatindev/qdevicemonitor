@@ -249,7 +249,7 @@ void MainWindow::setupEnvironment()
         const QString prefix(path.isEmpty() ? "" : ";");
         path = QString("Path=%1%2%3").arg(path).arg(prefix).arg(thirdPartyDir);
         qDebug() << "Path" << path;
-        (void) ::putenv(const_cast<char*>(path.toStdString().c_str()));
+        (void) std::putenv(const_cast<char*>(path.toStdString().c_str()));
     }
 #endif
 }
