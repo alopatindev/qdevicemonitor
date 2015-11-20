@@ -45,14 +45,15 @@ before_install:
   - pwd
   - ls -al
   - openssl aes-256-cbc -K $encrypted_59f5247592cb_key -iv $encrypted_59f5247592cb_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar xvf secrets.tar -C /home/travis/.ssh/
   - uname -a;
   - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
         cat /proc/cpuinfo;
+        tar xvf secrets.tar -C /home/travis/.ssh/;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         brew update;
         ci-scripts/fix_brew.sh;
+        tar xvf secrets.tar -C /Users/travis/.ssh/;
     fi;
   - $CXX --version;
 
@@ -131,17 +132,17 @@ after_success:
         SHA512_SUM=$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
+        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
         MD5_SUM=$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
         SHA1_SUM=$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
+        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
-  - echo "md5: ${MD5_SUM}";
-  - echo "sha1: ${SHA1_SUM}";
-  - echo "sha512: ${SHA512_SUM}";
+  - echo -n "md5 "; echo "${MD5_SUM}";
+    echo -n "sha1 "; echo "${SHA1_SUM}";
+    echo -n "sha512 "; echo "${SHA512_SUM}";
 
 # vim: textwidth=0
