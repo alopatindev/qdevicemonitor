@@ -409,7 +409,8 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
             for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
             {
-                if (it.value() == false)  // became offline
+                const bool becameOffline = it.value() == false;
+                if (becameOffline)
                 {
                     it = s_removedDeviceByTabClose.erase(it);
                 }
