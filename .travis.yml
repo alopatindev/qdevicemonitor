@@ -44,8 +44,8 @@ matrix:
 before_install:
   - pwd
   - ls -al
-  - openssl aes-256-cbc -K $encrypted_59f5247592cb_key -iv $encrypted_59f5247592cb_iv -in id_rsa.pub.enc -out .ssh/id_rsa.pub -d
-  - openssl aes-256-cbc -K $encrypted_59f5247592cb_key -iv $encrypted_59f5247592cb_iv -in id_rsa.enc -out .ssh/id_rsa -d
+  - openssl aes-256-cbc -K $encrypted_59f5247592cb_key -iv $encrypted_59f5247592cb_iv -in id_rsa.pub.enc -out /home/travis/.ssh/id_rsa.pub -d
+  - openssl aes-256-cbc -K $encrypted_59f5247592cb_key -iv $encrypted_59f5247592cb_iv -in id_rsa.enc -out /home/travis/.ssh/id_rsa -d
   - uname -a;
   - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
@@ -138,7 +138,7 @@ after_success:
         SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B -v -i ~/.ssh_host_rsa_key -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
+        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
   - echo "md5: ${MD5_SUM}";
   - echo "sha1: ${SHA1_SUM}";
