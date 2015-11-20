@@ -2,7 +2,7 @@
 
 set -e
 
-ln -sf ../../.pre-commit.sh .git/hooks/pre-commit
+ln -sf ../../scripts/pre-commit.sh .git/hooks/pre-commit
 
 OSX=0
 if [ "$(uname)" = Darwin ]; then
