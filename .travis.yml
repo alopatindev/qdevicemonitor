@@ -132,14 +132,14 @@ after_success:
         SHA512_SUM=$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
+        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
         MD5_SUM=$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
         SHA1_SUM=$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
 
         set -e;
-        scp -B -v "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
+        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
   - echo -n "md5 "; echo "${MD5_SUM}";
     echo -n "sha1 "; echo "${SHA1_SUM}";
