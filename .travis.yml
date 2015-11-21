@@ -12,22 +12,15 @@ env:
     - VERSION=1.0.0
 
 matrix:
-  include:
-    - os: linux
-      compiler: g++-5
-      env: UPLOAD_BUILD=1
-    - os: linux
-      compiler: g++-4.9
-      env: UPLOAD_BUILD=0
-    - os: linux
-      compiler: g++-4.8
-      env: UPLOAD_BUILD=0
-    - os: linux
-      compiler: clang++-3.6
-      env: UPLOAD_BUILD=0
-    - os: osx
-      compiler: clang
-      env: UPLOAD_BUILD=1
+  - os: linux
+    compiler: g++
+    env: UPLOAD_BUILD=1
+  - os: linux
+    compiler: clang++
+    env: UPLOAD_BUILD=0
+  - os: osx
+    compiler: clang++
+    env: UPLOAD_BUILD=1
 
 addons:
   ssh_known_hosts:
@@ -60,6 +53,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
         cat /proc/cpuinfo;
+        dpkg -l | grep g++;
         tar xvf secrets.tar -C /home/travis/.ssh/;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         brew update;
