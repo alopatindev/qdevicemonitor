@@ -12,7 +12,7 @@ set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin;C:\Program Files\7-Zip
 
 set REVISION=%APPVEYOR_REPO_COMMIT:~0,8%
 
-set VERSION_WITH_BUILD_NUMBER=%VERSION% build %APPVEYOR_BUILD_NUMBER% rev %REVISION%
+set VERSION_WITH_BUILD_NUMBER="%VERSION% build %APPVEYOR_BUILD_NUMBER% rev %REVISION%"
 
 set PROGRAMNAME=qdevicemonitor
 set OUTPUT_DATETIME=%date:~-4,4%%date:~-10,2%%date:~-7,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
