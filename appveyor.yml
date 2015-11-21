@@ -3,7 +3,8 @@ version: "1.0.0 build {build}"
 # os: unstable
 
 environment:
-  VERSION: 1.0.0
+  global:
+    VERSION: 1.0.0
 
 install:
   - ci-scripts\set_env.bat

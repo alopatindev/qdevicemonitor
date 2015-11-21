@@ -10,8 +10,9 @@ os:
   - osx
 
 env:
-  - STORAGE_HOSTNAME=frs.sourceforge.net
-  - VERSION=1.0.0
+  global:
+    - STORAGE_HOSTNAME=frs.sourceforge.net
+    - VERSION=1.0.0
 
 addons:
   ssh_known_hosts:
@@ -83,17 +84,17 @@ script:
   - cd "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
-            qmake -spec linux-g++
+            qmake -spec linux-g++;
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec linux-clang
+            qmake -spec linux-clang;
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         if [ $CXX = "g++" ]; then
-            qmake -spec macx-g++
+            qmake -spec macx-g++;
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec macx-clang
+            qmake -spec macx-clang;
         fi;
     fi;
   - echo "${PATH}";
