@@ -11,10 +11,6 @@ env:
     - STORAGE_HOSTNAME=frs.sourceforge.net
     - VERSION=1.0.0
 
-compiler:
-  - gcc
-  - clang
-
 matrix:
   include:
     - os: linux
@@ -26,9 +22,6 @@ matrix:
     - os: osx
       compiler: clang
       env: UPLOAD_BUILD=1
-  exclude:
-    - os: osx
-      compiler: gcc
 
 addons:
   ssh_known_hosts:
@@ -56,12 +49,11 @@ addons:
 before_install:
   - pwd
   - ls -al
-  - openssl aes-256-cbc -K $encrypted_59f5247592cb_key -iv $encrypted_59f5247592cb_iv -in secrets.tar.enc -out secrets.tar -d
+  - openssl aes-256-cbc -K $encrypted_59f5247592cb_key -iv $encrypted_59f5247592cb_iv -in ci-scripts/secrets.tar.enc -out secrets.tar -d
   - uname -a;
   - if [ $TRAVIS_OS_NAME = linux ]; then
         cat /etc/*release;
         cat /proc/cpuinfo;
-        dpkg -l | egrep "(g++|clang++)";
         tar xvf secrets.tar -C /home/travis/.ssh/;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         brew update;
@@ -156,7 +148,7 @@ after_success:
   - if [ $UPLOAD_BUILD = 1 ]; then
         OS_NAME="${TRAVIS_OS_NAME}";
         if [ $OS_NAME = "linux" ]; then
-            OS_NAME="ubuntu"
+            OS_NAME="ubuntu";
         fi;
         scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/${OS_NAME}/";
     fi;
