@@ -11,17 +11,24 @@ env:
     - STORAGE_HOSTNAME=frs.sourceforge.net
     - VERSION=1.0.0
 
+compiler:
+  - gcc
+  - clang
+
 matrix:
   include:
     - os: linux
-      compiler: g++
+      compiler: gcc
       env: UPLOAD_BUILD=1
     - os: linux
-      compiler: clang++
+      compiler: clang
       env: UPLOAD_BUILD=0
     - os: osx
-      compiler: clang++
+      compiler: clang
       env: UPLOAD_BUILD=1
+  exclude:
+    - os: osx
+      compiler: gcc
 
 addons:
   ssh_known_hosts:
@@ -147,7 +154,7 @@ after_success:
     echo -n "sha1 "; echo "${SHA1_SUM}";
     echo -n "sha512 "; echo "${SHA512_SUM}";
   - if [ $UPLOAD_BUILD = 1 ]; then
-        OS_NAME="${TRAVIS_OS_NAME}"
+        OS_NAME="${TRAVIS_OS_NAME}";
         if [ $OS_NAME = "linux" ]; then
             OS_NAME="ubuntu"
         fi;
