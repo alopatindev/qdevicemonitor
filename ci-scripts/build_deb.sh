@@ -17,11 +17,11 @@ Version: ${VERSION}
 Section: contrib
 Priority: optional
 Architecture: amd64
-Depends: libqt5widgets5 (>= 5.0.0), libimobiledevice-utils (>= 1.1.5), usbmuxd (>= 1.0.8), android-tools-adb (>= 4.2.2)
+Depends: libqt5widgets5 (>= 5.0.0), libimobiledevice-utils (>= 1.1.5), usbmuxd (>= 1.0.8), android-tools-adb (>= 4.2.2), libc6 (>= 2.15)
 Installed-Size: ${INSTALLED_SIZE}
 Maintainer: Alexander Lopatin <alopatindev.spamhere@gmail.com>
-Description: Crossplatform Android, iOS and text file log viewer
- This programs shows a log from devices that run Android and iOS.
+Description: Crossplatform Android, iOS and text files log viewer
+ This program shows a log from devices that run Android and iOS.
  Also it is a GUI for tailf command-line tool." > debian/DEBIAN/control
 
 fakeroot dpkg-deb --build debian
