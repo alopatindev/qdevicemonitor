@@ -14,6 +14,24 @@ env:
     - STORAGE_HOSTNAME=frs.sourceforge.net
     - VERSION=1.0.0
 
+matrix:
+  include:
+    - os: linux
+      compiler: g++-5
+      env: UPLOAD_BUILD=1
+    - os: linux
+      compiler: g++-4.9
+      env: UPLOAD_BUILD=0
+    - os: linux
+      compiler: g++-4.8
+      env: UPLOAD_BUILD=0
+    - os: linux
+      compiler: clang++-3.6
+      env: UPLOAD_BUILD=0
+    - os: osx
+      compiler: clang
+      env: UPLOAD_BUILD=1
+
 addons:
   ssh_known_hosts:
     - ${STORAGE_HOSTNAME}
@@ -35,6 +53,7 @@ addons:
       - libimobiledevice-utils
       - g++-5
       - clang-3.6
+      - lintian
 
 matrix:
   exclude:
@@ -134,17 +153,16 @@ after_success:
         MD5_SUM=$(md5sum "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA1_SUM=$(sha1sum "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
-
-        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
         MD5_SUM=$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
         SHA1_SUM=$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
-
-        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
   - echo -n "md5 "; echo "${MD5_SUM}";
     echo -n "sha1 "; echo "${SHA1_SUM}";
     echo -n "sha512 "; echo "${SHA512_SUM}";
+  - if [ $UPLOAD_BUILD = 1 ]; then
+        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/${TRAVIS_OS_NAME}/";
+    fi;
 
 # vim: textwidth=0
