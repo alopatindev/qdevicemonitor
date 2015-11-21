@@ -10,15 +10,13 @@ env:
   global:
     - STORAGE_HOSTNAME=frs.sourceforge.net
     - VERSION=1.0.0
+    - UPLOAD_BUILD=0
 
 matrix:
   include:
     - os: linux
       compiler: gcc
       env: UPLOAD_BUILD=1
-    - os: linux
-      compiler: clang
-      env: UPLOAD_BUILD=0
     - os: osx
       compiler: clang
       env: UPLOAD_BUILD=1
