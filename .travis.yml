@@ -111,7 +111,7 @@ script:
   - cd ..;
   - ls -l "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        strip "${PROGRAMNAME}/${PROGRAMNAME}";
+        strip --remove-section=.comment "${PROGRAMNAME}/${PROGRAMNAME}";
         file "${PROGRAMNAME}/${PROGRAMNAME}";
         ldd "${PROGRAMNAME}/${PROGRAMNAME}";
 
@@ -152,7 +152,11 @@ after_success:
     echo -n "sha1 "; echo "${SHA1_SUM}";
     echo -n "sha512 "; echo "${SHA512_SUM}";
   - if [ $UPLOAD_BUILD = 1 ]; then
-        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/${TRAVIS_OS_NAME}/";
+        OS_NAME="${TRAVIS_OS_NAME}"
+        if [ $OS_NAME = "linux" ]; then
+            OS_NAME="ubuntu"
+        fi;
+        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/${OS_NAME}/";
     fi;
 
 # vim: textwidth=0

@@ -5,8 +5,22 @@ set -e
 echo "creating deb for '${PROGRAMNAME}'; output '${OUTPUT_FILENAME}'"
 mkdir -p ./debian/DEBIAN
 mkdir -p ./debian/usr/bin
+mkdir -p "./debian/usr/share/doc/${PROGRAMNAME}"
 find ./debian -type d | xargs chmod 755
-cp -v "${PROGRAMNAME}/${PROGRAMNAME}" ./debian/usr/bin/
+
+mv "${PROGRAMNAME}/${PROGRAMNAME}" ./debian/usr/bin/
+chmod 755 "./debian/usr/bin/${PROGRAMNAME}"
+
+echo "This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
+
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under certain conditions; read LICENSE for details.
+
+Copyright (C) 2014—2015  Alexander Lopatin <alopatindev ät gmail dot com>" > "./debian/usr/share/doc/${PROGRAMNAME}/copyright"
 
 # round((size in bytes)/1024)
 INSTALLED_SIZE=$(du -s ./debian/usr | awk '{x=$1/1024; i=int(x); if ((x-i)*10 >= 5) {f=1} else {f=0}; print i+f}')
