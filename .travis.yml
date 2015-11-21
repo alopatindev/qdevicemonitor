@@ -56,6 +56,7 @@ before_install:
         tar xvf secrets.tar -C /Users/travis/.ssh/;
     fi;
   - $CXX --version;
+  - set -e;
 
 install:
   - ls -al ~;
@@ -63,8 +64,6 @@ install:
   - if [ $TRAVIS_OS_NAME = linux ]; then
         sudo apt-get install -y --force-yes --no-install-suggests --no-install-recommends libimobiledevice-dev libimobiledevice-utils;
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        set -e;
-
         ls -al /Applications;
         cat ~/.ssh_host_rsa_key.pub;
 
@@ -83,18 +82,17 @@ script:
   - cd "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
-            qmake -spec linux-g++ "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
+            qmake -spec linux-g++
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec linux-clang "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
+            qmake -spec linux-clang
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        set -e;
         if [ $CXX = "g++" ]; then
-            qmake -spec macx-g++ "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
+            qmake -spec macx-g++
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec macx-clang "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
+            qmake -spec macx-clang
         fi;
     fi;
   - echo "${PATH}";
@@ -135,14 +133,12 @@ after_success:
         SHA1_SUM=$(sha1sum "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(sha512sum "${OUTPUT_FILENAME}" | awk '{print $1}');
 
-        set -e;
         scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/ubuntu/";
     elif [ $TRAVIS_OS_NAME = osx ]; then
         MD5_SUM=$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
         SHA1_SUM=$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
 
-        set -e;
         scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/osx/";
     fi;
   - echo -n "md5 "; echo "${MD5_SUM}";

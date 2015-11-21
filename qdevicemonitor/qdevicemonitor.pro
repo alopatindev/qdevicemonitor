@@ -45,12 +45,16 @@ CONFIG += c++11
 
 QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall
 
+VERSION = $$(VERSION)
+
+DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
+
 win32 {
-    QMAKE_CXXFLAGS += -D__NO_INLINE__  # FIXME: MinGW math compilation bug
+    DEFINES += __NO_INLINE__  # FIXME: MinGW math compilation bug
     RC_FILE = winicon.rc
 }
 
 macx {
-    QMAKE_CXXFLAGS += -stdlib=libc++ -Wfatal-errors
+    QMAKE_CXXFLAGS += -stdlib=libc++
     ICON = icons/app_icon.icns
 }

@@ -9,6 +9,8 @@ if [ "$(uname)" = Darwin ]; then
     OSX=1
 fi
 
+source ci-scripts/set_env.sh
+
 ctags -R .
 cd qdevicemonitor
 
