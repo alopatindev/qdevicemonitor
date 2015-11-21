@@ -6,6 +6,7 @@ echo "creating deb for '${PROGRAMNAME}'; output '${OUTPUT_FILENAME}'"
 mkdir -p ./debian/DEBIAN
 mkdir -p ./debian/usr/bin
 mkdir -p "./debian/usr/share/doc/${PROGRAMNAME}"
+mv README.md "./debian/usr/share/doc/${PROGRAMNAME}"
 find ./debian -type d | xargs chmod 755
 
 mv "${PROGRAMNAME}/${PROGRAMNAME}" ./debian/usr/bin/

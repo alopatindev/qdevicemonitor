@@ -38,9 +38,6 @@ build_script:
   - copy "%QTDIR%\bin\libgcc_s_dw2-1.dll" .
   - copy "%QTDIR%\bin\libstdc++-6.dll" .
   - copy "%QTDIR%\bin\libwinpthread-1.dll" .
-  - copy "%QTDIR%\bin\icuin5*.dll" .
-  - copy "%QTDIR%\bin\icuuc5*.dll" .
-  - copy "%QTDIR%\bin\icudt5*.dll" .
   - copy "%QTDIR%\bin\Qt5Core.dll" .
   - copy "%QTDIR%\bin\Qt5Gui.dll" .
   - copy "%QTDIR%\bin\Qt5Widgets.dll" .
@@ -52,6 +49,7 @@ build_script:
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%.exe"
+  - move "..\README.md" "..\%OUTPUT_DIRECTORY%\README.md.txt"
   - rmdir /S /Q release
   - mingw32-make clean
   - qmake "CONFIG += console"
