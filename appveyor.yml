@@ -1,4 +1,4 @@
-version: 0.0.{build}
+version: "1.0.0 build {build}"
 
 # os: unstable
 
@@ -44,7 +44,7 @@ build_script:
   - move "%CYG_HOMEDIR%\3rdparty" .
   - cd ..
   - cd %PROGRAMNAME%
-  - qmake
+  - qmake "VERSION=%VERSION%" 'DEFINES += VERSION=\\\"%VERSION_WITH_BUILD_NUMBER%\\\"'
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%.exe"

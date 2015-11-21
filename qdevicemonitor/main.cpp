@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
     a.setApplicationName("QDeviceMonitor");
+    a.setApplicationVersion(VERSION);
     MainWindow w;
     w.show();
 

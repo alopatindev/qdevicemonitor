@@ -83,18 +83,18 @@ script:
   - cd "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
-            qmake -spec linux-g++;
+            qmake -spec linux-g++ "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec linux-clang;
+            qmake -spec linux-clang "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         set -e;
         if [ $CXX = "g++" ]; then
-            qmake -spec macx-g++;
+            qmake -spec macx-g++ "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec macx-clang;
+            qmake -spec macx-clang "VERSION=${VERSION}" 'DEFINES += VERSION=\\\"'${VERSION_WITH_BUILD_NUMBER}'\\\"';
         fi;
     fi;
   - echo "${PATH}";
@@ -102,9 +102,13 @@ script:
   - cd ..;
   - ls -l "${PROGRAMNAME}";
   - if [ $TRAVIS_OS_NAME = linux ]; then
+        strip "${PROGRAMNAME}/${PROGRAMNAME}";
         file "${PROGRAMNAME}/${PROGRAMNAME}";
+        ldd "${PROGRAMNAME}/${PROGRAMNAME}";
+
         export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.deb";
         ./ci-scripts/build_deb.sh;
+        lintian -i -I --show-overrides "${OUTPUT_FILENAME}" && echo ok || echo failed;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         function copy_3rdparty() {
             THIRD_PARTY_NAME="$1";

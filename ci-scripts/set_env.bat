@@ -10,6 +10,9 @@ set CYG_INSTALLER=setup-x86.exe
 
 set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin;C:\Program Files\7-Zip
 
+set VERSION="1.0.0"
+set VERSION_WITH_BUILD_NUMBER="%VERSION% build %APPVEYOR_BUILD_NUMBER%"
+
 set PROGRAMNAME=qdevicemonitor
 set OUTPUT_DATETIME=%date:~-4,4%%date:~-10,2%%date:~-7,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
 set OUTPUT_DATETIME=%OUTPUT_DATETIME: =0%
