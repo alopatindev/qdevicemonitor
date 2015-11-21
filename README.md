@@ -32,13 +32,13 @@ Installation
 1. Add **universe** repository (Software Center — Edit — Software Sources...)
 2. sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
 3. sudo apt-get update
-4. [Download](http://qdevicemonitor.uhostall.com/ubuntu) and install the last deb package
+4. [Download](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/) and install the last deb package
 
 #### Gentoo
 [Use ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla.
 
 ### Mac OS X
-[Download](http://qdevicemonitor.uhostall.com/osx), unzip and move the app to /Applications.
+[Download](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/), unzip and move the app to /Applications.
 
 ### Windows
 [Download](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unzip and run.
@@ -67,7 +67,7 @@ If so—try **udevadm control --reload** or run usbmuxd manually.
 
 #### on Windows
 Make sure you've installed [iTunes](https://www.apple.com/itunes/download/)
-and checked that it runs and understands your device.
+and checked that it runs and detects your device.
 
 License
 -------
