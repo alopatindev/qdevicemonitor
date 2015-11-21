@@ -103,7 +103,7 @@ bool Utils::columnMatches(const QString& column, const QString& filter, const QS
     if (filter.startsWith(column))
     {
         columnFound = true;
-        QString value = filter.mid(column.length());
+        const QString value = filter.mid(column.length());
         if (value.isEmpty())
         {
             filtersValid = false;
@@ -118,40 +118,18 @@ bool Utils::columnMatches(const QString& column, const QString& filter, const QS
 
 bool Utils::columnTextMatches(const QString& filter, const QString& text)
 {
-    static QString f[3];
-    f[0] = filter.trimmed();
+    const QString textFilter = filter.trimmed();
 
-    if (f[0].isEmpty() || text.indexOf(f[0]) != -1)
+    if (textFilter.isEmpty() || text.indexOf(textFilter) != -1)
     {
         return true;
     }
     else
     {
-        f[1] = QString(".*%1.*").arg(f[0]);
-        f[2] = QString(".*(%1).*").arg(f[1]);
-
-        static QRegExp rx[] = {
-            //QRegExp("", Qt::CaseSensitive, QRegExp::RegExp),
-            QRegExp("", Qt::CaseSensitive, QRegExp::RegExp2),
-            QRegExp("", Qt::CaseSensitive, QRegExp::Wildcard),
-            QRegExp("", Qt::CaseSensitive, QRegExp::WildcardUnix),
-            //QRegExp("", Qt::CaseSensitive, QRegExp::FixedString),
-            QRegExp("", Qt::CaseSensitive, QRegExp::W3CXmlSchema11)
-        };
-
-        for (size_t i = 0; i < sizeof(rx) / sizeof(rx[0]); ++i)
-        {
-            QRegExp& r = rx[i];
-            for (size_t j = 0; j < sizeof(f) / sizeof(f[0]); ++j)
-            {
-                r.setPattern(f[j]);
-                if (r.isValid() && r.exactMatch(text))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        const QString regexpFilter = QString(".*(%1).*").arg(textFilter);
+        const QRegExp rx(regexpFilter, Qt::CaseSensitive, QRegExp::RegExp2);
+        const bool match = rx.isValid() && rx.exactMatch(text);
+        return match;
     }
 
     return true;

@@ -185,7 +185,7 @@ void AndroidDevice::update()
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 {
-    static QRegExp rx("([\\d-]+) *([\\d:\\.]+) *(\\d+) *(\\d+) *([A-Z]) *(.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
+    QRegExp rx("([\\d-]+) *([\\d:\\.]+) *(\\d+) *(\\d+) *([A-Z]) *(.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
     rx.setMinimal(true);
 
     bool filtersMatch = true;

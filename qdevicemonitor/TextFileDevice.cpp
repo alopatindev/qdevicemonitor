@@ -103,16 +103,11 @@ void TextFileDevice::update()
 
 void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QString& text) const
 {
-    for (auto& filter : filters)
-    {
-        bool columnFound = false;
-        if (!Utils::columnMatches("text:", filter, text, filtersValid, columnFound))
-        {
-            filtersMatch = false;
-            break;
-        }
+    filtersValid = true;
 
-        if (!columnFound && !Utils::columnTextMatches(filter, text))
+    for (const auto& filter : filters)
+    {
+        if (!Utils::columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;
@@ -124,7 +119,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
 {
     bool filtersMatch = true;
 
-    static QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
+    QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
     rx.setMinimal(true);
 
     const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;

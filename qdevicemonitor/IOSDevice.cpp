@@ -205,7 +205,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         return;
     }
 
-    static QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
+    QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
     rx.setMinimal(true);
 
     //qDebug() << "filterAndAddToTextEdit:" << line;
