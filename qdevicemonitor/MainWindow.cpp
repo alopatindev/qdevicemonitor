@@ -295,5 +295,7 @@ void MainWindow::checkExternalPrograms()
                 tr("Program \"%1\" is not found. Please add its directory path to PATH environment variable and restart the application.")
                     .arg(programs[i]));
         }
+        procs[i].terminate();
+        procs[i].close();
     }
 }

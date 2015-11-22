@@ -62,6 +62,7 @@ void TextFileDevice::stopLogger()
 {
     qDebug() << "TextFileDevice::stopLogger";
 
+    m_tailProcess.terminate();
     m_tailProcess.close();
 }
 

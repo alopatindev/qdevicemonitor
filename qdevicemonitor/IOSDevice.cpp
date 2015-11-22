@@ -47,6 +47,7 @@ IOSDevice::~IOSDevice()
     qDebug() << "IOSDevice::~IOSDevice";
     stopLogger();
     disconnect(&m_deviceInfoProcess, 0, this, 0);
+    m_deviceInfoProcess.terminate();
     m_deviceInfoProcess.close();
 }
 
@@ -96,6 +97,7 @@ void IOSDevice::stopLogger()
 {
     qDebug() << "IOSDevice::stopLogger";
 
+    m_deviceLogProcess.terminate();
     m_deviceLogProcess.close();
     m_deviceLogFileStream.clear();
     m_deviceLogFile.close();

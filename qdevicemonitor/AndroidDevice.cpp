@@ -42,6 +42,8 @@ AndroidDevice::~AndroidDevice()
 {
     qDebug() << "AndroidDevice::~AndroidDevice";
     stopLogger();
+
+    m_deviceInfoProcess.terminate();
     m_deviceInfoProcess.close();
 }
 
@@ -95,7 +97,9 @@ void AndroidDevice::stopLogger()
 {
     qDebug() << "AndroidDevice::stopLogger";
 
+    m_deviceLogProcess.terminate();
     m_deviceLogProcess.close();
+
     m_deviceLogFileStream.clear();
     m_deviceLogFile.close();
 }
@@ -118,6 +122,7 @@ void AndroidDevice::update()
             }
         }
 
+        m_deviceInfoProcess.terminate();
         m_deviceInfoProcess.close();
 
         if (!m_didReadDeviceModel)
@@ -296,6 +301,7 @@ void AndroidDevice::maybeClearAdbLog()
         m_deviceClearLogProcess.setReadChannel(QProcess::StandardOutput);
         m_deviceClearLogProcess.start("adb", args);
         m_deviceClearLogProcess.waitForFinished(1000);
+        m_deviceClearLogProcess.terminate();
         m_deviceClearLogProcess.close();
     }
 }
@@ -421,7 +427,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
             }
         }
 
-        s_devicesListProcess.close();
+        stopDevicesListProcess();
 
         QStringList args;
         args.append("devices");
@@ -432,6 +438,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
 void AndroidDevice::stopDevicesListProcess()
 {
+    s_devicesListProcess.terminate();
     s_devicesListProcess.close();
 }
 
