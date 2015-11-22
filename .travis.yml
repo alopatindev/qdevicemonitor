@@ -21,6 +21,10 @@ matrix:
     - os: osx
       compiler: clang
       env: UPLOAD_BUILD=1
+  allow_failures:
+    # FIXME: Qt bugs
+    - os: linux
+      compiler: clang
 
 addons:
   ssh_known_hosts:
