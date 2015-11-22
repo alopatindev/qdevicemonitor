@@ -8,10 +8,10 @@ os:
   - osx
 
 env:
-  - UPLOAD_BUILD=0
   global:
     - STORAGE_HOSTNAME=frs.sourceforge.net
     - VERSION=1.0.0
+    - UPLOAD_BUILD=0
 
 matrix:
   include:
