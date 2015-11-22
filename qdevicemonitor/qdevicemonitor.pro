@@ -50,7 +50,7 @@ VERSION = $$(VERSION)
 DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
 
 linux-clang {
-    QMAKE_CXXFLAGS += -Wno-deprecated-register  # FIXME: Qt bug
+    QMAKE_CXXFLAGS += -Wno-deprecated-register -Wno-nested-anon-types  # FIXME: Qt bugs
 }
 
 win32 {
