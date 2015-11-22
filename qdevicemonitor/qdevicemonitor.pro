@@ -49,6 +49,10 @@ VERSION = $$(VERSION)
 
 DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
 
+linux-clang {
+    QMAKE_CXXFLAGS += -Wno-deprecated-register  # FIXME: Qt bug
+}
+
 win32 {
     DEFINES += __NO_INLINE__  # FIXME: MinGW math compilation bug
     RC_FILE = winicon.rc

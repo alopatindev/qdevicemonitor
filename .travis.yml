@@ -18,8 +18,6 @@ matrix:
     - os: linux
       compiler: gcc
       env: UPLOAD_BUILD=1
-    - os: linux
-      compiler: clang
     - os: osx
       compiler: clang
       env: UPLOAD_BUILD=1
