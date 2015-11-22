@@ -76,7 +76,7 @@ and checked that it runs and detects your device.
 ### Android devices are not recognized?
 1. Make sure you've enabled Developer mode on your device (basically with Settings — Developer Options — USB Debugging)
 2. Make sure you've confirmed (from the device) you trust your computer
-3. Make sure you your device is detectable with ddms/monitor
+3. Make sure your device is detectable with ddms/monitor
     1. On some devices debugging works only if you select the particular "Connect as" option (Built-in CD-ROM, Camera, MTP, etc.)
     2. Try "adb kill-server" and "adb devices" commands
 
