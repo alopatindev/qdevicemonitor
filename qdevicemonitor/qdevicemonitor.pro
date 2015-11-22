@@ -56,6 +56,6 @@ win32 {
 
 macx {
     QMAKE_CXXFLAGS += -stdlib=libc++
-    QMAKE_LFLAGS += stdlib=libc++
+    QMAKE_LFLAGS += -stdlib=libc++
     ICON = icons/app_icon.icns
 }

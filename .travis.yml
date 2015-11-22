@@ -1,12 +1,14 @@
 # sudo: false
 
 language: cpp
+compiler: clang
 
 os:
   - linux
   - osx
 
 env:
+  - UPLOAD_BUILD=0
   global:
     - STORAGE_HOSTNAME=frs.sourceforge.net
     - VERSION=1.0.0
@@ -18,20 +20,14 @@ matrix:
       env: UPLOAD_BUILD=1
     - os: linux
       compiler: clang
-      env: UPLOAD_BUILD=0
     - os: osx
       compiler: clang
       env: UPLOAD_BUILD=1
     - os: osx
       compiler: gcc
-      env: UPLOAD_BUILD=0
-  exclude:
+  allow_failures:
     - os: osx
-      compiler:
-      env:
-    - os: linux
-      compiler:
-      env:
+      compiler: gcc
 
 addons:
   ssh_known_hosts:
@@ -160,7 +156,9 @@ after_success:
         if [ $OS_NAME = "linux" ]; then
             OS_NAME="ubuntu";
         fi;
-        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_USER_AND_PATH}/${OS_NAME}/";
+        STORAGE_URL="${STORAGE_USER_AND_PATH}/${OS_NAME}/";
+        scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_URL}";
+        ci-scripts/remove_old_builds.sh "${STORAGE_URL}";
     fi;
 
-# vim: textwidth=0
+# vim: textwidth=0:shiftwidth=2:softtabstop=2:tabstop=2
