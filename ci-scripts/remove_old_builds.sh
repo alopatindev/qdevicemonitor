@@ -4,7 +4,7 @@ ALLOWED_AMOUNT=10
 
 STORAGE_URL="$1"
 
-OUT=$(mktemp)
+OUT=$(mktemp /tmp/sftp-XXXXXX)
 
 sftp_connect() {
     sftp -q -o "StrictHostKeyChecking no" "${STORAGE_URL}"
