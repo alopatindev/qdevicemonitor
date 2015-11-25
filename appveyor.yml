@@ -58,9 +58,9 @@ build_script:
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"
   - cd ..
   - 7z a -mx=9 "%OUTPUT_FILENAME%" "%OUTPUT_DIRECTORY%"
-  - %CYG_ROOT_WIN%\bin\md5sum "%OUTPUT_FILENAME%"
-  - %CYG_ROOT_WIN%\bin\sha1sum "%OUTPUT_FILENAME%"
-  - %CYG_ROOT_WIN%\bin\sha512sum "%OUTPUT_FILENAME%"
+  - '%CYG_ROOT_WIN%\bin\md5sum "%OUTPUT_FILENAME%"'
+  - '%CYG_ROOT_WIN%\bin\sha1sum "%OUTPUT_FILENAME%"'
+  - '%CYG_ROOT_WIN%\bin\sha512sum "%OUTPUT_FILENAME%"'
 
 artifacts:
   - path: $(OUTPUT_FILENAME)
