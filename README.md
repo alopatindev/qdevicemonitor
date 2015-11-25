@@ -30,8 +30,8 @@ Installation
 ### GNU/Linux
 #### Ubuntu
 1. Add **universe** repository (Software Center — Edit — Software Sources...)
-2. sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-3. sudo apt-get update
+2. `sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa`
+3. `sudo apt-get update`
 4. [Download](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/) and install the last deb package
 
 #### Gentoo
@@ -67,7 +67,7 @@ Make sure that you've confirmed (from the device) that you trust this computer.
 #### on GNU/Linux
 If you've just installed **usbmuxd** (as dependence) it probably didn't run
 automatically as you plugged in the device.
-If so—try **udevadm control --reload** or run usbmuxd manually.
+If so—try `udevadm control --reload` or run usbmuxd manually.
 
 #### on Windows
 Make sure you've installed [iTunes](https://www.apple.com/itunes/download/)
@@ -98,6 +98,9 @@ and checked that it runs and detects your device.
 3. Try to restart the OS
 
 If you're still experiencing issues—try all troubleshooting steps from the beginning (probably you've configured everything right and reapplying one of the previous steps will work). If it didn't help—try to Google it, I'm pretty sure you're running into some common issue ;)
+
+### OS X: App can’t be opened because it is from an unidentified developer
+Try [this guide](http://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/)
 
 License
 -------
