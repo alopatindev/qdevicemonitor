@@ -32,21 +32,21 @@ Installation
 1. Add **universe** repository (Software Center — Edit — Software Sources...)
 2. `sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa`
 3. `sudo apt-get update`
-4. [Download](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/) and install the last deb package
+4. [Download .deb](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/) and install it
 
 #### Gentoo
 [Use ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla.
 
 ### Mac OS X
-[Download](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/), unzip and move the app to /Applications.
+[Download .dmg](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/), open and move the app to /Applications.
 
 ### Windows
 1. If you need Android support (optional)
     1. Install Android SDK
     2. Install **Tools**, **Platform-tools** and **USB Driver** with Android SDK manager
     3. Add the path to `platform-tools` directory (from Android SDK) to **Path** environment variable (with Control Panel — System — Advanced — Environment Variables)
-2. [Download](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unzip and run.
-Full build list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history).
+2. [Download .zip](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unpack and run.
+Full build list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green build and then click on Artifacts).
 
 ### Build from the Source Code
 Make sure that you have installed [Qt >= 5](http://www.qt.io/download-open-source).

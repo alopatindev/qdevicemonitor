@@ -132,25 +132,9 @@ script:
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
 
-        FRAMEWORKS_DIR="${APP_DIR}/Contents/Frameworks";
-        mkdir "${FRAMEWORKS_DIR}";
-
-        for i in $(otool -L "${EXECFILE}" | grep qt5 | awk '{print $1}'); do
-            echo "editing path to '${i}'";
-            LIB_MACHINE_DIR=$(echo "$i" | python2 -c 'print raw_input().split("Versions")[0]');
-            LIB_MACHINE_FILE=$(echo "$i" | python2 -c 'print "Versions" + raw_input().split("Versions")[1]');
-            FRAMEWORK_NAME=$(echo "$i" | python2 -c 'print raw_input().split(".framework")[0].split("/")[-1:][0] + ".framework"');
-            echo cp -rv "${LIB_MACHINE_DIR}" "${FRAMEWORKS_DIR}/";
-            cp -rv "${LIB_MACHINE_DIR}" "${FRAMEWORKS_DIR}/";
-            echo install_name_tool -change "$i" "@executable_path/../Frameworks/${FRAMEWORK_NAME}/${LIB_MACHINE_FILE}" "${EXECFILE}";
-            install_name_tool -change "$i" "@executable_path/../Frameworks/${FRAMEWORK_NAME}/${LIB_MACHINE_FILE}" "${EXECFILE}";
-        done;
-        otool -L "${EXECFILE}";
-
-        mkdir "${OUTPUT_DIRECTORY}";
-        mv "${PROGRAMNAME}/${PROGRAMNAME}.app" "${OUTPUT_DIRECTORY}/${PROGRAMNAME}.app";
-        export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.zip";
-        7z a -mx=9 "${OUTPUT_FILENAME}" "${OUTPUT_DIRECTORY}";
+        macdeployqt "${PROGRAMNAME}/${PROGRAMNAME}.app" -dmg;
+        mv "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_DIRECTORY}.dmg";
+        export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.dmg";
     fi
   - ls -l;
 
