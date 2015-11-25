@@ -58,6 +58,7 @@ build_script:
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"
   - cd ..
   - 7z a -mx=9 "%OUTPUT_FILENAME%" "%OUTPUT_DIRECTORY%"
+  - '%CYG_ROOT%/bin/bash -lc "for i in md5sum sha1sum sha512sum ; do echo $i ; $i *.zip ; echo ; done"'
 
 artifacts:
   - path: $(OUTPUT_FILENAME)
