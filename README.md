@@ -10,22 +10,25 @@ Key Features
 ------------
 1. GNU/Linux, Mac OS X and Windows support
 2. Logs can be taken from Android, iOS or from text file
-3. Filtering support
-    1. Plain text, wildcards and regexes
+3. Filtering support (RegExp)
+    1. Automatic filter history that is used as autocomplete
     2. Prefixes **pid:, tid:, tag: or text:** (Android only)
-    3. Verbosity level (Android only)
-    4. Automatic filter history that is used as autocomplete
-4. Backup to text files automatically. Automatic old files removal
-5. Log color highlighting (two color schemes)
-6. Shortcuts
-    1. Alt+C — clear log
-    2. Ctrl+M — add a mark to log
-    3. Ctrl+E — open in external text editor
+4. Verbosity level (Android only)
+5. Backup to text files automatically. Automatic old files removal
+6. Color Highlight (two color schemes)
+7. Clear Log
+8. Add a Mark to Log
+9. Open Log in External Text Editor
 
 ![Main Window](screenshots/mainwindow-osx.png)
 
 Installation
 ------------
+
+## Stable Builds
+See the [Releases Page](https://github.com/alopatindev/qdevicemonitor/releases)
+
+## Latest Builds
 
 ### GNU/Linux
 #### Ubuntu
@@ -35,18 +38,18 @@ Installation
 4. [Download .deb](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/) and install it
 
 #### Gentoo
-[Use ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla.
+[Use .ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla.
 
 ### Mac OS X
 [Download .dmg](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/), open and move the app to /Applications.
 
 ### Windows
-1. If you need Android support (optional)
+1. For Android support
     1. Install Android SDK
     2. Install **Tools**, **Platform-tools** and **USB Driver** with Android SDK manager
     3. Add the path to `platform-tools` directory (from Android SDK) to **Path** environment variable (with Control Panel — System — Advanced — Environment Variables)
 2. [Download .zip](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unpack and run.
-Full build list is [here](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green build and then click on Artifacts).
+[Full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on Artifacts).
 
 ### Build from the Source Code
 Make sure that you have installed [Qt >= 5](http://www.qt.io/download-open-source).
@@ -93,13 +96,15 @@ and checked that it runs and detects your device.
 #### on Windows
 1. If your device is not detectable with ddms/monitor
     1. Check Control Panel — System — Hardware — Device Manager: is your device detected correctly? If it's not—try reinstalling the driver specifying the path to `extras\google\usb-driver` (from Android SDK)
-    2. If it didn't work—try reinstalling the driving by choosing "Don't search. I will choose the driver to install" and select "Android Composite ADB Interface"
+    2. If it didn't work—try reinstalling the driver by choosing "Don't search. I will choose the driver to install" and select "Android Composite ADB Interface"
 2. Make sure you've added a path to `platform-tools` directory (from Android SDK) to **Path** environment variable
 3. Try to restart the OS
 
-If you're still experiencing issues—try all troubleshooting steps from the beginning (probably you've configured everything right and reapplying one of the previous steps will work). If it didn't help—try to Google it, I'm pretty sure you're running into some common issue ;)
+If you're still experiencing issues—try all troubleshooting steps from the beginning (probably you've configured everything right and reapplying one of the previous steps will work).
 
-### OS X: App can’t be opened because it is from an unidentified developer
+If it didn't help—try to Google it, specifying the device you use. I'm pretty sure you're running into some known issue ;)
+
+### Mac OS X: App can’t be opened because it is from an unidentified developer
 Try [this guide](http://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/)
 
 License
