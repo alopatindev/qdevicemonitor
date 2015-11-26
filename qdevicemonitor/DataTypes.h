@@ -38,7 +38,7 @@ namespace DataTypes
     typedef QHash<QString, QSharedPointer<BaseDevice>> DevicesMap;
 
     static const char* const Verbosity[] = {
-        "Fatal",
+        "Assert",
         "Error",
         "Warn",
         "Info",
@@ -48,7 +48,7 @@ namespace DataTypes
 
     enum VerbosityEnum
     {
-        Fatal,
+        Assert,
         Error,
         Warn,
         Info,

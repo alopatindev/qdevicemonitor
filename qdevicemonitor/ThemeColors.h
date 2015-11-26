@@ -30,7 +30,7 @@ namespace ThemeColors
 
     enum ColorTypes
     {
-        VerbosityFatal,
+        VerbosityAssert,
         VerbosityError,
         VerbosityWarn,
         VerbosityInfo,

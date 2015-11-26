@@ -429,6 +429,6 @@ void IOSDevice::readStandardError()
     for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !stream.atEnd(); ++i)
     {
         const QString line = stream.readLine();
-        m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityFatal], line + "\n");
+        m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityAssert], line + "\n");
     }
 }
