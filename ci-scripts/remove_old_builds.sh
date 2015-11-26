@@ -10,7 +10,7 @@ sftp_connect() {
     sftp -q -o "StrictHostKeyChecking no" "${STORAGE_URL}"
 }
 
-for B in $(echo 'ls -1' | sftp_connect | grep 'qdevicemonitor' | sort); do
+for B in $(echo 'ls -1' | sftp_connect | grep "^${PROGRAMNAME}" | sort); do
     echo $B >> $OUT
 done
 
