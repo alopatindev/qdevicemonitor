@@ -26,33 +26,33 @@ Installation
 ------------
 
 ## Stable Builds
-See the [Releases Page](https://github.com/alopatindev/qdevicemonitor/releases)
-
-## Latest Builds
+[Download the build](https://github.com/alopatindev/qdevicemonitor/releases) for your platform
 
 ### GNU/Linux
 #### Ubuntu
 1. Add **universe** repository (Software Center — Edit — Software Sources...)
 2. `sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa`
 3. `sudo apt-get update`
-4. [Download .deb](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/) and install it
+4. Install the .deb
 
 #### Gentoo
-[Use .ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla.
+[Use .ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla
 
 ### Mac OS X
-[Download .dmg](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/), open and move the app to /Applications.
+Open the .dmg and move the app to /Applications
 
 ### Windows
 1. For Android support
     1. Install Android SDK
     2. Install **Tools**, **Platform-tools** and **USB Driver** with Android SDK manager
     3. Add the path to `platform-tools` directory (from Android SDK) to **Path** environment variable (with Control Panel — System — Advanced — Environment Variables)
-2. [Download .zip](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), unpack and run.
-[Full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on Artifacts).
+2. Unpack the .zip and run `qdevicemonitor.exe`
+
+## Latest Builds
+[See this](https://sourceforge.net/projects/qdevicemonitor/files/ci/)
 
 ### Build from the Source Code
-Make sure that you have installed [Qt >= 5](http://www.qt.io/download-open-source).
+Make sure that you have installed [Qt >= 5](http://www.qt.io/download-open-source)
 * open **qdevicemonitor/qdevicemonitor.pro** with QtCreator and build the project
 * **or** use the following terminal commands:
 ```
@@ -65,16 +65,16 @@ Troubleshooting
 ---------------
 
 ### iOS devices are not recognized?
-Make sure that you've confirmed (from the device) that you trust this computer.
+Make sure that you've confirmed (from the device) that you trust this computer
 
 #### on GNU/Linux
 If you've just installed **usbmuxd** (as dependence) it probably didn't run
 automatically as you plugged in the device.
-If so—try `udevadm control --reload` or run usbmuxd manually.
+If so—try `udevadm control --reload` or run usbmuxd manually
 
 #### on Windows
 Make sure you've installed [iTunes](https://www.apple.com/itunes/download/)
-and checked that it runs and detects your device.
+and checked that it runs and detects your device
 
 ### Android devices are not recognized?
 1. Make sure you've enabled Developer mode on your device (basically with Settings — Developer Options — USB Debugging)
@@ -100,7 +100,7 @@ and checked that it runs and detects your device.
 2. Make sure you've added a path to `platform-tools` directory (from Android SDK) to **Path** environment variable
 3. Try to restart the OS
 
-If you're still experiencing issues—try all troubleshooting steps from the beginning (probably you've configured everything right and reapplying one of the previous steps will work).
+If you're still experiencing issues—try all troubleshooting steps from the beginning (probably you've configured everything right and reapplying one of the previous steps will work)
 
 If it didn't help—try to Google it, specifying the device you use. I'm pretty sure you're running into some known issue ;)
 
