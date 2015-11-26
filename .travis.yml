@@ -10,7 +10,7 @@ os:
 env:
   global:
     - STORAGE_HOSTNAME=frs.sourceforge.net
-    - VERSION=1.0.0
+    - VERSION=1.0.1
     - UPLOAD_BUILD=0
 
 matrix:
