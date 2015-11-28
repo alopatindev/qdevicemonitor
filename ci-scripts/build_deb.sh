@@ -16,7 +16,9 @@ DOCSDIR="debian/usr/share/doc/${PROGRAMNAME}"
 mkdir -v -p "${DOCSDIR}"
 mv -v README.md "${DOCSDIR}/"
 
-ICONPATH="debian/usr/share/icons/hicolor/scalable/apps/${PROGRAMNAME}.svg"
+ICONDIR="debian/usr/share/icons/hicolor/scalable/apps"
+ICONPATH="${ICONDIR}/${PROGRAMNAME}.svg"
+mkdir -v -p "${ICONDIR}"
 mv -v icons/app_icon.svg "${ICONPATH}"
 chmod 644 "${ICONPATH}"
 
