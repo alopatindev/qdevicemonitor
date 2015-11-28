@@ -132,7 +132,7 @@ script:
 
         macdeployqt "${PROGRAMNAME}/${PROGRAMNAME}.app" -dmg;
         export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.dmg";
-        mv "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_FILENAME}.dmg";
+        mv "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_FILENAME}";
     fi
   - ls -l;
 
