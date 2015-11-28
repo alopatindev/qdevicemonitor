@@ -68,8 +68,7 @@ before_install:
 install:
   - ls -al ~;
     ls -al ~/.ssh;
-  - if [ $TRAVIS_OS_NAME = linux ]; then
-    elif [ $TRAVIS_OS_NAME = osx ]; then
+  - if [ $TRAVIS_OS_NAME = osx ]; then
         ls -al /Applications;
         cat ~/.ssh_host_rsa_key.pub;
 
@@ -118,7 +117,8 @@ script:
             THIRD_PARTY_NAME="$1";
             THIRD_PARTY_DIR="$2";
             PROGRAM_DIR=$(brew info "${THIRD_PARTY_NAME}" | grep '/Cellar/' | awk '{print $1}');
-            cp -rv "${PROGRAM_DIR}" "${THIRD_PARTY_DIR}/${THIRD_PARTY_NAME}";
+            cp -av "${PROGRAM_DIR}" "${THIRD_PARTY_DIR}/${THIRD_PARTY_NAME}";
+            ls -l "${THIRD_PARTY_DIR}/${THIRD_PARTY_NAME}";
         };
         APP_DIR="${PROGRAMNAME}/${PROGRAMNAME}.app";
         EXECFILE="${APP_DIR}/Contents/MacOS/${PROGRAMNAME}";
@@ -131,8 +131,8 @@ script:
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
 
         macdeployqt "${PROGRAMNAME}/${PROGRAMNAME}.app" -dmg;
-        mv "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_DIRECTORY}.dmg";
         export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.dmg";
+        mv "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_FILENAME}.dmg";
     fi
   - ls -l;
 
