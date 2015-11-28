@@ -16,16 +16,9 @@ DOCSDIR="debian/usr/share/doc/${PROGRAMNAME}"
 mkdir -v -p "${DOCSDIR}"
 mv -v README.md "${DOCSDIR}/"
 
-ICONSIZES=( 48 64 72 96 128 256 )
-ICONSDIR="debian/usr/share/icons/hicolor"
-for SIZE in ${ICONSIZES}; do
-    D="${ICONSDIR}/${SIZE}x${SIZE}/apps"
-    mkdir -v -p "${D}"
-    inkscape \
-        --export-png="${D}/${PROGRAMNAME}.png" \
-        --export-width=${SIZE} --export-height=${SIZE} --export-background-opacity=0 --without-gui icons/app_icon.svg
-    chmod 644 "${D}/${PROGRAMNAME}.png"
-done
+ICONPATH="debian/usr/share/icons/hicolor/scalable/apps/${PROGRAMNAME}.svg"
+mv -v icons/app_icon.svg "${ICONPATH}"
+chmod 644 "${ICONPATH}"
 
 find debian -type d | xargs chmod 755
 

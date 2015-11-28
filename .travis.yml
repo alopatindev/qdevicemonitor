@@ -46,7 +46,6 @@ addons:
       - g++-5
       - clang-3.6
       - lintian
-      - inkscape
 
 before_install:
   - pwd
