@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=QDeviceMonitor
+Comment=Crossplatform log viewer for Android, iOS and text files
+Keywords=log;android;ios;apple;develop;
+Exec=qdevicemonitor
+Icon=qdevicemonitor.png
+Terminal=false
+Categories=Utility;

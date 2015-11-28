@@ -3,16 +3,33 @@
 set -e
 
 echo "creating deb for '${PROGRAMNAME}'; output '${OUTPUT_FILENAME}'"
-mkdir -p debian/DEBIAN
-mkdir -p debian/usr/bin
-mkdir -p "./debian/usr/share/doc/${PROGRAMNAME}"
-find debian -type d | xargs chmod 755
 
-mv "${PROGRAMNAME}/${PROGRAMNAME}" debian/usr/bin/
-chmod 755 "debian/usr/bin/${PROGRAMNAME}"
+mkdir -v -p debian/DEBIAN
+mkdir -v -p debian/usr/bin
+
+DESKTOPFILESDIR="debian/usr/share/applications"
+mkdir -v -p "${DESKTOPFILESDIR}"
+mv -v "icons/${PROGRAMNAME}.desktop" "${DESKTOPFILESDIR}/"
 
 DOCSDIR="debian/usr/share/doc/${PROGRAMNAME}"
-mv README.md "${DOCSDIR}/"
+mkdir -v -p "${DOCSDIR}"
+mv -v README.md "${DOCSDIR}/"
+
+ICONSIZES=( 48 64 72 96 128 256 )
+ICONSDIR="debian/usr/share/icons/hicolor"
+for SIZE in ${ICONSIZES}; do
+    D="${ICONSDIR}/${SIZE}x${SIZE}/apps"
+    mkdir -v -p "${D}"
+    inkscape \
+        --export-png="${D}/${PROGRAMNAME}.png" \
+        --export-width=${SIZE} --export-height=${SIZE} --export-background-opacity=0 --without-gui icons/app_icon.svg
+done
+
+find debian -type d | xargs chmod 755
+
+mv -v "${PROGRAMNAME}/${PROGRAMNAME}" debian/usr/bin/
+chmod 755 "debian/usr/bin/${PROGRAMNAME}"
+
 echo "This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or (at
@@ -47,8 +64,7 @@ Description: Crossplatform Android, iOS and text files log viewer
 
 fakeroot dpkg-deb --build debian
 ls -l
-echo mv debian.deb "${OUTPUT_FILENAME}"
-mv debian.deb "${OUTPUT_FILENAME}"
+mv -v debian.deb "${OUTPUT_FILENAME}"
 ls -l
 ls -lR debian
 

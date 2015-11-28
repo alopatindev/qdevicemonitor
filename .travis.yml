@@ -48,6 +48,7 @@ addons:
       - g++-5
       - clang-3.6
       - lintian
+      - inkscape
 
 before_install:
   - pwd
@@ -70,7 +71,6 @@ install:
   - ls -al ~;
     ls -al ~/.ssh;
   - if [ $TRAVIS_OS_NAME = linux ]; then
-        sudo apt-get install -y --force-yes --no-install-suggests --no-install-recommends libimobiledevice-dev libimobiledevice-utils;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         ls -al /Applications;
         cat ~/.ssh_host_rsa_key.pub;
