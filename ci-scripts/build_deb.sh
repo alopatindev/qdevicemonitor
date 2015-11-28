@@ -10,6 +10,7 @@ mkdir -v -p debian/usr/bin
 DESKTOPFILESDIR="debian/usr/share/applications"
 mkdir -v -p "${DESKTOPFILESDIR}"
 mv -v "icons/${PROGRAMNAME}.desktop" "${DESKTOPFILESDIR}/"
+chmod 644 "${DESKTOPFILESDIR}/${PROGRAMNAME}.desktop"
 
 DOCSDIR="debian/usr/share/doc/${PROGRAMNAME}"
 mkdir -v -p "${DOCSDIR}"
@@ -23,6 +24,7 @@ for SIZE in ${ICONSIZES}; do
     inkscape \
         --export-png="${D}/${PROGRAMNAME}.png" \
         --export-width=${SIZE} --export-height=${SIZE} --export-background-opacity=0 --without-gui icons/app_icon.svg
+    chmod 644 "${D}/${PROGRAMNAME}.png"
 done
 
 find debian -type d | xargs chmod 755
