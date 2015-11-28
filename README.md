@@ -50,6 +50,7 @@ Open the .dmg and move the app to /Applications
 
 ## Latest Builds
 For Ubuntu GNU/Linux and Mac OS X [see this](https://sourceforge.net/projects/qdevicemonitor/files/ci/)
+
 For Windows: [latest build](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), [full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on Artifacts)
 
 ### Build from the Source Code
