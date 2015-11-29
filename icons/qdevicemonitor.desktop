@@ -4,6 +4,6 @@ Name=QDeviceMonitor
 Comment=Crossplatform log viewer for Android, iOS and text files
 Keywords=log;android;ios;apple;develop;
 Exec=qdevicemonitor
-Icon=qdevicemonitor.svg
+Icon=qdevicemonitor
 Terminal=false
 Categories=Utility;
