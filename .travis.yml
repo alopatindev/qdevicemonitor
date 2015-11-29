@@ -129,9 +129,11 @@ script:
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
 
-        macdeployqt "${PROGRAMNAME}/${PROGRAMNAME}.app" -dmg;
+        macdeployqt "${APP_DIR}" -dmg;
+        ls -la;
+        ls -la "${PROGRAMNAME}";
         export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.dmg";
-        mv "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_FILENAME}";
+        mv -v "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_FILENAME}";
     fi
   - ls -l;
 
