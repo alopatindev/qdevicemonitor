@@ -357,42 +357,44 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                 while (!stream.atEnd())
                 {
                     const QString line = stream.readLine();
-                    if (!line.contains("List of devices attached"))
+                    if (line.contains("List of devices attached"))
                     {
-                        const QStringList lineSplit = line.split("\t");
-                        if (lineSplit.count() >= 2)
+                        continue;
+                    }
+
+                    const QStringList lineSplit = line.split("\t");
+                    if (lineSplit.count() >= 2)
+                    {
+                        const QString& deviceId = lineSplit[0];
+                        const QString& deviceStatus = lineSplit[1];
+                        //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
+                        if (s_removedDeviceByTabClose.contains(deviceId))
                         {
-                            const QString deviceId = lineSplit[0];
-                            const QString deviceStatus = lineSplit[1];
-                            //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
-                            if (s_removedDeviceByTabClose.contains(deviceId))
+                            s_removedDeviceByTabClose[deviceId] = true;  // visited
+                        }
+                        else
+                        {
+                            auto it = map.find(deviceId);
+                            if (it == map.end())
                             {
-                                s_removedDeviceByTabClose[deviceId] = true;  // visited
+                                map[deviceId] = QSharedPointer<BaseDevice>(
+                                    new AndroidDevice(
+                                        parent,
+                                        deviceId,
+                                        DeviceType::Android,
+                                        QString(getPlatformStringStatic()),
+                                        tr("Initializing..."),
+                                        deviceAdapter
+                                    )
+                                );
+                            }
+                            else if ((*it)->getType() != DeviceType::Android)
+                            {
+                                qDebug() << "id collision";
                             }
                             else
                             {
-                                auto it = map.find(deviceId);
-                                if (it == map.end())
-                                {
-                                    map[deviceId] = QSharedPointer<BaseDevice>(
-                                        new AndroidDevice(
-                                            parent,
-                                            deviceId,
-                                            DeviceType::Android,
-                                            QString(getPlatformStringStatic()),
-                                            tr("Initializing..."),
-                                            deviceAdapter
-                                        )
-                                    );
-                                }
-                                else if ((*it)->getType() != DeviceType::Android)
-                                {
-                                    qDebug() << "id collision";
-                                }
-                                else
-                                {
-                                    updateDeviceStatus(deviceStatus, *(*it), deviceId);
-                                }
+                                updateDeviceStatus(deviceStatus, *(*it), deviceId);
                             }
                         }
                     }

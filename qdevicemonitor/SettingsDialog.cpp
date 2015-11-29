@@ -60,7 +60,7 @@ void SettingsDialog::saveSettings(QSettings& s)
 void SettingsDialog::on_editorBrowseButton_clicked()
 {
     qDebug() << "on_editorBrowseButton_clicked";
-    QString fileName = QFileDialog::getOpenFileName(
+    const QString fileName = QFileDialog::getOpenFileName(
         this,
         tr("Open File"),
         QString(),

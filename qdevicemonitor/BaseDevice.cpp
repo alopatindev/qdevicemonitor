@@ -54,8 +54,8 @@ BaseDevice::~BaseDevice()
 {
     qDebug() << "~BaseDevice" << m_id;
 
-    disconnect(&m_completionAddTimer, 0, this, 0);
-    disconnect(&m_deviceWidget->getFilterLineEdit(), 0, this, 0);
+    disconnect(&m_completionAddTimer, nullptr, this, nullptr);
+    disconnect(&m_deviceWidget->getFilterLineEdit(), nullptr, this, nullptr);
 
     delete m_deviceWidget; // FIXME: the design of QTabWidget is not really compatible with things like QSharedPointer at the moment
 }

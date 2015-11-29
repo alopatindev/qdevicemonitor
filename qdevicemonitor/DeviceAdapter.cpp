@@ -48,7 +48,7 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
 DeviceAdapter::~DeviceAdapter()
 {
     qDebug() << "~DeviceAdapter";
-    disconnect(&m_filesRemovalTimer, 0, this, 0);
+    disconnect(&m_filesRemovalTimer, nullptr, this, nullptr);
 }
 
 void DeviceAdapter::start()
@@ -232,9 +232,10 @@ void DeviceAdapter::addFilterAsCompletion(const QString& completionToAdd)
     m_filterCompleterModel.appendRow(new QStandardItem(completionToAdd));
     m_filterCompletions.append(completionToAdd);
 
-    size_t oldCompletionsNumber = m_filterCompletions.size() > MAX_FILTER_COMPLETIONS
-                                  ? m_filterCompletions.size() - MAX_FILTER_COMPLETIONS
-                                  : 0;
+    const size_t oldCompletionsNumber =
+        m_filterCompletions.size() > MAX_FILTER_COMPLETIONS
+        ? m_filterCompletions.size() - MAX_FILTER_COMPLETIONS
+        : 0;
     if (oldCompletionsNumber > 0)
     {
         qDebug() << "removing old" << oldCompletionsNumber << "completions";
@@ -344,31 +345,30 @@ void DeviceAdapter::fixTabIndexes(const int removedTabIndex)
 void DeviceAdapter::focusFilterInput()
 {
     qDebug() << "focusFilterInput";
-    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
-    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
-    deviceWidget->focusFilterInput();
+    getCurrentDeviceWidget()->focusFilterInput();
 }
 
 void DeviceAdapter::markLog()
 {
     qDebug() << "markLog";
-    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
-    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
-    deviceWidget->markLog();
+    getCurrentDeviceWidget()->markLog();
 }
 
 void DeviceAdapter::clearLog()
 {
     qDebug() << "clearLog";
-    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
-    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
-    deviceWidget->clearLog();
+    getCurrentDeviceWidget()->clearLog();
 }
 
 void DeviceAdapter::openLogFile()
 {
     qDebug() << "openLogFile";
+    getCurrentDeviceWidget()->openLogFile();
+}
+
+QPointer<DeviceWidget> DeviceAdapter::getCurrentDeviceWidget()
+{
     QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
     QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
-    deviceWidget->openLogFile();
+    return deviceWidget;
 }

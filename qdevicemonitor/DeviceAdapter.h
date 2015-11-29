@@ -29,6 +29,8 @@
 #include <QSettings>
 #include <QStringList>
 
+class DeviceWidget;
+
 class DeviceAdapter : public QObject
 {
     Q_OBJECT
@@ -93,6 +95,7 @@ public slots:
 private:
     void updateDevicesMap();
     void fixTabIndexes(const int removedTabIndex);
+    QPointer<DeviceWidget> getCurrentDeviceWidget();
 };
 
 #endif // DEVICEADAPTER_H
