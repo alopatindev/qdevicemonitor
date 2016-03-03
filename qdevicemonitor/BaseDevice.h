@@ -87,7 +87,7 @@ protected:
     QString m_humanReadableDescription;
     bool m_online;
     QPointer<QTabWidget> m_tabWidget;
-    QPointer<DeviceWidget> m_deviceWidget;
+    QSharedPointer<DeviceWidget> m_deviceWidget;
     int m_tabIndex;
     QPointer<DeviceAdapter> m_deviceAdapter;
     QString m_lastFilter;

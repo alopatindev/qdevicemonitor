@@ -173,15 +173,13 @@ void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, D
         if (it == map.end())
         {
             const QString fileName = QFileInfo(logFile).fileName();
-            map[logFile] = QSharedPointer<BaseDevice>(
-                new TextFileDevice(
-                    parent,
-                    logFile,
-                    DeviceType::TextFile,
-                    fileName,
-                    logFile,
-                    deviceAdapter
-                )
+            map[logFile] = QSharedPointer<TextFileDevice>::create(
+                parent,
+                logFile,
+                DeviceType::TextFile,
+                fileName,
+                logFile,
+                deviceAdapter
             );
         }
     }
