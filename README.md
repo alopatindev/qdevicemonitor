@@ -83,24 +83,24 @@ and checked that it runs and detects your device
 2. Make sure you've confirmed (from the device) you trust your computer
 3. Make sure your device is detectable with ddms/monitor
     1. On some devices debugging works only if you select the particular "Connect as" option (Built-in CD-ROM, Camera, MTP, etc.)
-    2. Try "adb kill-server" and "adb devices" commands
+    2. Try `adb kill-server` and `adb devices` terminal commands
 
 #### on GNU/Linux
-1. Check the Vendor ID of your device with `lsusb`
-2. Create or modify the file `~/.android/adb_usb.ini`. Add a line (with the content "0x1234", where `1234` should be replaced with your Vendor ID) to the beginning or end of the file
-3. Create or modify the file /etc/udev/rules.d/51-android.rules
+1. Check the **Vendor ID** of your device with `lsusb`
+2. Create or modify the file `~/.android/adb_usb.ini`. Add a line (with the content `0x1234`, where `1234` should be replaced with your **Vendor ID**) to the beginning or end of the file
+3. Create or modify the file `/etc/udev/rules.d/51-android.rules`
 4. Modify the file permission: `sudo chmod a+rx /etc/udev/rules.d/51-android.rules`
-5. Add a line (with the following content) to the file: `SUBSYSTEM=="usb", ATTR{idVendor}=="1234", MODE="0666", GROUP="plugdev"` where `1234` should be replaced with your Vendor ID
-6. Ensure that you are in the user group "plugdev": `sudo adduser plugdev`
+5. Add a line (with the following content) to the file: `SUBSYSTEM=="usb", ATTR{idVendor}=="1234", MODE="0666", GROUP="plugdev"` where `1234` should be replaced with your **Vendor ID**
+6. Ensure that you are in the user group **plugdev**: `sudo adduser plugdev`
 7. Restart the udev service: `sudo service udev restart`
 8. `adb kill-server && adb devices`
 
 #### on Windows
 1. If your device is not detectable with ddms/monitor
-    1. Check Control Panel — System — Hardware — Device Manager: is your device detected correctly? If it's not—try reinstalling the driver specifying the path to `extras\google\usb-driver` (from Android SDK)
-    2. If it didn't work—try reinstalling the driver by choosing "Don't search. I will choose the driver to install" and select "Android Composite ADB Interface"
+    1. Check Control Panel — System — Hardware — **Device Manager**: is your device detected correctly? If it's not—try reinstalling the driver specifying the path to `extras\google\usb-driver` (from Android SDK)
+    2. If it didn't work—try reinstalling the driver by choosing `Don't search. I will choose the driver to install` and select `Android Composite ADB Interface`
 2. Make sure you've added a path to `platform-tools` directory (from Android SDK) to **Path** environment variable
-3. Try to restart the OS
+3. Try to **restart** the OS
 
 If you're still experiencing issues—try all troubleshooting steps from the beginning (probably you've configured everything right and reapplying one of the previous steps will work)
 
@@ -121,4 +121,4 @@ This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions; read LICENSE for details.
 
-Copyright (C) 2014—2015  Alexander Lopatin <alopatindev ät gmail dot com>
+Copyright (C) 2014—2016  Alexander Lopatin <alopatindev ät gmail dot com>
