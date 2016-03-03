@@ -105,7 +105,7 @@ void DeviceWidget::addText(const QColor& color, const QString& text)
 
     if (m_textStream.isNull())
     {
-        m_textStream = QSharedPointer<QTextStream>(new QTextStream());
+        m_textStream = QSharedPointer<QTextStream>::create();
         m_textStream->setCodec("UTF-8");
         m_textStream->setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
     }

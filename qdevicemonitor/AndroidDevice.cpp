@@ -79,7 +79,7 @@ void AndroidDevice::startLogger()
 
     m_deviceLogFile.setFileName(currentLogAbsFileName);
     m_deviceLogFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
-    m_deviceLogFileStream = QSharedPointer<QTextStream>(new QTextStream(&m_deviceLogFile));
+    m_deviceLogFileStream = QSharedPointer<QTextStream>::create(&m_deviceLogFile);
     m_deviceLogFileStream->setCodec("UTF-8");
 
     QStringList args;
@@ -377,15 +377,13 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                             auto it = map.find(deviceId);
                             if (it == map.end())
                             {
-                                map[deviceId] = QSharedPointer<BaseDevice>(
-                                    new AndroidDevice(
-                                        parent,
-                                        deviceId,
-                                        DeviceType::Android,
-                                        QString(getPlatformStringStatic()),
-                                        tr("Initializing..."),
-                                        deviceAdapter
-                                    )
+                                map[deviceId] = QSharedPointer<AndroidDevice>::create(
+                                    parent,
+                                    deviceId,
+                                    DeviceType::Android,
+                                    QString(getPlatformStringStatic()),
+                                    tr("Initializing..."),
+                                    deviceAdapter
                                 );
                             }
                             else if ((*it)->getType() != DeviceType::Android)
