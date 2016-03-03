@@ -37,8 +37,8 @@ extern "C" int putenv(char*);  // FIXME: MinGW compilation bug
 
 MainWindow::MainWindow(QPointer<QWidget> parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
 {
+    ui = QSharedPointer<Ui::MainWindow>::create();
     ui->setupUi(this);
 
     setupEnvironment();

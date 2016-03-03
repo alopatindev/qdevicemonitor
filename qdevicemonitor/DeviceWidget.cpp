@@ -30,9 +30,9 @@ const char* const MARK_LINE = "========================== MARK =================
 
 DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter)
     : QWidget(parent)
-    , ui(new Ui::DeviceWidget)
     , m_deviceAdapter(deviceAdapter)
 {
+    ui = QSharedPointer<Ui::DeviceWidget>::create();
     ui->setupUi(this);
 
     //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());

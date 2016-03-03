@@ -23,8 +23,8 @@
 
 SettingsDialog::SettingsDialog(QPointer<QWidget> parent)
     : QDialog(parent)
-    , ui(new Ui::SettingsDialog)
 {
+    ui = QSharedPointer<Ui::SettingsDialog>::create();
     ui->setupUi(this);
 }
 
