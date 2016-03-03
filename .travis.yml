@@ -5,6 +5,8 @@ os:
   - linux
   - osx
 
+dist: trusty
+
 env:
   global:
     - STORAGE_HOSTNAME=frs.sourceforge.net
