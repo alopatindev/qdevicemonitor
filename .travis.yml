@@ -46,6 +46,7 @@ addons:
       - g++-5
       - clang-3.6
       - lintian
+      - cppcheck
 
 before_install:
   - pwd
@@ -60,18 +61,18 @@ before_install:
         brew update;
         ci-scripts/fix_brew.sh;
         tar xvf secrets.tar -C /Users/travis/.ssh/;
-    fi;
-  - $CXX --version;
-  - set -e;
+    fi
+  - $CXX --version
+  - set -e
 
 install:
-  - ls -al ~;
-    ls -al ~/.ssh;
+  - ls -al ~
+  - ls -al ~/.ssh
   - if [ $TRAVIS_OS_NAME = osx ]; then
         ls -al /Applications;
         cat ~/.ssh_host_rsa_key.pub;
 
-        brew install -v android-platform-tools libimobiledevice libusb p7zip qt5;
+        brew install -v android-platform-tools libimobiledevice libusb p7zip qt5 cppcheck;
 
         echo "${PATH}";
         QTDIR=$(brew info qt5 | grep '/Cellar/' | awk '{print $1}');
@@ -79,11 +80,11 @@ install:
         echo "${PATH}";
         ls -l "${QTDIR}";
         ls -l "${QTDIR}/bin";
-    fi;
+    fi
 
 script:
-  - source ci-scripts/set_env.sh;
-  - cd "${PROGRAMNAME}";
+  - source ci-scripts/set_env.sh
+  - cd "${PROGRAMNAME}"
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec linux-g++;
@@ -98,11 +99,12 @@ script:
         if [ $CXX = "clang++" ]; then
             qmake -spec macx-clang;
         fi;
-    fi;
-  - echo "${PATH}";
-  - make -j2;
-  - cd ..;
-  - ls -l "${PROGRAMNAME}";
+    fi
+  - echo "${PATH}"
+  - make -j2
+  - cppcheck --verbose --quiet --std=c++11 --enable=all --error-exitcode=1 --force . || echo failed
+  - cd ..
+  - ls -l "${PROGRAMNAME}"
   - if [ $TRAVIS_OS_NAME = linux ]; then
         strip --remove-section=.comment "${PROGRAMNAME}/${PROGRAMNAME}";
         file "${PROGRAMNAME}/${PROGRAMNAME}";
@@ -135,7 +137,7 @@ script:
         export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.dmg";
         mv -v "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_FILENAME}";
     fi
-  - ls -l;
+  - ls -l
 
 after_success:
   - if [ $TRAVIS_OS_NAME = linux ]; then
@@ -146,7 +148,7 @@ after_success:
         MD5_SUM=$(md5 "${OUTPUT_FILENAME}" | awk '{print $4}');
         SHA1_SUM=$(shasum -a 1 "${OUTPUT_FILENAME}" | awk '{print $1}');
         SHA512_SUM=$(shasum -a 512 "${OUTPUT_FILENAME}" | awk '{print $1}');
-    fi;
+    fi
   - echo -n "md5 "; echo "${MD5_SUM}";
     echo -n "sha1 "; echo "${SHA1_SUM}";
     echo -n "sha512 "; echo "${SHA512_SUM}";
@@ -158,6 +160,6 @@ after_success:
         STORAGE_URL="${STORAGE_USER_AND_PATH}/${OS_NAME}/";
         scp -B -v -o "StrictHostKeyChecking no" "${OUTPUT_FILENAME}" "${STORAGE_URL}";
         ci-scripts/remove_old_builds.sh "${STORAGE_URL}";
-    fi;
+    fi
 
 # vim: textwidth=0:shiftwidth=2:softtabstop=2:tabstop=2
