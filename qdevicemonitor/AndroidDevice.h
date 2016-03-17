@@ -42,7 +42,7 @@ public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                            const QString& humanReadableName, const QString& humanReadableDescription,
                            QPointer<DeviceAdapter> deviceAdapter);
-    virtual ~AndroidDevice();
+    ~AndroidDevice() override;
     void update() override;
     void filterAndAddToTextEdit(const QString& line) override;
     const char* getPlatformString() const override { return getPlatformStringStatic(); }

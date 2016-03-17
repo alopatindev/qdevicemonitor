@@ -36,7 +36,7 @@ class SettingsDialog : public QDialog
 
 public:
     explicit SettingsDialog(QPointer<QWidget> parent = 0);
-    ~SettingsDialog();
+    ~SettingsDialog() override;
 
     void loadSettings(const QSettings& s);
     void saveSettings(QSettings& s);

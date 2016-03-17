@@ -42,7 +42,7 @@ class DeviceWidget : public QWidget
 
 public:
     explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
-    virtual ~DeviceWidget();
+    ~DeviceWidget() override;
     void hideVerbosity();
 
     inline QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }

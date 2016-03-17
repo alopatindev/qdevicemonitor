@@ -39,7 +39,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QPointer<QWidget> parent = 0);
-    ~MainWindow();
+    ~MainWindow() override;
 
     void loadSettings();
     void saveSettings();

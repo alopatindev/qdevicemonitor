@@ -38,7 +38,7 @@ public:
     explicit BaseDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                         const QString& humanReadableName, const QString& humanReadableDescription,
                         QPointer<DeviceAdapter> deviceAdapter);
-    virtual ~BaseDevice();
+    ~BaseDevice() override;
 
     void updateTabWidget();
     virtual void update() = 0;
