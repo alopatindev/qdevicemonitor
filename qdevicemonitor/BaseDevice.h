@@ -44,6 +44,7 @@ public:
     virtual void update() = 0;
     virtual void filterAndAddToTextEdit(const QString& line) = 0;
     virtual const char* getPlatformString() const = 0;
+    virtual void reloadTextEdit() = 0;
 
     void maybeAddCompletionAfterDelay(const QString& filter);
 
@@ -73,9 +74,6 @@ public:
     void filterAndAddFromLogBufferToTextEdit();
 
 signals:
-
-public slots:
-    virtual void reloadTextEdit() = 0;
 
 private slots:
     void addFilterAsCompletion();

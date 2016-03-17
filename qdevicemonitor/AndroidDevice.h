@@ -43,14 +43,15 @@ public:
                            const QString& humanReadableName, const QString& humanReadableDescription,
                            QPointer<DeviceAdapter> deviceAdapter);
     virtual ~AndroidDevice();
-    virtual void update();
-    virtual void filterAndAddToTextEdit(const QString& line);
-    virtual const char* getPlatformString() const { return getPlatformStringStatic(); }
+    void update() override;
+    void filterAndAddToTextEdit(const QString& line) override;
+    const char* getPlatformString() const override { return getPlatformStringStatic(); }
+    void reloadTextEdit() override;
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void stopDevicesListProcess();
     static void removedDeviceByTabClose(const QString& id);
-    virtual void onOnlineChange(const bool online);
+    void onOnlineChange(const bool online) override;
 
 private:
     void updateDeviceModel();
@@ -66,9 +67,6 @@ private:
                       const QString& tag = QString(),
                       const QString& text = QString()) const;
     static const char* getPlatformStringStatic() { return "Android"; }
-
-public slots:
-    void reloadTextEdit();
 };
 
 #endif // ANDROIDDEVICE_H

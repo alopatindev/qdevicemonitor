@@ -53,8 +53,8 @@ public slots:
     void on_tabWidget_tabCloseRequested(int index);
 
 protected:
-    virtual void keyReleaseEvent(QKeyEvent* event);
-    virtual void mouseReleaseEvent(QMouseEvent* event);
+    void keyReleaseEvent(QKeyEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     QSharedPointer<Ui::MainWindow> ui;
