@@ -30,9 +30,9 @@ const char* const MARK_LINE = "========================== MARK =================
 
 DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter)
     : QWidget(parent)
-    , ui(new Ui::DeviceWidget)
     , m_deviceAdapter(deviceAdapter)
 {
+    ui = QSharedPointer<Ui::DeviceWidget>::create();
     ui->setupUi(this);
 
     //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
@@ -105,7 +105,7 @@ void DeviceWidget::addText(const QColor& color, const QString& text)
 
     if (m_textStream.isNull())
     {
-        m_textStream = QSharedPointer<QTextStream>(new QTextStream());
+        m_textStream = QSharedPointer<QTextStream>::create();
         m_textStream->setCodec("UTF-8");
         m_textStream->setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
     }

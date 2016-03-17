@@ -83,7 +83,7 @@ void IOSDevice::startLogger()
 
     m_deviceLogFile.setFileName(currentLogAbsFileName);
     m_deviceLogFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
-    m_deviceLogFileStream = QSharedPointer<QTextStream>(new QTextStream(&m_deviceLogFile));
+    m_deviceLogFileStream = QSharedPointer<QTextStream>::create(&m_deviceLogFile);
     m_deviceLogFileStream->setCodec("UTF-8");
 
     QStringList args;
@@ -346,15 +346,13 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
                         auto it = map.find(deviceId);
                         if (it == map.end())
                         {
-                            map[deviceId] = QSharedPointer<BaseDevice>(
-                                new IOSDevice(
-                                    parent,
-                                    deviceId,
-                                    DeviceType::IOS,
-                                    QString(getPlatformStringStatic()),
-                                    tr("Initializing..."),
-                                    deviceAdapter
-                                )
+                            map[deviceId] = QSharedPointer<IOSDevice>::create(
+                                parent,
+                                deviceId,
+                                DeviceType::IOS,
+                                QString(getPlatformStringStatic()),
+                                tr("Initializing..."),
+                                deviceAdapter
                             );
                         }
                         else if ((*it)->getType() != DeviceType::IOS)

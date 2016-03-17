@@ -41,9 +41,9 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const Dev
 
     updateLogBufferSpace();
 
-    m_deviceWidget = new DeviceWidget(static_cast<QTabWidget*>(m_tabWidget), m_deviceAdapter);
+    m_deviceWidget = QSharedPointer<DeviceWidget>::create(static_cast<QTabWidget*>(m_tabWidget), m_deviceAdapter);
     m_deviceWidget->getFilterLineEdit().setCompleter(&m_deviceAdapter->getFilterCompleter());
-    m_tabIndex = m_tabWidget->addTab(m_deviceWidget, humanReadableName);
+    m_tabIndex = m_tabWidget->addTab(m_deviceWidget.data(), humanReadableName);
     m_lastFilter = m_deviceWidget->getFilterLineEdit().text();
 
     m_completionAddTimer.setSingleShot(true);
@@ -57,7 +57,7 @@ BaseDevice::~BaseDevice()
     disconnect(&m_completionAddTimer, nullptr, this, nullptr);
     disconnect(&m_deviceWidget->getFilterLineEdit(), nullptr, this, nullptr);
 
-    delete m_deviceWidget; // FIXME: the design of QTabWidget is not really compatible with things like QSharedPointer at the moment
+    m_tabWidget.clear();
 }
 
 void BaseDevice::updateTabWidget()
