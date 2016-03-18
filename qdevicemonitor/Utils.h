@@ -22,20 +22,19 @@
 #include <QString>
 #include <QTextStream>
 
-class Utils
+namespace Utils
 {
-public:
-    static const char* const LOGS_DIR;
-    static const char* const LOG_EXT;
-    static const char* const DATE_FORMAT;
+    static const char* const LOGS_DIR = "logs";
+    static const char* const LOG_EXT = ".log";
+    static const char* const DATE_FORMAT = "yyyy-MM-dd_hh-mm-ss";
 
-    static const QString& getDataPath();
-    static const QString& getLogsPath();
-    static QString getNewLogFilePath(const QString& suffix);
-    static const QString& getConfigPath();
-    static QString removeSpecialCharacters(const QString& text);
-    static QString getCurrentDateTimeUtc();
-    static int verbosityCharacterToInt(const char character);
-};
+    const QString& getDataPath();
+    const QString& getLogsPath();
+    QString getNewLogFilePath(const QString& suffix);
+    const QString& getConfigPath();
+    QString removeSpecialCharacters(const QString& text);
+    QString getCurrentDateTimeUtc();
+    int verbosityCharacterToInt(const char character);
+}
 
 #endif // UTILS_H

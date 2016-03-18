@@ -24,17 +24,15 @@
 #include <QRegularExpression>
 #include <QtCore/QStringBuilder>
 
-const char* const Utils::LOGS_DIR = "logs";
-const char* const Utils::LOG_EXT = ".log";
-const char* const Utils::DATE_FORMAT = "yyyy-MM-dd_hh-mm-ss";
+namespace Utils {
 
-const QString& Utils::getDataPath()
+const QString& getDataPath()
 {
     static const QString d = QDir::homePath() % "/." % qApp->applicationName();
     return d;
 }
 
-const QString& Utils::getLogsPath()
+const QString& getLogsPath()
 {
     static const QString d = getDataPath() % "/" % LOGS_DIR;
     static bool initialized = false;
@@ -47,18 +45,18 @@ const QString& Utils::getLogsPath()
     return d;
 }
 
-QString Utils::getNewLogFilePath(const QString& suffix)
+QString getNewLogFilePath(const QString& suffix)
 {
     return getLogsPath() % "/" % suffix % getCurrentDateTimeUtc() % LOG_EXT;
 }
 
-const QString& Utils::getConfigPath()
+const QString& getConfigPath()
 {
     static const QString d = getDataPath() % "/" % qApp->applicationName() % ".conf";
     return d;
 }
 
-QString Utils::removeSpecialCharacters(const QString& text)
+QString removeSpecialCharacters(const QString& text)
 {
     static const QRegularExpression re("[^a-zA-Z\\d\\s]");
     QString out(text);
@@ -67,12 +65,12 @@ QString Utils::removeSpecialCharacters(const QString& text)
     return out;
 }
 
-QString Utils::getCurrentDateTimeUtc()
+QString getCurrentDateTimeUtc()
 {
     return QDateTime::currentDateTimeUtc().toString(DATE_FORMAT);
 }
 
-int Utils::verbosityCharacterToInt(const char character)
+int verbosityCharacterToInt(const char character)
 {
     switch (character)
     {
@@ -98,3 +96,5 @@ int Utils::verbosityCharacterToInt(const char character)
         return -1;
     }
 }
+
+} // namespace Utils
