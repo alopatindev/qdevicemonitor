@@ -216,7 +216,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
     //qDebug() << "filterAndAddToTextEdit:" << line;
 
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    QRegularExpressionMatch match = re.match(line);
+    const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
         const QStringRef prefix = match.capturedRef("prefix");

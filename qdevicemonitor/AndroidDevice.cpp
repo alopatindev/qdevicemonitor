@@ -199,7 +199,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     bool filtersMatch = true;
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
 
-    QRegularExpressionMatch match = re.match(line);
+    const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
         const QStringRef date = match.capturedRef("date");

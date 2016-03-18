@@ -171,9 +171,9 @@ bool BaseDevice::columnTextMatches(const QString& filter, const QStringRef& text
 #if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
         // FIXME: remove this hack
         const QString textString = QString().append(text);
-        QRegularExpressionMatch match = m_columnTextRegexp.match(textString);
+        const QRegularExpressionMatch match = m_columnTextRegexp.match(textString);
 #else
-        QRegularExpressionMatch match = m_columnTextRegexp.match(text);
+        const QRegularExpressionMatch match = m_columnTextRegexp.match(text);
 #endif
         return match.hasMatch();
     }
