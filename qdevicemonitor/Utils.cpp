@@ -137,7 +137,13 @@ bool Utils::columnTextMatches(const QString& filter, const QStringRef& text)
             re.setPatternOptions(QRegularExpression::DotMatchesEverythingOption);
         }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
+        // FIXME: remove this hack
+        const QString textString = QString().append(text);
+        QRegularExpressionMatch match = re.match(textString);
+#else
         QRegularExpressionMatch match = re.match(text);
+#endif
         return match.hasMatch();
     }
 

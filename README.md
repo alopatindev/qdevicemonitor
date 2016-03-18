@@ -54,7 +54,7 @@ For Ubuntu GNU/Linux and Mac OS X [see this](https://sourceforge.net/projects/qd
 For Windows: [latest build](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts), [full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on Artifacts)
 
 ### Build from the Source Code
-Make sure that you have installed [Qt >= 5.1](http://www.qt.io/download-open-source)
+Make sure that you have installed [Qt >= 5.5](http://www.qt.io/download-open-source)
 * open **qdevicemonitor/qdevicemonitor.pro** with QtCreator and build the project
 * **or** use the following terminal commands:
 ```
