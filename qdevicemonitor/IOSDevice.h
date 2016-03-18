@@ -54,7 +54,7 @@ private:
     void updateDeviceModel();
     void startLogger();
     void stopLogger();
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QString& text) const;
+    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text) const;
 
     static const char* getPlatformStringStatic() { return "iOS"; }
 

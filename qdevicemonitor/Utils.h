@@ -36,8 +36,8 @@ public:
     static QString removeSpecialCharacters(const QString& text);
     static QString getCurrentDateTimeUtc();
     static int verbosityCharacterToInt(const char character);
-    static bool columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound);
-    static bool columnTextMatches(const QString& filter, const QString& text);
+    static bool columnMatches(const QString& column, const QString& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound);
+    static bool columnTextMatches(const QString& filter, const QStringRef& text);
 };
 
 #endif // UTILS_H

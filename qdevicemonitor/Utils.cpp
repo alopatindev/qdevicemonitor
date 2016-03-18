@@ -20,8 +20,10 @@
 #include <QApplication>
 #include <QDateTime>
 #include <QDir>
-#include <QRegExp>
 #include <QDebug>
+#include <QRegExp>
+#include <QRegularExpression>
+#include <QtCore/QStringBuilder>
 
 const char* const Utils::LOGS_DIR = "logs";
 const char* const Utils::LOG_EXT = ".log";
@@ -98,7 +100,7 @@ int Utils::verbosityCharacterToInt(const char character)
     }
 }
 
-bool Utils::columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound)
+bool Utils::columnMatches(const QString& column, const QString& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound)
 {
     if (filter.startsWith(column))
     {
@@ -116,7 +118,7 @@ bool Utils::columnMatches(const QString& column, const QString& filter, const QS
     return true;
 }
 
-bool Utils::columnTextMatches(const QString& filter, const QString& text)
+bool Utils::columnTextMatches(const QString& filter, const QStringRef& text)
 {
     const QString textFilter = filter.trimmed();
 
@@ -126,10 +128,17 @@ bool Utils::columnTextMatches(const QString& filter, const QString& text)
     }
     else
     {
-        const QString regexpFilter = QString(".*(%1).*").arg(textFilter);
-        const QRegExp rx(regexpFilter, Qt::CaseSensitive, QRegExp::RegExp2);
-        const bool match = rx.isValid() && rx.exactMatch(text);
-        return match;
+        static QRegularExpression re;
+        const QString regexpFilter(".*(" % textFilter % ").*");
+        const bool dirty = re.pattern() != regexpFilter;
+        if (dirty)
+        {
+            re.setPattern(regexpFilter);
+            re.setPatternOptions(QRegularExpression::CaseInsensitiveOption | QRegularExpression::DotMatchesEverythingOption);
+        }
+
+        QRegularExpressionMatch match = re.match(text);
+        return match.hasMatch();
     }
 
     return true;

@@ -21,7 +21,8 @@
 
 #include <QDebug>
 #include <QHash>
-#include <QRegExp>
+#include <QRegularExpression>
+#include <QtCore/QStringBuilder>
 
 using namespace DataTypes;
 
@@ -190,36 +191,39 @@ void AndroidDevice::update()
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 {
-    QRegExp rx("([\\d-]+) *([\\d:\\.]+) *(\\d+) *(\\d+) *([A-Z]) *(.+):", Qt::CaseSensitive, QRegExp::W3CXmlSchema11);
-    rx.setMinimal(true);
+    static QRegularExpression re(
+        "(?<date>[\\d-]+) *(?<time>[\\d:\\.]+) *(?<pid>\\d+) *(?<tid>\\d+) *(?<verbosity>[A-Z]) *(?<tag>.+):",
+        QRegularExpression::CaseInsensitiveOption | QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
+    );
 
     bool filtersMatch = true;
+    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0; // FIXME: rename to themeIndex
 
-    int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    if (rx.indexIn(line) > -1)
+    QRegularExpressionMatch match = re.match(line);
+    if (match.hasMatch())
     {
-        const QString date = rx.cap(1);
-        const QString time = rx.cap(2);
-        const QString pid = rx.cap(3);
-        const QString tid = rx.cap(4);
-        const QString verbosity = rx.cap(5);
-        const QString tag = rx.cap(6).trimmed();
-        const QString text = line.mid(rx.pos(6) + rx.cap(6).length() + 2); // the rest of the line after "foo: "
-        //qDebug() << "date" << date << "time" << time << "pid" << pid << "tid" << tid << "level" << verbosity << "tag" << tag << "text" << text;
+        const QStringRef date = match.capturedRef("date");
+        const QStringRef time = match.capturedRef("time");
+        const QStringRef pid = match.capturedRef("pid");
+        const QStringRef tid = match.capturedRef("tid");
+        const QStringRef verbosity = match.capturedRef("verbosity");
+        const QStringRef tag = match.capturedRef("tag").trimmed();
+        const QStringRef text = line.midRef(match.capturedEnd("tag"));
 
-        const VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity[0].toLatin1()));
+        const VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.at(0).toLatin1()));
+
         checkFilters(filtersMatch, m_filtersValid, m_filters, verbosityLevel, pid, tid, tag, text);
 
         if (filtersMatch)
         {
             const QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
 
-            m_deviceWidget->addText(verbosityColor, verbosity + " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], date + " " + time + " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Pid], pid + " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tid], tid + " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tag], tag + " ");
-            m_deviceWidget->addText(verbosityColor, text + "\n");
+            m_deviceWidget->addText(verbosityColor, verbosity % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], date % " " % time % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Pid], pid % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tid], tid % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tag], tag % " ");
+            m_deviceWidget->addText(verbosityColor, text % "\n");
         }
     }
     else
@@ -228,7 +232,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, m_filtersValid, m_filters);
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line + "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line % "\n");
         }
     }
 
@@ -236,7 +240,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
-void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QString& pid, const QString& tid, const QString& tag, const QString& text) const
+void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text) const
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
 

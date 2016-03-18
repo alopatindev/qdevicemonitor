@@ -62,10 +62,10 @@ private:
     bool columnMatches(const QString& column, const QString& filter, const QString& originalValue, bool& filtersValid, bool& columnFound) const;
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters,
                       const VerbosityEnum verbosityLevel = Verbose,
-                      const QString& pid = QString(),
-                      const QString& tid = QString(),
-                      const QString& tag = QString(),
-                      const QString& text = QString()) const;
+                      const QStringRef& pid = QStringRef(),
+                      const QStringRef& tid = QStringRef(),
+                      const QStringRef& tag = QStringRef(),
+                      const QStringRef& text = QStringRef()) const;
     static const char* getPlatformStringStatic() { return "Android"; }
 };
 
