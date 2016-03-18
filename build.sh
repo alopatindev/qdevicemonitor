@@ -22,5 +22,5 @@ else
     #qmake -spec linux-g++ 'CONFIG += debug'
     qmake -spec linux-clang 'CONFIG += debug'
     time make -j16
-    gdb ./qdevicemonitor
+    gdb -quiet ./qdevicemonitor
 fi
