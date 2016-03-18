@@ -49,14 +49,8 @@ for i in libplist-1.12 libusbmuxd-1.0.10 libimobiledevice-1.2.0 ; do
     build_and_install "$i"
 done
 
-cp "/bin/cygwin1.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/cygintl-8.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/cygxml2-2.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/cygiconv-2.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/cygz.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/cyggcc_s-1.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/cygcrypto-1.0.0.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/cygssl-1.0.0.dll" "${THIRD_PARTY_DIR}/bin/"
-cp "/bin/tail.exe" "${THIRD_PARTY_DIR}/bin/"
+for i in "cygwin1.dll" "cygintl-8.dll" "cygxml2-2.dll" "cygiconv-2.dll" "cygz.dll" "cyggcc_s-1.dll" "cygcrypto-1.0.0.dll" "cygssl-1.0.0.dll" "cyglzma-5.dll" "tail.exe"; do
+    cp "/bin/${i}" "${THIRD_PARTY_DIR}/bin/"
+done
 
 # vim: textwidth=0
