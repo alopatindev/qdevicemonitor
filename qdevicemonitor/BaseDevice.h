@@ -73,6 +73,7 @@ public:
     void addToLogBuffer(const QString& text);
     void updateLogBufferSpace();
     void filterAndAddFromLogBufferToTextEdit();
+    bool columnMatches(const QString& column, const QString& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound);
     bool columnTextMatches(const QString& filter, const QStringRef& text);
 
 signals:

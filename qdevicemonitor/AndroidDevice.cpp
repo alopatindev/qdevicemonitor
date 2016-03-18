@@ -252,10 +252,10 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
     for (const auto& filter : filters)
     {
         bool columnFound = false;
-        if (!Utils::columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
-            !Utils::columnMatches("tid:", filter, tid, filtersValid, columnFound) ||
-            !Utils::columnMatches("tag:", filter, tag, filtersValid, columnFound) ||
-            !Utils::columnMatches("text:", filter, text, filtersValid, columnFound))
+        if (!columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
+            !columnMatches("tid:", filter, tid, filtersValid, columnFound) ||
+            !columnMatches("tag:", filter, tag, filtersValid, columnFound) ||
+            !columnMatches("text:", filter, text, filtersValid, columnFound))
         {
             filtersMatch = false;
             break;

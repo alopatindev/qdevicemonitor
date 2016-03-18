@@ -98,21 +98,3 @@ int Utils::verbosityCharacterToInt(const char character)
         return -1;
     }
 }
-
-bool Utils::columnMatches(const QString& column, const QString& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound)
-{
-    if (filter.startsWith(column))
-    {
-        columnFound = true;
-        const QString value = filter.mid(column.length());
-        if (value.isEmpty())
-        {
-            filtersValid = false;
-        }
-        else if (!originalValue.contains(value))
-        {
-            return false;
-        }
-    }
-    return true;
-}

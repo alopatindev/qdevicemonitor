@@ -187,7 +187,7 @@ void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStri
     for (auto& filter : filters)
     {
         bool columnFound = false;
-        if (!Utils::columnMatches("text:", filter, text, filtersValid, columnFound))
+        if (!columnMatches("text:", filter, text, filtersValid, columnFound))
         {
             filtersMatch = false;
             break;
