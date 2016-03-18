@@ -191,9 +191,10 @@ void AndroidDevice::update()
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 {
+    // TODO: create individual copies for each device instance
     static QRegularExpression re(
         "(?<date>[\\d-]+) *(?<time>[\\d:\\.]+) *(?<pid>\\d+) *(?<tid>\\d+) *(?<verbosity>[A-Z]) *(?<tag>.+):",
-        QRegularExpression::CaseInsensitiveOption | QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
+        QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
     bool filtersMatch = true;
@@ -208,7 +209,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         const QStringRef tid = match.capturedRef("tid");
         const QStringRef verbosity = match.capturedRef("verbosity");
         const QStringRef tag = match.capturedRef("tag").trimmed();
-        const QStringRef text = line.midRef(match.capturedEnd("tag"));
+        const QStringRef text = line.midRef(match.capturedEnd("tag") + 1);
 
         const VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.at(0).toLatin1()));
 

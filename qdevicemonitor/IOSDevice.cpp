@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QHash>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QtCore/QStringBuilder>
 
 using namespace DataTypes;
@@ -208,21 +208,21 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         return;
     }
 
-    QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
-    rx.setMinimal(true);
+    // TODO: create individual copies for each device instance
+    static QRegularExpression re(
+        "(?<prefix>[A-Za-z]* +[\\d]+ [\\d:]+) (?<deviceName>.+) ",
+        QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
+    );
 
     //qDebug() << "filterAndAddToTextEdit:" << line;
 
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    if (rx.indexIn(line) > -1)
+    QRegularExpressionMatch match = re.match(line);
+    if (match.hasMatch())
     {
-        const QString prefix = rx.cap(1);
-        const QString deviceName = rx.cap(2);
-        const QStringRef text = line.midRef(rx.pos(2) + rx.cap(2).length() + 1);
-
-        /*qDebug() << "prefix" << prefix;
-        qDebug() << "deviceName" << deviceName;
-        qDebug() << "text" << text;*/
+        const QStringRef prefix = match.capturedRef("prefix");
+        const QStringRef deviceName = match.capturedRef("deviceName");
+        const QStringRef text = line.midRef(match.capturedEnd("hostname") + 1);
 
         bool filtersMatch = true;
         checkFilters(filtersMatch, m_filtersValid, m_filters, text);

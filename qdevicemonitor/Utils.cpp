@@ -21,7 +21,6 @@
 #include <QDateTime>
 #include <QDir>
 #include <QDebug>
-#include <QRegExp>
 #include <QRegularExpression>
 #include <QtCore/QStringBuilder>
 
@@ -62,8 +61,8 @@ const QString& Utils::getConfigPath()
 QString Utils::removeSpecialCharacters(const QString& text)
 {
     QString out(text);
-    static const QRegExp regexp("[^a-zA-Z\\d\\s]");
-    out.remove(regexp);
+    static const QRegularExpression re("[^a-zA-Z\\d\\s]");
+    out.remove(re);
     out.replace(" ", "_");
     return out;
 }
@@ -128,13 +127,14 @@ bool Utils::columnTextMatches(const QString& filter, const QStringRef& text)
     }
     else
     {
+        // TODO: create individual copies for each device instance
         static QRegularExpression re;
         const QString regexpFilter(".*(" % textFilter % ").*");
         const bool dirty = re.pattern() != regexpFilter;
         if (dirty)
         {
             re.setPattern(regexpFilter);
-            re.setPatternOptions(QRegularExpression::CaseInsensitiveOption | QRegularExpression::DotMatchesEverythingOption);
+            re.setPatternOptions(QRegularExpression::DotMatchesEverythingOption);
         }
 
         QRegularExpressionMatch match = re.match(text);

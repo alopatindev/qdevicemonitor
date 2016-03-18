@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QHash>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QtCore/QStringBuilder>
 
 using namespace DataTypes;
@@ -121,19 +121,19 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
 {
     bool filtersMatch = true;
 
-    QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
-    rx.setMinimal(true);
+    // TODO: create individual copies for each device instance
+    static QRegularExpression re(
+        "(?<prefix>[A-Za-z]* +[\\d]+ [\\d:]+) (?<hostname>.+) ",
+        QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
+    );
 
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    if (rx.indexIn(line) > -1)
+    QRegularExpressionMatch match = re.match(line);
+    if (match.hasMatch())
     {
-        const QString prefix = rx.cap(1);
-        const QString hostname = rx.cap(2);
-        const QStringRef text = line.midRef(rx.pos(2) + rx.cap(2).length() + 1);
-
-        /*qDebug() << "prefix" << prefix;
-        qDebug() << "hostname" << hostname;
-        qDebug() << "text" << text;*/
+        const QStringRef prefix = match.capturedRef("prefix");
+        const QStringRef hostname = match.capturedRef("hostname");
+        const QStringRef text = line.midRef(match.capturedEnd("hostname") + 1);
 
         checkFilters(filtersMatch, m_filtersValid, m_filters, text);
 
