@@ -4,6 +4,7 @@ set -e -v -x
 
 export THIRD_PARTY_DIR="3rdparty"
 export PKG_CONFIG_PATH="$(pwd)/${THIRD_PARTY_DIR}/lib/pkgconfig"
+export DEBUG_LIBIMOBILEDEVICE=0
 
 function download_and_unpack {
     PACKNAME=$(echo "$1" | sed 's/-.*//')
@@ -33,7 +34,7 @@ function build_and_install {
     NOCONFIGURE=1 ./autogen.sh
 
     PREFIX_DIR="$(pwd)/../${THIRD_PARTY_DIR}"
-    if [ ${PACKNAME} = 'libimobiledevice' ]; then
+    if [ ${PACKNAME} = 'libimobiledevice' ] && [ ${DEBUG_LIBIMOBILEDEVICE} = 1 ]; then
         ./configure --prefix "${PREFIX_DIR}" --enable-debug-code || cat config.log
     else
         ./configure --prefix "${PREFIX_DIR}" || cat config.log
