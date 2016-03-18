@@ -137,7 +137,7 @@ bool BaseDevice::columnMatches(const QString& column, const QString& filter, con
     if (filter.startsWith(column))
     {
         columnFound = true;
-        const QString value = filter.mid(column.length());
+        const QStringRef value = filter.midRef(column.length());
         if (value.isEmpty())
         {
             filtersValid = false;
