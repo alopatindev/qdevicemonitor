@@ -30,6 +30,7 @@
 #include <QProcess>
 #include <QSettings>
 #include <QStringList>
+#include <QtCore/QStringBuilder>
 
 #if __MINGW32__
 extern "C" int putenv(char*);  // FIXME: MinGW compilation bug
@@ -219,7 +220,7 @@ void MainWindow::setupEnvironment()
     (void) Utils::getLogsPath();
 
 #if defined(Q_OS_MAC)
-    const QString thirdPartyDir(QCoreApplication::applicationDirPath() + "/3rdparty");
+    const QString thirdPartyDir(QCoreApplication::applicationDirPath() % "/3rdparty");
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -231,11 +232,12 @@ void MainWindow::setupEnvironment()
         {
             const QString prefix(path.isEmpty() ? "" : ":");
             const QString dir = QString("%1/%2").arg(thirdPartyDir).arg(i);
-            path += QString("%1%2/bin").arg(prefix).arg(dir);
+            path = QString("%1%2%3/bin").arg(path).arg(prefix).arg(dir);
             if (QFileInfo(QString("%1/lib").arg(dir)).isDir())
             {
                 const QString prefix(dyldFallbackLibraryPath.isEmpty() ? "" : ":");
-                dyldFallbackLibraryPath += QString("%1%2/lib").arg(prefix).arg(dir);
+                dyldFallbackLibraryPath = QString("%1%2%3/lib")
+                    .arg(dyldFallbackLibraryPath).arg(prefix).arg(dir);
             }
         }
         qDebug() << "PATH" << path;
@@ -244,7 +246,7 @@ void MainWindow::setupEnvironment()
         (void) ::setenv("DYLD_FALLBACK_LIBRARY_PATH", dyldFallbackLibraryPath.toStdString().c_str(), 1);
     }
 #elif defined(Q_OS_WIN32)
-    const QString thirdPartyDir(QCoreApplication::applicationDirPath() + "\\3rdparty\\bin");
+    const QString thirdPartyDir(QCoreApplication::applicationDirPath() % "\\3rdparty\\bin");
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const char* pPath = std::getenv("Path");

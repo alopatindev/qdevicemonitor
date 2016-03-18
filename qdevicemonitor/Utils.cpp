@@ -30,13 +30,13 @@ const char* const Utils::DATE_FORMAT = "yyyy-MM-dd_hh-mm-ss";
 
 const QString& Utils::getDataPath()
 {
-    static const QString d = QDir::homePath() + "/." + qApp->applicationName();
+    static const QString d = QDir::homePath() % "/." % qApp->applicationName();
     return d;
 }
 
 const QString& Utils::getLogsPath()
 {
-    static const QString d = getDataPath() + "/" + LOGS_DIR;
+    static const QString d = getDataPath() % "/" % LOGS_DIR;
     static bool initialized = false;
     if (!initialized)
     {
@@ -49,12 +49,12 @@ const QString& Utils::getLogsPath()
 
 QString Utils::getNewLogFilePath(const QString& suffix)
 {
-    return getLogsPath() + "/" + suffix + getCurrentDateTimeUtc() + LOG_EXT;
+    return getLogsPath() % "/" % suffix % getCurrentDateTimeUtc() % LOG_EXT;
 }
 
 const QString& Utils::getConfigPath()
 {
-    static const QString d = getDataPath() + "/" + qApp->applicationName() + ".conf";
+    static const QString d = getDataPath() % "/" % qApp->applicationName() % ".conf";
     return d;
 }
 

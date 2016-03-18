@@ -312,7 +312,7 @@ void AndroidDevice::maybeClearAdbLog()
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
-    auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
+    const auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
     {
         const bool online = deviceStatus == "device";
         device.setHumanReadableDescription(
