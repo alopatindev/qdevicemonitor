@@ -36,6 +36,7 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, con
     , m_didReadDeviceModel(false)
 {
     qDebug() << "AndroidDevice::AndroidDevice";
+    m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefixes (<b>pid:</b>, <b>tid:</b>, <b>tag:</b> or <b>text:</b>) with Plain Text</li><li>Regular Expressions</li></ul>"));
     updateDeviceModel();
 }
 

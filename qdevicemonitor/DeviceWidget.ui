@@ -122,7 +122,7 @@ p, li { white-space: pre-wrap; }
      <item row="0" column="1" colspan="7">
       <widget class="QLineEdit" name="filterLineEdit">
        <property name="toolTip">
-        <string>Search for messages. Accepts regexes and wildcards. Prefix with pid:, tid:, tag: or text: to limit scope.</string>
+        <string/>
        </property>
       </widget>
      </item>
