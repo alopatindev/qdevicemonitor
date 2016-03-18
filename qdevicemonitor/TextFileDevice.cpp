@@ -103,13 +103,13 @@ void TextFileDevice::update()
     }
 }
 
-void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text) const
+void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text)
 {
     filtersValid = true;
 
     for (const auto& filter : filters)
     {
-        if (!Utils::columnTextMatches(filter, text))
+        if (!columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;
@@ -121,8 +121,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
 {
     bool filtersMatch = true;
 
-    // TODO: create individual copies for each device instance
-    static QRegularExpression re(
+    static const QRegularExpression re(
         "(?<prefix>[A-Za-z]* +[\\d]+ [\\d:]+) (?<hostname>.+) ",
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );

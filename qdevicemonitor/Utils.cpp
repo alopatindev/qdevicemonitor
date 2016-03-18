@@ -60,8 +60,8 @@ const QString& Utils::getConfigPath()
 
 QString Utils::removeSpecialCharacters(const QString& text)
 {
-    QString out(text);
     static const QRegularExpression re("[^a-zA-Z\\d\\s]");
+    QString out(text);
     out.remove(re);
     out.replace(" ", "_");
     return out;
@@ -114,38 +114,5 @@ bool Utils::columnMatches(const QString& column, const QString& filter, const QS
             return false;
         }
     }
-    return true;
-}
-
-bool Utils::columnTextMatches(const QString& filter, const QStringRef& text)
-{
-    const QString textFilter = filter.trimmed();
-
-    if (textFilter.isEmpty() || text.indexOf(textFilter) != -1)
-    {
-        return true;
-    }
-    else
-    {
-        // TODO: create individual copies for each device instance
-        static QRegularExpression re;
-        const QString regexpFilter(".*(" % textFilter % ").*");
-        const bool dirty = re.pattern() != regexpFilter;
-        if (dirty)
-        {
-            re.setPattern(regexpFilter);
-            re.setPatternOptions(QRegularExpression::DotMatchesEverythingOption);
-        }
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
-        // FIXME: remove this hack
-        const QString textString = QString().append(text);
-        QRegularExpressionMatch match = re.match(textString);
-#else
-        QRegularExpressionMatch match = re.match(text);
-#endif
-        return match.hasMatch();
-    }
-
     return true;
 }

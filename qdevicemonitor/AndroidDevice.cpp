@@ -191,8 +191,7 @@ void AndroidDevice::update()
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 {
-    // TODO: create individual copies for each device instance
-    static QRegularExpression re(
+    static const QRegularExpression re(
         "(?<date>[\\d-]+) *(?<time>[\\d:\\.]+) *(?<pid>\\d+) *(?<tid>\\d+) *(?<verbosity>[A-Z]) *(?<tag>.+):",
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
@@ -241,7 +240,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
-void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text) const
+void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text)
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
 
@@ -262,7 +261,7 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
             break;
         }
 
-        if (!columnFound && !Utils::columnTextMatches(filter, text))
+        if (!columnFound && !columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;

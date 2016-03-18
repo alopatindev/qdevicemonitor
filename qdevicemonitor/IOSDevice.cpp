@@ -182,7 +182,7 @@ void IOSDevice::update()
     }
 }
 
-void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text) const
+void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text)
 {
     for (auto& filter : filters)
     {
@@ -193,7 +193,7 @@ void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStri
             break;
         }
 
-        if (!columnFound && !Utils::columnTextMatches(filter, text))
+        if (!columnFound && !columnTextMatches(filter, text))
         {
             filtersMatch = false;
             break;
@@ -208,8 +208,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         return;
     }
 
-    // TODO: create individual copies for each device instance
-    static QRegularExpression re(
+    static const QRegularExpression re(
         "(?<prefix>[A-Za-z]* +[\\d]+ [\\d:]+) (?<deviceName>.+) ",
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );

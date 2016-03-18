@@ -19,6 +19,7 @@
 
 #include <QDebug>
 #include <QIcon>
+#include <QtCore/QStringBuilder>
 
 using namespace DataTypes;
 
@@ -129,4 +130,35 @@ void BaseDevice::filterAndAddFromLogBufferToTextEdit()
     {
         filterAndAddToTextEdit(line);
     }
+}
+
+bool BaseDevice::columnTextMatches(const QString& filter, const QStringRef& text)
+{
+    const QString textFilter = filter.trimmed();
+
+    if (textFilter.isEmpty() || text.indexOf(textFilter) != -1)
+    {
+        return true;
+    }
+    else
+    {
+        const QString regexpFilter(".*(" % textFilter % ").*");
+        const bool dirty = m_columnTextRegexp.pattern() != regexpFilter;
+        if (dirty)
+        {
+            m_columnTextRegexp.setPattern(regexpFilter);
+            m_columnTextRegexp.setPatternOptions(QRegularExpression::DotMatchesEverythingOption);
+        }
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
+        // FIXME: remove this hack
+        const QString textString = QString().append(text);
+        QRegularExpressionMatch match = m_columnTextRegexp.match(textString);
+#else
+        QRegularExpressionMatch match = m_columnTextRegexp.match(text);
+#endif
+        return match.hasMatch();
+    }
+
+    return true;
 }

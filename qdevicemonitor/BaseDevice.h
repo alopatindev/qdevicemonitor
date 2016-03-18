@@ -24,6 +24,7 @@
 
 #include <QPointer>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QString>
 #include <QTabWidget>
 #include <QTimer>
@@ -72,6 +73,7 @@ public:
     void addToLogBuffer(const QString& text);
     void updateLogBufferSpace();
     void filterAndAddFromLogBufferToTextEdit();
+    bool columnTextMatches(const QString& filter, const QStringRef& text);
 
 signals:
 
@@ -93,6 +95,7 @@ protected:
     bool m_filtersValid;
     QStringList m_filters;
     QStringList m_logBuffer;
+    QRegularExpression m_columnTextRegexp;
 
 private:
     bool m_visited;

@@ -65,7 +65,7 @@ private:
                       const QStringRef& pid = QStringRef(),
                       const QStringRef& tid = QStringRef(),
                       const QStringRef& tag = QStringRef(),
-                      const QStringRef& text = QStringRef()) const;
+                      const QStringRef& text = QStringRef());
     static const char* getPlatformStringStatic() { return "Android"; }
 };
 
