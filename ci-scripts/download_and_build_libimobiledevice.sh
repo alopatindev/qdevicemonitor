@@ -25,9 +25,20 @@ function download_and_unpack {
 
 function build_and_install {
     cd "$1"
+
+    PACKNAME=$(echo "$1" | sed 's/-.*//')
+    echo "${PACKNAME}"
+
     exec 0</dev/null
     NOCONFIGURE=1 ./autogen.sh
-    ./configure --prefix "$(pwd)/../${THIRD_PARTY_DIR}" || cat config.log
+
+    PREFIX_DIR="$(pwd)/../${THIRD_PARTY_DIR}"
+    if [ ${PACKNAME} = 'libimobiledevice' ]; then
+        ./configure --prefix "${PREFIX_DIR}" --enable-debug-code || cat config.log
+    else
+        ./configure --prefix "${PREFIX_DIR}" || cat config.log
+    fi
+
     make -j2
     make install
     cd ..
