@@ -197,7 +197,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     );
 
     bool filtersMatch = true;
-    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0; // FIXME: rename to themeIndex
+    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
 
     QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
@@ -216,13 +216,13 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            const QColor verbosityColor = ThemeColors::Colors[theme][verbosityLevel];
+            const QColor verbosityColor = ThemeColors::Colors[themeIndex][verbosityLevel];
 
             m_deviceWidget->addText(verbosityColor, verbosity % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], date % " " % time % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Pid], pid % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tid], tid % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::Tag], tag % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], date % " " % time % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Pid], pid % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tid], tid % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tag], tag % " ");
             m_deviceWidget->addText(verbosityColor, text % "\n");
         }
     }
@@ -232,7 +232,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, m_filtersValid, m_filters);
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], line % "\n");
         }
     }
 

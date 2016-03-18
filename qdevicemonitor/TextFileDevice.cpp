@@ -124,7 +124,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
     QRegExp rx("([A-Za-z]* +[\\d]+ [\\d:]+) (.+) ", Qt::CaseSensitive, QRegExp::RegExp2);
     rx.setMinimal(true);
 
-    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
     {
         const QString prefix = rx.cap(1);
@@ -139,9 +139,9 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], prefix % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityWarn], hostname % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], text % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], prefix % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityWarn], hostname % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], text % "\n");
         }
     }
     else
@@ -149,7 +149,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, m_filtersValid, m_filters, QStringRef(&line));
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], line % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], line % "\n");
         }
     }
 

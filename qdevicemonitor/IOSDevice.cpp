@@ -213,7 +213,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
     //qDebug() << "filterAndAddToTextEdit:" << line;
 
-    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     if (rx.indexIn(line) > -1)
     {
         const QString prefix = rx.cap(1);
@@ -229,9 +229,9 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::DateTime], prefix % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityWarn], deviceName % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityVerbose], text % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], prefix % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityWarn], deviceName % " ");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], text % "\n");
         }
     }
     else
@@ -242,7 +242,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityInfo], line % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityInfo], line % "\n");
         }
     }
 
@@ -424,10 +424,10 @@ void IOSDevice::readStandardError()
     stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
     stream << m_deviceInfoProcess.readAllStandardError();
 
-    const int theme = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !stream.atEnd(); ++i)
     {
         const QString line = stream.readLine();
-        m_deviceWidget->addText(ThemeColors::Colors[theme][ThemeColors::VerbosityAssert], line + "\n");
+        m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], line + "\n");
     }
 }
