@@ -26,7 +26,7 @@
 
 using namespace DataTypes;
 
-const char* const MARK_LINE = "========================== MARK ==========================\n";
+const QString MARK_LINE("========================== MARK ==========================");
 
 DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter)
     : QWidget(parent)
@@ -34,6 +34,9 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
 {
     ui = QSharedPointer<Ui::DeviceWidget>::create();
     ui->setupUi(this);
+
+    m_textStream.setCodec("UTF-8");
+    m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
     //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     //ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
@@ -92,34 +95,28 @@ void DeviceWidget::maybeScrollTextEditToEnd()
     }
 }
 
-void DeviceWidget::addText(const QColor& color, const QString& text)
+void DeviceWidget::addText(const QColor& color, const QStringRef& text)
 {
-    static const QString initialString("<font style=\"font-family: %1; font-size: %2pt; font-weight: %3;\" color=\"%4\">%5</font>");
+    m_textStream
+        << "<font style=\"font-family: " << m_deviceAdapter->getFont()
+        << "; font-size: " << m_deviceAdapter->getFontSize()
+        << "pt; font-weight: " << (m_deviceAdapter->isFontBold() ? "bold" : "none")
+        << ";\" color=\"" << color.name()
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        << "\">" << QString().append(text)
+#else
+        << "\">" << text
+#endif
+        << " </font>";
+}
 
-    const QString out = initialString
-        .arg(m_deviceAdapter->getFont())
-        .arg(m_deviceAdapter->getFontSize())
-        .arg(m_deviceAdapter->isFontBold() ? "bold" : "none")
-        .arg(color.name())
-        .arg(text);
-
-    if (m_textStream.isNull())
-    {
-        m_textStream = QSharedPointer<QTextStream>::create();
-        m_textStream->setCodec("UTF-8");
-        m_textStream->setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
-    }
-
-    *m_textStream << out;
-
-    if (text.endsWith("\n"))
-    {
-        ui->textEdit->setUpdatesEnabled(false);
-        ui->textEdit->append(m_textStream->readLine());
-        ui->textEdit->setUpdatesEnabled(true);
-        m_textStream.clear();
-        m_stringStream.clear();
-    }
+void DeviceWidget::flushText()
+{
+    m_textStream.flush();
+    ui->textEdit->setUpdatesEnabled(false);
+    ui->textEdit->append(m_textStream.readLine());
+    ui->textEdit->setUpdatesEnabled(true);
 }
 
 void DeviceWidget::clearTextEdit()
@@ -177,7 +174,7 @@ void DeviceWidget::focusFilterInput()
 void DeviceWidget::on_markLogButton_clicked()
 {
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], MARK_LINE);
+    addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&MARK_LINE));
     //addToLogBuffer(MARK_LINE);
 }
 

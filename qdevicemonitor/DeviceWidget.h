@@ -36,7 +36,7 @@ class DeviceWidget : public QWidget
 
     QSharedPointer<Ui::DeviceWidget> ui;
     QPointer<DeviceAdapter> m_deviceAdapter;
-    QSharedPointer<QTextStream> m_textStream;
+    QTextStream m_textStream;
     QString m_stringStream;
     QString m_currentLogFileName;
 
@@ -50,7 +50,8 @@ public:
     inline int getVerbosityLevel() const { return ui->verbositySlider->value(); }
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
-    void addText(const QColor& color, const QString& text);
+    void addText(const QColor& color, const QStringRef& text);
+    void flushText();
     void clearTextEdit();
     void onLogFileNameChanged(const QString& logFileName);
     void focusFilterInput();

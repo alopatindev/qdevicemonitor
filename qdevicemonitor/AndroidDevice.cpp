@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QHash>
 #include <QRegularExpression>
-#include <QtCore/QStringBuilder>
 
 using namespace DataTypes;
 
@@ -219,12 +218,14 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         {
             const QColor verbosityColor = ThemeColors::Colors[themeIndex][verbosityLevel];
 
-            m_deviceWidget->addText(verbosityColor, verbosity % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], date % " " % time % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Pid], pid % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tid], tid % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tag], tag % " ");
-            m_deviceWidget->addText(verbosityColor, text % "\n");
+            m_deviceWidget->addText(verbosityColor, verbosity);
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], date);
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], time);
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Pid], pid);
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tid], tid);
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tag], tag);
+            m_deviceWidget->addText(verbosityColor, text);
+            m_deviceWidget->flushText();
         }
     }
     else
@@ -233,7 +234,8 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, m_filtersValid, m_filters);
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], line % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&line));
+            m_deviceWidget->flushText();
         }
     }
 

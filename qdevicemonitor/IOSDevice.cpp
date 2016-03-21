@@ -23,7 +23,6 @@
 #include <QFileInfo>
 #include <QHash>
 #include <QRegularExpression>
-#include <QtCore/QStringBuilder>
 
 using namespace DataTypes;
 
@@ -213,8 +212,6 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
-    //qDebug() << "filterAndAddToTextEdit:" << line;
-
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
@@ -228,20 +225,21 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], prefix % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityWarn], deviceName % " ");
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], text % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], prefix);
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityWarn], deviceName);
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], text);
+            m_deviceWidget->flushText();
         }
     }
     else
     {
-        // failed to parse
         bool filtersMatch = true;
         checkFilters(filtersMatch, m_filtersValid, m_filters, QStringRef(&line));
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityInfo], line % "\n");
+            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityInfo], QStringRef(&line));
+            m_deviceWidget->flushText();
         }
     }
 
@@ -427,6 +425,6 @@ void IOSDevice::readStandardError()
     for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !stream.atEnd(); ++i)
     {
         const QString line = stream.readLine();
-        m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], line + "\n");
+        m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
     }
 }
