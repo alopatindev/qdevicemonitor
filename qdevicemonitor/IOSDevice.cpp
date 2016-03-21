@@ -149,7 +149,7 @@ void IOSDevice::update()
                     filterAndAddToTextEdit(m_deviceLogFileStream->readLine());
                 }
             }
-            else if(m_deviceLogProcess.canReadLine())
+            else if (m_deviceLogProcess.canReadLine())
             {
                 QString stringStream;
                 QTextStream stream;
