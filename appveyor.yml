@@ -45,14 +45,14 @@ build_script:
   - move "%CYG_HOMEDIR%\3rdparty" .
   - cd ..
   - cd %PROGRAMNAME%
-  - qmake
+  - qmake "CONFIG += release"
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%.exe"
   - move "..\README.md" "..\%OUTPUT_DIRECTORY%\README.md.txt"
   - rmdir /S /Q release
   - mingw32-make clean
-  - qmake "CONFIG += console"
+  - qmake "CONFIG += console release"
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"

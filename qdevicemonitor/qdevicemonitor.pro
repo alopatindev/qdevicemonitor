@@ -43,8 +43,11 @@ FORMS    += MainWindow.ui \
 
 CONFIG += c++11
 
-QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall -O3
-QMAKE_CFLAGS_RELEASE = -O3
+QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3
+
+QMAKE_LFLAGS_RELEASE -= -O1
 
 VERSION = $$(VERSION)
 

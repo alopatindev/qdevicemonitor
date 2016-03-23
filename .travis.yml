@@ -89,17 +89,17 @@ script:
   - cd "${PROGRAMNAME}"
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
-            qmake -spec linux-g++;
+            qmake -spec linux-g++ 'CONFIG += release';
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec linux-clang;
+            qmake -spec linux-clang 'CONFIG += release';
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         if [ $CXX = "g++" ]; then
-            qmake -spec macx-g++;
+            qmake -spec macx-g++ 'CONFIG += release';
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec macx-clang;
+            qmake -spec macx-clang 'CONFIG += release';
         fi;
     fi
   - echo "${PATH}"
