@@ -152,15 +152,13 @@ bool BaseDevice::columnMatches(const QString& column, const QString& filter, con
 
 bool BaseDevice::columnTextMatches(const QString& filter, const QStringRef& text)
 {
-    const QString textFilter = filter.trimmed();
-
-    if (textFilter.isEmpty() || text.indexOf(textFilter) != -1)
+    if (filter.isEmpty() || text.contains(filter))
     {
         return true;
     }
     else
     {
-        const QString regexpFilter(".*(" % textFilter % ").*");
+        const QString regexpFilter(".*(" % filter % ").*");
         const bool dirty = m_columnTextRegexp.pattern() != regexpFilter;
         if (dirty)
         {

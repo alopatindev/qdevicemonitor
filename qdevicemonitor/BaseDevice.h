@@ -26,8 +26,14 @@
 #include <QProcess>
 #include <QRegularExpression>
 #include <QString>
+#include <QStringRef>
 #include <QTabWidget>
 #include <QTimer>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+    // FIXME: remove this hack
+    #include <QVector>
+#endif
 
 using namespace DataTypes;
 
@@ -94,7 +100,12 @@ protected:
     QString m_lastFilter;
     QString m_currentLogFileName;
     bool m_filtersValid;
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+    // FIXME: remove this hack
     QStringList m_filters;
+#else
+    QVector<QStringRef> m_filters;
+#endif
     QStringList m_logBuffer;
     QRegularExpression m_columnTextRegexp;
 

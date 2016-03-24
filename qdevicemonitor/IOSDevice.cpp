@@ -136,7 +136,12 @@ void IOSDevice::update()
             const QString filter = m_deviceWidget->getFilterLineEdit().text();
             if (m_lastFilter != filter)
             {
-                m_filters = filter.split(" ");
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+                // FIXME: remove this hack
+                m_filters = filter.split(' ');
+#else
+                m_filters = filter.splitRef(' ');
+#endif
                 m_filtersValid = true;
                 m_lastFilter = filter;
                 reloadTextEdit();

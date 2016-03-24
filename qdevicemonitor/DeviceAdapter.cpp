@@ -223,7 +223,7 @@ void DeviceAdapter::saveSettings(QSettings& s)
 void DeviceAdapter::addFilterAsCompletion(const QString& completionToAdd)
 {
     qDebug() << "addFilterAsCompletion" << completionToAdd;
-    if (m_filterCompletions.indexOf(completionToAdd) != -1)
+    if (m_filterCompletions.contains(completionToAdd))
     {
         qDebug() << completionToAdd << "is already in the list";
         return;
