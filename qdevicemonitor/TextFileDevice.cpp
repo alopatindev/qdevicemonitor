@@ -87,15 +87,10 @@ void TextFileDevice::update()
                 maybeAddCompletionAfterDelay(filter);
             }
 
-            QString stringStream;
-            QTextStream stream;
-            stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-
             for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
             {
-                stream << m_tailProcess.readLine();
-                const QString line = stream.readLine();
+                s_tempStream << m_tailProcess.readLine();
+                const QString line = s_tempStream.readLine();
                 addToLogBuffer(line);
                 filterAndAddToTextEdit(line);
             }

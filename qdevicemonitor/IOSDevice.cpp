@@ -156,15 +156,10 @@ void IOSDevice::update()
             }
             else if (m_deviceLogProcess.canReadLine())
             {
-                QString stringStream;
-                QTextStream stream;
-                stream.setCodec("UTF-8");
-                stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
-                    stream << m_deviceLogProcess.readLine();
-                    const QString line = stream.readLine();
+                    s_tempStream << m_deviceLogProcess.readLine();
+                    const QString line = s_tempStream.readLine();
                     *m_deviceLogFileStream << line << "\n";
                     m_deviceLogFileStream->flush();
                     addToLogBuffer(line);
@@ -296,12 +291,8 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
         {
             deviceListError = true;
 
-            QString stringStream;
-            QTextStream stream;
-            stream.setCodec("UTF-8");
-            stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-            stream << s_devicesListProcess.readAllStandardError();
-            const QString errorText = stream.readLine();
+            s_tempStream << s_devicesListProcess.readAllStandardError();
+            const QString errorText = s_tempStream.readLine();
 
             if (s_devicesListProcess.exitCode() != 0xFF || errorText != "ERROR: Unable to retrieve device list!")
             {
@@ -335,15 +326,11 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
 
             if (s_devicesListProcess.canReadLine())
             {
-                QString stringStream;
-                QTextStream stream;
-                stream.setCodec("UTF-8");
-                stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-                stream << s_devicesListProcess.readAll();
+                s_tempStream << s_devicesListProcess.readAll();
 
-                while (!stream.atEnd())
+                while (!s_tempStream.atEnd())
                 {
-                    const QString deviceId = stream.readLine();
+                    const QString deviceId = s_tempStream.readLine();
                     //qDebug() << "deviceId" << deviceId;
                     if (s_removedDeviceByTabClose.contains(deviceId))
                     {
@@ -425,16 +412,12 @@ void IOSDevice::removedDeviceByTabClose(const QString& id)
 void IOSDevice::readStandardError()
 {
     qDebug() << "readStandardError";
-    QString stringStream;
-    QTextStream stream;
-    stream.setCodec("UTF-8");
-    stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-    stream << m_deviceInfoProcess.readAllStandardError();
+    s_tempStream << m_deviceInfoProcess.readAllStandardError();
 
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !stream.atEnd(); ++i)
+    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !s_tempStream.atEnd(); ++i)
     {
-        const QString line = stream.readLine();
+        const QString line = s_tempStream.readLine();
         m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
     }
 }

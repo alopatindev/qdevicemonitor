@@ -164,15 +164,10 @@ void AndroidDevice::update()
             }
             else if (m_deviceLogProcess.canReadLine())
             {
-                QString stringStream;
-                QTextStream stream;
-                stream.setCodec("UTF-8");
-                stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
-                    stream << m_deviceLogProcess.readLine();
-                    const QString line = stream.readLine();
+                    s_tempStream << m_deviceLogProcess.readLine();
+                    const QString line = s_tempStream.readLine();
                     *m_deviceLogFileStream << line << "\n";
                     m_deviceLogFileStream->flush();
                     addToLogBuffer(line);
@@ -365,21 +360,18 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
             if (s_devicesListProcess.canReadLine())
             {
-                QString stringStream;
-                QTextStream stream;
-                stream.setCodec("UTF-8");
-                stream.setString(&stringStream, QIODevice::ReadWrite | QIODevice::Text);
-                stream << s_devicesListProcess.readAll();
+                s_tempStream << s_devicesListProcess.readAll();
 
-                while (!stream.atEnd())
+                while (!s_tempStream.atEnd())
                 {
-                    const QString line = stream.readLine();
+                    const QString line = s_tempStream.readLine();
                     if (line.contains("List of devices attached"))
                     {
                         continue;
                     }
 
-                    const QStringList lineSplit = line.split("\t");
+                    // TODO: replace split with splitRef
+                    const QStringList lineSplit = line.split('\t');
                     if (lineSplit.count() >= 2)
                     {
                         const QString& deviceId = lineSplit[0];

@@ -22,7 +22,6 @@
 #include <QFile>
 #include <QProcess>
 #include <QStringList>
-#include <QTextStream>
 #include <QVector>
 
 using namespace DataTypes;

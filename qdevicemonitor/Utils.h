@@ -20,7 +20,6 @@
 
 #include <QFile>
 #include <QString>
-#include <QTextStream>
 
 namespace Utils
 {

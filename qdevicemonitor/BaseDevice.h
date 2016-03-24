@@ -28,6 +28,7 @@
 #include <QString>
 #include <QStringRef>
 #include <QTabWidget>
+#include <QTextStream>
 #include <QTimer>
 #include <QVector>
 
@@ -105,6 +106,9 @@ protected:
 #endif
     QStringList m_logBuffer;
     QRegularExpression m_columnTextRegexp;
+
+    static QString s_tempBuffer;
+    static QTextStream s_tempStream;
 
 private:
     bool m_visited;
