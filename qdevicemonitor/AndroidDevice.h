@@ -48,6 +48,7 @@ public:
     const char* getPlatformString() const override { return getPlatformStringStatic(); }
     void reloadTextEdit() override;
 
+    static void updateDeviceStatus(const QString& deviceStatus, BaseDevice& device, const QString& deviceId);
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void releaseTempBuffer();
     static void stopDevicesListProcess();

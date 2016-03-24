@@ -262,21 +262,21 @@ void IOSDevice::reloadTextEdit()
     filterAndAddFromLogBufferToTextEdit();
 }
 
+void IOSDevice::updateDeviceStatus(const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
+{
+    const bool online = deviceStatus == "device";
+    device.setHumanReadableDescription(
+        tr("%1\nStatus: %2\nID: %3")
+            .arg(tr(getPlatformStringStatic()))
+            .arg(online ? "Online" : "Offline")
+            .arg(deviceId)
+    );
+    device.setOnline(online);
+    device.setVisited(true);
+}
+
 void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
-    auto updateDeviceStatus = [](const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
-    {
-        const bool online = deviceStatus == "device";
-        device.setHumanReadableDescription(
-            tr("%1\nStatus: %2\nID: %3")
-                .arg(tr(getPlatformStringStatic()))
-                .arg(online ? "Online" : "Offline")
-                .arg(deviceId)
-        );
-        device.setOnline(online);
-        device.setVisited(true);
-    };
-
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
         if (s_tempStream.isNull())
