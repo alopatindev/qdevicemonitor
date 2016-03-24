@@ -40,6 +40,7 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
 
     //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     //ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
+    ui->textEdit->setAttribute(Qt::WA_OpaquePaintEvent);
     ui->textEdit->setUndoRedoEnabled(false);
     ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleLines());
 
