@@ -107,7 +107,12 @@ void TextFileDevice::update()
     }
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+// FIXME: remove this hack
 void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text)
+#else
+void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters, const QStringRef& text)
+#endif
 {
     filtersValid = true;
 

@@ -248,7 +248,12 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+// FIXME: remove this hack
 void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text)
+#else
+void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters, VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text)
+#endif
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
 

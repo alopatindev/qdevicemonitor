@@ -29,11 +29,7 @@
 #include <QStringRef>
 #include <QTabWidget>
 #include <QTimer>
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
-    // FIXME: remove this hack
-    #include <QVector>
-#endif
+#include <QVector>
 
 using namespace DataTypes;
 

@@ -23,6 +23,7 @@
 #include <QProcess>
 #include <QStringList>
 #include <QTextStream>
+#include <QVector>
 
 using namespace DataTypes;
 
@@ -59,7 +60,12 @@ private:
     void stopLogger();
     void maybeClearAdbLog();
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+    // FIXME: remove this hack
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters,
+#else
+    void checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters,
+#endif
                       const VerbosityEnum verbosityLevel = Verbose,
                       const QStringRef& pid = QStringRef(),
                       const QStringRef& tid = QStringRef(),
