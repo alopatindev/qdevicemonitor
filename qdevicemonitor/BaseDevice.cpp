@@ -151,7 +151,12 @@ void BaseDevice::filterAndAddFromLogBufferToTextEdit()
     }
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+// FIXME: remove this hack
 bool BaseDevice::columnMatches(const QString& column, const QString& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound)
+#else
+bool BaseDevice::columnMatches(const QString& column, const QStringRef& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound)
+#endif
 {
     if (filter.startsWith(column))
     {
