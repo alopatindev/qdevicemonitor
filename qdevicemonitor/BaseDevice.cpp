@@ -35,6 +35,7 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const Dev
     , m_tabWidget(parent)
     , m_tabIndex(-1)
     , m_deviceAdapter(deviceAdapter)
+    , m_dirtyFilter(false)
     , m_filtersValid(true)
     , m_visited(true)
 {
@@ -45,10 +46,10 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const Dev
     m_deviceWidget = QSharedPointer<DeviceWidget>::create(static_cast<QTabWidget*>(m_tabWidget), m_deviceAdapter);
     m_deviceWidget->getFilterLineEdit().setCompleter(&m_deviceAdapter->getFilterCompleter());
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget.data(), humanReadableName);
-    m_lastFilter = m_deviceWidget->getFilterLineEdit().text();
 
     m_completionAddTimer.setSingleShot(true);
     connect(&m_completionAddTimer, &QTimer::timeout, this, &BaseDevice::addFilterAsCompletion);
+    connect(&(m_deviceWidget->getFilterLineEdit()), &QLineEdit::textChanged, this, &BaseDevice::updateFilter);
 }
 
 BaseDevice::~BaseDevice()
@@ -101,6 +102,13 @@ void BaseDevice::addFilterAsCompletion()
 {
     qDebug() << "BaseDevice::addFilterAsCompletion";
     m_deviceAdapter->addFilterAsCompletion(m_completionToAdd);
+}
+
+void BaseDevice::updateFilter(const QString& filter)
+{
+    (void) filter;
+    m_dirtyFilter = true;
+    qDebug() << "BaseDevice::updateFilter(" << filter << ")";
 }
 
 void BaseDevice::addToLogBuffer(const QString& text)

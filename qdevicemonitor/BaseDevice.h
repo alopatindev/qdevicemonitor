@@ -86,6 +86,7 @@ signals:
 
 private slots:
     void addFilterAsCompletion();
+    void updateFilter(const QString& filter);
 
 protected:
     const QString m_id;
@@ -97,8 +98,8 @@ protected:
     QSharedPointer<DeviceWidget> m_deviceWidget;
     int m_tabIndex;
     QPointer<DeviceAdapter> m_deviceAdapter;
-    QString m_lastFilter;
     QString m_currentLogFileName;
+    bool m_dirtyFilter;
     bool m_filtersValid;
 #if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
     // FIXME: remove this hack

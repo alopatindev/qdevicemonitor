@@ -72,9 +72,10 @@ void TextFileDevice::update()
     {
     case QProcess::Running:
         {
-            const QString filter = m_deviceWidget->getFilterLineEdit().text();
-            if (m_lastFilter != filter)
+            if (m_dirtyFilter)
             {
+                m_dirtyFilter = false;
+                const QString filter = m_deviceWidget->getFilterLineEdit().text();
 #if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
                 // FIXME: remove this hack
                 m_filters = filter.split(' ');
@@ -82,7 +83,6 @@ void TextFileDevice::update()
                 m_filters = filter.splitRef(' ');
 #endif
                 m_filtersValid = true;
-                m_lastFilter = filter;
                 reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
             }
