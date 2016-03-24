@@ -32,21 +32,21 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
     : QWidget(parent)
     , m_deviceAdapter(deviceAdapter)
 {
-    ui = QSharedPointer<Ui::DeviceWidget>::create();
-    ui->setupUi(this);
+    m_ui = QSharedPointer<Ui::DeviceWidget>::create();
+    m_ui->setupUi(this);
 
     m_textStream.setCodec("UTF-8");
     m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
     //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
     //ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
-    ui->textEdit->setUndoRedoEnabled(false);
-    ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleLines());
+    m_ui->textEdit->setUndoRedoEnabled(false);
+    m_ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleLines());
 
     clearTextEdit();
 
-    ui->verbositySlider->valueChanged(ui->verbositySlider->value());
-    ui->wrapCheckBox->setCheckState(ui->wrapCheckBox->isChecked() ? Qt::Checked : Qt::Unchecked);
+    m_ui->verbositySlider->valueChanged(m_ui->verbositySlider->value());
+    m_ui->wrapCheckBox->setCheckState(m_ui->wrapCheckBox->isChecked() ? Qt::Checked : Qt::Unchecked);
 }
 
 DeviceWidget::~DeviceWidget()
@@ -56,20 +56,20 @@ DeviceWidget::~DeviceWidget()
 
 void DeviceWidget::hideVerbosity()
 {
-    ui->verbositySlider->setVisible(false);
-    ui->verbosityLabel->setVisible(false);
+    m_ui->verbositySlider->setVisible(false);
+    m_ui->verbosityLabel->setVisible(false);
 }
 
 void DeviceWidget::on_verbositySlider_valueChanged(int value)
 {
     qDebug() << "verbosity" << value;
     const char* const v = Verbosity[value];
-    ui->verbosityLabel->setText(tr(v));
+    m_ui->verbosityLabel->setText(tr(v));
 }
 
 void DeviceWidget::on_wrapCheckBox_toggled(bool checked)
 {
-    ui->textEdit->setLineWrapMode(checked ? QTextEdit::WidgetWidth : QTextEdit::NoWrap);
+    m_ui->textEdit->setLineWrapMode(checked ? QTextEdit::WidgetWidth : QTextEdit::NoWrap);
     maybeScrollTextEditToEnd();
 }
 
@@ -80,16 +80,16 @@ void DeviceWidget::on_scrollLockCheckBox_toggled(bool)
 
 void DeviceWidget::highlightFilterLineEdit(bool red)
 {
-    static QPalette normalPal = ui->filterLineEdit->palette();
+    static QPalette normalPal = m_ui->filterLineEdit->palette();
     static QPalette redPal(Qt::red);
     redPal.setColor(QPalette::Highlight, Qt::red);
 
-    ui->filterLineEdit->setPalette(red ? redPal : normalPal);
+    m_ui->filterLineEdit->setPalette(red ? redPal : normalPal);
 }
 
 void DeviceWidget::maybeScrollTextEditToEnd()
 {
-    if (!ui->scrollLockCheckBox->isChecked())
+    if (!m_ui->scrollLockCheckBox->isChecked())
     {
         scrollTextEditToEnd();
     }
@@ -114,14 +114,14 @@ void DeviceWidget::addText(const QColor& color, const QStringRef& text)
 void DeviceWidget::flushText()
 {
     m_textStream.flush();
-    ui->textEdit->setUpdatesEnabled(false);
-    ui->textEdit->append(m_textStream.readLine());
-    ui->textEdit->setUpdatesEnabled(true);
+    m_ui->textEdit->setUpdatesEnabled(false);
+    m_ui->textEdit->append(m_textStream.readLine());
+    m_ui->textEdit->setUpdatesEnabled(true);
 }
 
 void DeviceWidget::clearTextEdit()
 {
-    static QPalette defaultPal = ui->textEdit->palette();
+    static QPalette defaultPal = m_ui->textEdit->palette();
     QPalette pal;
     if (m_deviceAdapter->isDarkTheme())
     {
@@ -132,7 +132,7 @@ void DeviceWidget::clearTextEdit()
     {
         pal = defaultPal;
     }
-    ui->textEdit->setPalette(pal);
+    m_ui->textEdit->setPalette(pal);
 
     getTextEdit().clear();
 }
@@ -168,7 +168,7 @@ void DeviceWidget::onLogFileNameChanged(const QString& logFileName)
 
 void DeviceWidget::focusFilterInput()
 {
-    ui->filterLineEdit->setFocus();
+    m_ui->filterLineEdit->setFocus();
 }
 
 void DeviceWidget::on_markLogButton_clicked()
@@ -180,15 +180,15 @@ void DeviceWidget::on_markLogButton_clicked()
 
 void DeviceWidget::markLog()
 {
-    ui->markLogButton->click();
+    m_ui->markLogButton->click();
 }
 
 void DeviceWidget::clearLog()
 {
-    ui->clearLogButton->click();
+    m_ui->clearLogButton->click();
 }
 
 void DeviceWidget::openLogFile()
 {
-    ui->openLogFileButton->click();
+    m_ui->openLogFileButton->click();
 }

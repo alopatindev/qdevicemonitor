@@ -32,7 +32,7 @@ class SettingsDialog : public QDialog
 {
     Q_OBJECT
 
-    QSharedPointer<Ui::SettingsDialog> ui;
+    QSharedPointer<Ui::SettingsDialog> m_ui;
 
 public:
     explicit SettingsDialog(QPointer<QWidget> parent = 0);

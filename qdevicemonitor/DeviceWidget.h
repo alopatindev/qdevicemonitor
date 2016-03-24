@@ -34,7 +34,7 @@ class DeviceWidget : public QWidget
 {
     Q_OBJECT
 
-    QSharedPointer<Ui::DeviceWidget> ui;
+    QSharedPointer<Ui::DeviceWidget> m_ui;
     QPointer<DeviceAdapter> m_deviceAdapter;
     QTextStream m_textStream;
     QString m_stringStream;
@@ -45,9 +45,9 @@ public:
     ~DeviceWidget() override;
     void hideVerbosity();
 
-    inline QLineEdit& getFilterLineEdit() const { return *(ui->filterLineEdit); }
-    inline QTextEdit& getTextEdit() const { return *(ui->textEdit); }
-    inline int getVerbosityLevel() const { return ui->verbositySlider->value(); }
+    inline QLineEdit& getFilterLineEdit() const { return *(m_ui->filterLineEdit); }
+    inline QTextEdit& getTextEdit() const { return *(m_ui->textEdit); }
+    inline int getVerbosityLevel() const { return m_ui->verbositySlider->value(); }
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
     void addText(const QColor& color, const QStringRef& text);

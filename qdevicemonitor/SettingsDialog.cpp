@@ -24,8 +24,8 @@
 SettingsDialog::SettingsDialog(QPointer<QWidget> parent)
     : QDialog(parent)
 {
-    ui = QSharedPointer<Ui::SettingsDialog>::create();
-    ui->setupUi(this);
+    m_ui = QSharedPointer<Ui::SettingsDialog>::create();
+    m_ui->setupUi(this);
 }
 
 SettingsDialog::~SettingsDialog()
@@ -34,26 +34,26 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::loadSettings(const QSettings& s)
 {
-    ui->visibleBlocksSpinBox->setValue(s.value("visibleBlocks").toInt());
-    ui->fontComboBox->setCurrentFont(QFont(s.value("font").toString()));
-    ui->fontSizeSpinBox->setValue(s.value("fontSize").toInt());
-    ui->fontBoldCheckBox->setChecked(s.value("fontBold").toBool());
-    ui->darkThemeCheckBox->setChecked(s.value("darkTheme").toBool());
-    ui->clearAndroidLogCheckBox->setChecked(s.value("clearAndroidLog").toBool());
-    ui->autoRemoveFilesOlderThanSpinBox->setValue(s.value("autoRemoveFilesHours").toInt());
-    ui->editorLineEdit->setText(s.value("textEditorPath").toString());
+    m_ui->visibleBlocksSpinBox->setValue(s.value("visibleBlocks").toInt());
+    m_ui->fontComboBox->setCurrentFont(QFont(s.value("font").toString()));
+    m_ui->fontSizeSpinBox->setValue(s.value("fontSize").toInt());
+    m_ui->fontBoldCheckBox->setChecked(s.value("fontBold").toBool());
+    m_ui->darkThemeCheckBox->setChecked(s.value("darkTheme").toBool());
+    m_ui->clearAndroidLogCheckBox->setChecked(s.value("clearAndroidLog").toBool());
+    m_ui->autoRemoveFilesOlderThanSpinBox->setValue(s.value("autoRemoveFilesHours").toInt());
+    m_ui->editorLineEdit->setText(s.value("textEditorPath").toString());
 }
 
 void SettingsDialog::saveSettings(QSettings& s)
 {
-    s.setValue("visibleBlocks", ui->visibleBlocksSpinBox->value());
-    s.setValue("font", ui->fontComboBox->currentFont().family());
-    s.setValue("fontSize", ui->fontSizeSpinBox->value());
-    s.setValue("fontBold", ui->fontBoldCheckBox->isChecked());
-    s.setValue("darkTheme", ui->darkThemeCheckBox->isChecked());
-    s.setValue("clearAndroidLog", ui->clearAndroidLogCheckBox->isChecked());
-    s.setValue("autoRemoveFilesHours", ui->autoRemoveFilesOlderThanSpinBox->value());
-    s.setValue("textEditorPath", ui->editorLineEdit->text());
+    s.setValue("visibleBlocks", m_ui->visibleBlocksSpinBox->value());
+    s.setValue("font", m_ui->fontComboBox->currentFont().family());
+    s.setValue("fontSize", m_ui->fontSizeSpinBox->value());
+    s.setValue("fontBold", m_ui->fontBoldCheckBox->isChecked());
+    s.setValue("darkTheme", m_ui->darkThemeCheckBox->isChecked());
+    s.setValue("clearAndroidLog", m_ui->clearAndroidLogCheckBox->isChecked());
+    s.setValue("autoRemoveFilesHours", m_ui->autoRemoveFilesOlderThanSpinBox->value());
+    s.setValue("textEditorPath", m_ui->editorLineEdit->text());
     s.sync();
 }
 
@@ -73,6 +73,6 @@ void SettingsDialog::on_editorBrowseButton_clicked()
 
     if (!fileName.isEmpty())
     {
-        ui->editorLineEdit->setText(fileName);
+        m_ui->editorLineEdit->setText(fileName);
     }
 }

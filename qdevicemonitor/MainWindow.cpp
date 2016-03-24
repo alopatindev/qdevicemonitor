@@ -39,14 +39,14 @@ extern "C" int putenv(char*);  // FIXME: MinGW compilation bug
 MainWindow::MainWindow(QPointer<QWidget> parent)
     : QMainWindow(parent)
 {
-    ui = QSharedPointer<Ui::MainWindow>::create();
-    ui->setupUi(this);
+    m_ui = QSharedPointer<Ui::MainWindow>::create();
+    m_ui->setupUi(this);
 
     setupEnvironment();
     loadSettings();
     checkExternalPrograms();
 
-    m_deviceAdapter.setParent(ui->tabWidget);
+    m_deviceAdapter.setParent(m_ui->tabWidget);
     m_deviceAdapter.start();
 }
 
@@ -154,7 +154,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::MidButton)
     {
-        const QTabBar& tabBar = *(ui->tabWidget->tabBar());
+        const QTabBar& tabBar = *(m_ui->tabWidget->tabBar());
         const QPoint mousePos = tabBar.mapFrom(this, event->pos());
         const int index = tabBar.tabAt(mousePos);
         on_tabWidget_tabCloseRequested(index);

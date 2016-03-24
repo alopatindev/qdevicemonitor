@@ -57,7 +57,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
-    QSharedPointer<Ui::MainWindow> ui;
+    QSharedPointer<Ui::MainWindow> m_ui;
     void checkExternalPrograms();
     void setupEnvironment();
 };
