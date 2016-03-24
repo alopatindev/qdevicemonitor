@@ -168,7 +168,7 @@
    <item row="4" column="0" colspan="2">
     <widget class="QCheckBox" name="clearAndroidLogCheckBox">
      <property name="text">
-      <string>Clear log after device connection (Android only)</string>
+      <string>Clear Log after device connection (Android only)</string>
      </property>
     </widget>
    </item>
