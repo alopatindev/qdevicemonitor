@@ -23,7 +23,6 @@
 #include <QProcess>
 #include <QStringList>
 #include <QTextStream>
-#include <QVector>
 
 using namespace DataTypes;
 
@@ -48,6 +47,7 @@ public:
     void reloadTextEdit() override;
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
+    static void releaseTempBuffer();
     static void stopDevicesListProcess();
     static void removedDeviceByTabClose(const QString& id);
 
@@ -55,12 +55,7 @@ private:
     void updateDeviceModel();
     void startLogger();
     void stopLogger();
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-    // FIXME: remove this hack
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text);
-#else
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters, const QStringRef& text);
-#endif
+    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
 
     static const char* getPlatformStringStatic() { return "iOS"; }
 

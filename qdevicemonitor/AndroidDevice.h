@@ -23,7 +23,6 @@
 #include <QProcess>
 #include <QStringList>
 #include <QTextStream>
-#include <QVector>
 
 using namespace DataTypes;
 
@@ -50,8 +49,10 @@ public:
     void reloadTextEdit() override;
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
+    static void releaseTempBuffer();
     static void stopDevicesListProcess();
     static void removedDeviceByTabClose(const QString& id);
+
     void onOnlineChange(const bool online) override;
 
 private:
@@ -60,12 +61,8 @@ private:
     void stopLogger();
     void maybeClearAdbLog();
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-    // FIXME: remove this hack
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters,
-#else
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters,
-#endif
+    void checkFilters(bool& filtersMatch,
+                      bool& filtersValid,
                       const VerbosityEnum verbosityLevel = Verbose,
                       const QStringRef& pid = QStringRef(),
                       const QStringRef& tid = QStringRef(),

@@ -64,8 +64,12 @@ void DeviceAdapter::stop()
     qDebug() << "DeviceAdapter::stop";
     m_updateTimer.stop();
     disconnect(&m_updateTimer, &QTimer::timeout, this, &DeviceAdapter::update);
+
     AndroidDevice::stopDevicesListProcess();
     IOSDevice::stopDevicesListProcess();
+
+    AndroidDevice::releaseTempBuffer();
+    IOSDevice::releaseTempBuffer();
 }
 
 void DeviceAdapter::update()

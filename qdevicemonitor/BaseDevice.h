@@ -30,7 +30,6 @@
 #include <QTabWidget>
 #include <QTextStream>
 #include <QTimer>
-#include <QVector>
 
 using namespace DataTypes;
 
@@ -104,17 +103,11 @@ protected:
     QString m_currentLogFileName;
     bool m_dirtyFilter;
     bool m_filtersValid;
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-    // FIXME: remove this hack
     QStringList m_filters;
-#else
-    QVector<QStringRef> m_filters;
-#endif
     QStringList m_logBuffer;
     QRegularExpression m_columnTextRegexp;
-
-    static QString s_tempBuffer;
-    static QTextStream s_tempStream;
+    QString m_tempBuffer;
+    QTextStream m_tempStream;
 
 private:
     bool m_visited;

@@ -26,6 +26,9 @@
 
 using namespace DataTypes;
 
+static QSharedPointer<QString> s_tempBuffer;
+static QSharedPointer<QTextStream> s_tempStream;
+
 static QProcess s_devicesListProcess;
 static QHash<QString, bool> s_removedDeviceByTabClose;
 
@@ -48,6 +51,7 @@ IOSDevice::~IOSDevice()
     stopLogger();
     disconnect(&m_deviceInfoProcess, nullptr, this, nullptr);
     m_deviceInfoProcess.terminate();
+    m_deviceInfoProcess.kill();
     m_deviceInfoProcess.close();
 }
 
@@ -98,6 +102,7 @@ void IOSDevice::stopLogger()
     qDebug() << "IOSDevice::stopLogger";
 
     m_deviceLogProcess.terminate();
+    m_deviceLogProcess.kill();
     m_deviceLogProcess.close();
     m_deviceLogFileStream.clear();
     m_deviceLogFile.close();
@@ -137,12 +142,7 @@ void IOSDevice::update()
             {
                 m_dirtyFilter = false;
                 const QString filter = m_deviceWidget->getFilterLineEdit().text();
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-                // FIXME: remove this hack
                 m_filters = filter.split(' ');
-#else
-                m_filters = filter.splitRef(' ');
-#endif
                 m_filtersValid = true;
                 reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
@@ -158,8 +158,8 @@ void IOSDevice::update()
             {
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
-                    s_tempStream << m_deviceLogProcess.readLine();
-                    const QString line = s_tempStream.readLine();
+                    m_tempStream << m_deviceLogProcess.readLine();
+                    const QString line = m_tempStream.readLine();
                     *m_deviceLogFileStream << line << "\n";
                     m_deviceLogFileStream->flush();
                     addToLogBuffer(line);
@@ -181,15 +181,11 @@ void IOSDevice::update()
     }
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-// FIXME: remove this hack
-void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text)
-#else
-void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters, const QStringRef& text)
-#endif
+void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text)
 {
-    for (auto& filter : filters)
+    for (auto& filterString : m_filters)
     {
+        const QStringRef filter(&filterString);
         bool columnFound = false;
         if (!columnMatches("text:", filter, text, filtersValid, columnFound))
         {
@@ -226,7 +222,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         const QStringRef text = line.midRef(match.capturedEnd("hostname") + 1);
 
         bool filtersMatch = true;
-        checkFilters(filtersMatch, m_filtersValid, m_filters, text);
+        checkFilters(filtersMatch, m_filtersValid, text);
 
         if (filtersMatch)
         {
@@ -239,7 +235,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
     else
     {
         bool filtersMatch = true;
-        checkFilters(filtersMatch, m_filtersValid, m_filters, QStringRef(&line));
+        checkFilters(filtersMatch, m_filtersValid, QStringRef(&line));
 
         if (filtersMatch)
         {
@@ -281,9 +277,16 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
         device.setVisited(true);
     };
 
-
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
+        if (s_tempStream.isNull())
+        {
+            s_tempStream = QSharedPointer<QTextStream>::create();
+            s_tempBuffer = QSharedPointer<QString>::create();
+            s_tempStream->setCodec("UTF-8");
+            s_tempStream->setString(&(*s_tempBuffer), QIODevice::ReadWrite | QIODevice::Text);
+        }
+
         bool deviceListError = false;
 
         if (s_devicesListProcess.exitCode() != 0 ||
@@ -291,8 +294,8 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
         {
             deviceListError = true;
 
-            s_tempStream << s_devicesListProcess.readAllStandardError();
-            const QString errorText = s_tempStream.readLine();
+            *s_tempStream << s_devicesListProcess.readAllStandardError();
+            const QString errorText = s_tempStream->readLine();
 
             if (s_devicesListProcess.exitCode() != 0xFF || errorText != "ERROR: Unable to retrieve device list!")
             {
@@ -326,11 +329,11 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
 
             if (s_devicesListProcess.canReadLine())
             {
-                s_tempStream << s_devicesListProcess.readAll();
+                *s_tempStream << s_devicesListProcess.readAll();
 
-                while (!s_tempStream.atEnd())
+                while (!s_tempStream->atEnd())
                 {
-                    const QString deviceId = s_tempStream.readLine();
+                    const QString deviceId = s_tempStream->readLine();
                     //qDebug() << "deviceId" << deviceId;
                     if (s_removedDeviceByTabClose.contains(deviceId))
                     {
@@ -390,7 +393,7 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
             }
         }
 
-        s_devicesListProcess.close();
+        stopDevicesListProcess();
 
         QStringList args;
         args.append("-l");
@@ -399,8 +402,20 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
     }
 }
 
+void IOSDevice::releaseTempBuffer()
+{
+    qDebug() << "IOSDevice::releaseTempBuffer";
+    if (!s_tempStream.isNull())
+    {
+        s_tempStream.clear();
+        s_tempBuffer.clear();
+    }
+}
+
 void IOSDevice::stopDevicesListProcess()
 {
+    s_devicesListProcess.terminate();
+    s_devicesListProcess.kill();
     s_devicesListProcess.close();
 }
 
@@ -412,12 +427,12 @@ void IOSDevice::removedDeviceByTabClose(const QString& id)
 void IOSDevice::readStandardError()
 {
     qDebug() << "readStandardError";
-    s_tempStream << m_deviceInfoProcess.readAllStandardError();
+    m_tempStream << m_deviceInfoProcess.readAllStandardError();
 
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !s_tempStream.atEnd(); ++i)
+    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_tempStream.atEnd(); ++i)
     {
-        const QString line = s_tempStream.readLine();
+        const QString line = m_tempStream.readLine();
         m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
     }
 }

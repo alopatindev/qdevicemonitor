@@ -25,6 +25,9 @@
 
 using namespace DataTypes;
 
+static QSharedPointer<QString> s_tempBuffer;
+static QSharedPointer<QTextStream> s_tempStream;
+
 static QProcess s_devicesListProcess;
 static QHash<QString, bool> s_removedDeviceByTabClose;
 
@@ -145,12 +148,7 @@ void AndroidDevice::update()
             {
                 m_dirtyFilter = false;
                 const QString filter = m_deviceWidget->getFilterLineEdit().text();
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-                // FIXME: remove this hack
                 m_filters = filter.split(' ');
-#else
-                m_filters = filter.splitRef(' ');
-#endif
                 m_filtersValid = true;
                 reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
@@ -166,8 +164,8 @@ void AndroidDevice::update()
             {
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
                 {
-                    s_tempStream << m_deviceLogProcess.readLine();
-                    const QString line = s_tempStream.readLine();
+                    m_tempStream << m_deviceLogProcess.readLine();
+                    const QString line = m_tempStream.readLine();
                     *m_deviceLogFileStream << line << "\n";
                     m_deviceLogFileStream->flush();
                     addToLogBuffer(line);
@@ -212,7 +210,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
 
         const VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.at(0).toLatin1()));
 
-        checkFilters(filtersMatch, m_filtersValid, m_filters, verbosityLevel, pid, tid, tag, text);
+        checkFilters(filtersMatch, m_filtersValid, verbosityLevel, pid, tid, tag, text);
 
         if (filtersMatch)
         {
@@ -231,7 +229,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     else
     {
         qDebug() << "failed to parse" << line;
-        checkFilters(filtersMatch, m_filtersValid, m_filters);
+        checkFilters(filtersMatch, m_filtersValid);
         if (filtersMatch)
         {
             m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&line));
@@ -243,12 +241,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-// FIXME: remove this hack
-void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text)
-#else
-void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters, VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text)
-#endif
+void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text)
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
 
@@ -257,8 +250,9 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const Q
         return;
     }
 
-    for (const auto& filter : filters)
+    for (const auto& filterString : m_filters)
     {
+        const QStringRef filter(&filterString);
         bool columnFound = false;
         if (!columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
             !columnMatches("tid:", filter, tid, filtersValid, columnFound) ||
@@ -336,6 +330,14 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
+        if (s_tempStream.isNull())
+        {
+            s_tempStream = QSharedPointer<QTextStream>::create();
+            s_tempBuffer = QSharedPointer<QString>::create();
+            s_tempStream->setCodec("UTF-8");
+            s_tempStream->setString(&(*s_tempBuffer), QIODevice::ReadWrite | QIODevice::Text);
+        }
+
         if (s_devicesListProcess.exitCode() != 0 ||
             s_devicesListProcess.exitStatus() == QProcess::ExitStatus::CrashExit)
         {
@@ -360,11 +362,11 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
             if (s_devicesListProcess.canReadLine())
             {
-                s_tempStream << s_devicesListProcess.readAll();
+                *s_tempStream << s_devicesListProcess.readAll();
 
-                while (!s_tempStream.atEnd())
+                while (!s_tempStream->atEnd())
                 {
-                    const QString line = s_tempStream.readLine();
+                    const QString line = s_tempStream->readLine();
                     if (line.contains("List of devices attached"))
                     {
                         continue;
@@ -445,9 +447,20 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
     }
 }
 
+void AndroidDevice::releaseTempBuffer()
+{
+    qDebug() << "AndroidDevice::releaseTempBuffer";
+    if (!s_tempStream.isNull())
+    {
+        s_tempStream.clear();
+        s_tempBuffer.clear();
+    }
+}
+
 void AndroidDevice::stopDevicesListProcess()
 {
     s_devicesListProcess.terminate();
+    s_devicesListProcess.kill();
     s_devicesListProcess.close();
 }
 

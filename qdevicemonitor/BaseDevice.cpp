@@ -23,10 +23,6 @@
 
 using namespace DataTypes;
 
-static bool s_tempStreamInitialized = false;
-QString BaseDevice::s_tempBuffer;
-QTextStream BaseDevice::s_tempStream;
-
 BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                        const QString& humanReadableName, const QString& humanReadableDescription,
                        QPointer<DeviceAdapter> deviceAdapter)
@@ -45,12 +41,8 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const Dev
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
 
-    if (!s_tempStreamInitialized)
-    {
-        s_tempStreamInitialized = true;
-        s_tempStream.setCodec("UTF-8");
-        s_tempStream.setString(&s_tempBuffer, QIODevice::ReadWrite | QIODevice::Text);
-    }
+    m_tempStream.setCodec("UTF-8");
+    m_tempStream.setString(&m_tempBuffer, QIODevice::ReadWrite | QIODevice::Text);
 
     updateLogBufferSpace();
 

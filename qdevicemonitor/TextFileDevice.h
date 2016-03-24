@@ -22,7 +22,6 @@
 #include <QFile>
 #include <QProcess>
 #include <QStringList>
-#include <QVector>
 
 using namespace DataTypes;
 
@@ -51,12 +50,7 @@ private:
 
     static const char* getPlatformStringStatic() { return "Text File"; }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-    // FIXME: remove this hack
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text);
-#else
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters, const QStringRef& text);
-#endif
+    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
 };
 
 #endif // ANDROIDDEVICE_H

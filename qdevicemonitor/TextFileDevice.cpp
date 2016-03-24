@@ -63,6 +63,7 @@ void TextFileDevice::stopLogger()
     qDebug() << "TextFileDevice::stopLogger";
 
     m_tailProcess.terminate();
+    m_tailProcess.kill();
     m_tailProcess.close();
 }
 
@@ -76,12 +77,7 @@ void TextFileDevice::update()
             {
                 m_dirtyFilter = false;
                 const QString filter = m_deviceWidget->getFilterLineEdit().text();
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-                // FIXME: remove this hack
                 m_filters = filter.split(' ');
-#else
-                m_filters = filter.splitRef(' ');
-#endif
                 m_filtersValid = true;
                 reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
@@ -89,8 +85,8 @@ void TextFileDevice::update()
 
             for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
             {
-                s_tempStream << m_tailProcess.readLine();
-                const QString line = s_tempStream.readLine();
+                m_tempStream << m_tailProcess.readLine();
+                const QString line = m_tempStream.readLine();
                 addToLogBuffer(line);
                 filterAndAddToTextEdit(line);
             }
@@ -102,17 +98,13 @@ void TextFileDevice::update()
     }
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-// FIXME: remove this hack
-void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringList& filters, const QStringRef& text)
-#else
-void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QVector<QStringRef>& filters, const QStringRef& text)
-#endif
+void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text)
 {
     filtersValid = true;
 
-    for (const auto& filter : filters)
+    for (const auto& filterString : m_filters)
     {
+        const QStringRef filter(&filterString);
         if (!columnTextMatches(filter, text))
         {
             filtersMatch = false;
@@ -138,7 +130,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         const QStringRef hostname = match.capturedRef("hostname");
         const QStringRef text = line.midRef(match.capturedEnd("hostname") + 1);
 
-        checkFilters(filtersMatch, m_filtersValid, m_filters, text);
+        checkFilters(filtersMatch, m_filtersValid, text);
 
         if (filtersMatch)
         {
@@ -150,7 +142,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
     }
     else
     {
-        checkFilters(filtersMatch, m_filtersValid, m_filters, QStringRef(&line));
+        checkFilters(filtersMatch, m_filtersValid, QStringRef(&line));
         if (filtersMatch)
         {
             m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&line));
