@@ -79,10 +79,11 @@ public:
 #if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
     // FIXME: remove this hack
     bool columnMatches(const QString& column, const QString& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound);
+    bool columnTextMatches(const QString& filter, const QStringRef& text);
 #else
     bool columnMatches(const QString& column, const QStringRef& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound);
+    bool columnTextMatches(const QStringRef& filter, const QStringRef& text);
 #endif
-    bool columnTextMatches(const QString& filter, const QStringRef& text);
 
 signals:
 

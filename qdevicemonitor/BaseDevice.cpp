@@ -117,9 +117,12 @@ void BaseDevice::addFilterAsCompletion()
 
 void BaseDevice::updateFilter(const QString& filter)
 {
-    (void) filter;
-    m_dirtyFilter = true;
     qDebug() << "BaseDevice::updateFilter(" << filter << ")";
+    m_dirtyFilter = true;
+
+    const QString regexpFilter(".*(" % filter % ").*");
+    m_columnTextRegexp.setPattern(regexpFilter);
+    m_columnTextRegexp.setPatternOptions(QRegularExpression::DotMatchesEverythingOption);
 }
 
 void BaseDevice::addToLogBuffer(const QString& text)
@@ -174,7 +177,12 @@ bool BaseDevice::columnMatches(const QString& column, const QStringRef& filter, 
     return true;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+// FIXME: remove this hack
 bool BaseDevice::columnTextMatches(const QString& filter, const QStringRef& text)
+#else
+bool BaseDevice::columnTextMatches(const QStringRef& filter, const QStringRef& text)
+#endif
 {
     if (filter.isEmpty() || text.contains(filter))
     {
@@ -182,14 +190,6 @@ bool BaseDevice::columnTextMatches(const QString& filter, const QStringRef& text
     }
     else
     {
-        const QString regexpFilter(".*(" % filter % ").*");
-        const bool dirty = m_columnTextRegexp.pattern() != regexpFilter;
-        if (dirty)
-        {
-            m_columnTextRegexp.setPattern(regexpFilter);
-            m_columnTextRegexp.setPatternOptions(QRegularExpression::DotMatchesEverythingOption);
-        }
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
         // FIXME: remove this hack
         const QString textString = QString().append(text);
