@@ -164,7 +164,12 @@ bool BaseDevice::columnMatches(const QString& column, const QStringRef& filter, 
     if (filter.startsWith(column))
     {
         columnFound = true;
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+// FIXME: remove this hack
         const QStringRef value = filter.midRef(column.length());
+#else
+        const QStringRef value = filter.mid(column.length());
+#endif
         if (value.isEmpty())
         {
             filtersValid = false;
