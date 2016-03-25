@@ -105,7 +105,7 @@ void DeviceWidget::addText(const QColor& color, const QStringRef& text)
         << ";\" color=\"" << color.name()
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
         // FIXME: remove this hack
-        << "\">" << QString().append(text)
+        << "\">" << text.toString()
 #else
         << "\">" << text
 #endif
