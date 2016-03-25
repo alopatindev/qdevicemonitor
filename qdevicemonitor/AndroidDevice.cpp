@@ -250,6 +250,9 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const V
         return;
     }
 
+    QString textString;
+    bool textStringInitialized = false;
+
     for (auto it = m_filters.constBegin(); it != m_filters.constEnd(); ++it)
     {
         const QStringRef filter(&(*it));
@@ -263,10 +266,19 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const V
             break;
         }
 
-        if (!columnFound && !columnTextMatches(filter, text.toString()))
+        if (!columnFound)
         {
-            filtersMatch = false;
-            break;
+            if (!textStringInitialized)
+            {
+                textStringInitialized = true;
+                textString = text.toString();
+            }
+
+            if (!columnTextMatches(filter, textString))
+            {
+                filtersMatch = false;
+                break;
+            }
         }
     }
 }
