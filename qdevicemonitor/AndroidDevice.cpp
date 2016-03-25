@@ -250,9 +250,9 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const V
         return;
     }
 
-    for (const auto& filterString : m_filters)
+    for (auto it = m_filters.constBegin(); it != m_filters.constEnd(); ++it)
     {
-        const QStringRef filter(&filterString);
+        const QStringRef filter(&(*it));
         bool columnFound = false;
         if (!columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
             !columnMatches("tid:", filter, tid, filtersValid, columnFound) ||
@@ -263,7 +263,7 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const V
             break;
         }
 
-        if (!columnFound && !columnTextMatches(filter, text))
+        if (!columnFound && !columnTextMatches(filter, text.toString()))
         {
             filtersMatch = false;
             break;

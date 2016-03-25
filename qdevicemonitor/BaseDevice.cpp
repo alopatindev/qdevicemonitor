@@ -164,7 +164,7 @@ bool BaseDevice::columnMatches(const QString& column, const QStringRef& filter, 
     return true;
 }
 
-bool BaseDevice::columnTextMatches(const QStringRef& filter, const QStringRef& text)
+bool BaseDevice::columnTextMatches(const QStringRef& filter, const QString& text)
 {
     if (filter.isEmpty() || text.contains(filter))
     {
@@ -172,13 +172,7 @@ bool BaseDevice::columnTextMatches(const QStringRef& filter, const QStringRef& t
     }
     else
     {
-#if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
-        // FIXME: remove this hack
-        const QString textString = text.toString();
-        const QRegularExpressionMatch match = m_columnTextRegexp.match(textString);
-#else
         const QRegularExpressionMatch match = m_columnTextRegexp.match(text);
-#endif
         return match.hasMatch();
     }
 

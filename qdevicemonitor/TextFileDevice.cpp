@@ -102,10 +102,10 @@ void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const 
 {
     filtersValid = true;
 
-    for (const auto& filterString : m_filters)
+    for (auto it = m_filters.constBegin(); it != m_filters.constEnd(); ++it)
     {
-        const QStringRef filter(&filterString);
-        if (!columnTextMatches(filter, text))
+        const QStringRef filter(&(*it));
+        if (!columnTextMatches(filter, text.toString()))
         {
             filtersMatch = false;
             break;

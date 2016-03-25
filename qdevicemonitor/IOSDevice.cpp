@@ -183,9 +183,9 @@ void IOSDevice::update()
 
 void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text)
 {
-    for (auto& filterString : m_filters)
+    for (auto it = m_filters.constBegin(); it != m_filters.constEnd(); ++it)
     {
-        const QStringRef filter(&filterString);
+        const QStringRef filter(&(*it));
         bool columnFound = false;
         if (!columnMatches("text:", filter, text, filtersValid, columnFound))
         {
@@ -193,7 +193,7 @@ void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStri
             break;
         }
 
-        if (!columnFound && !columnTextMatches(filter, text))
+        if (!columnFound && !columnTextMatches(filter, text.toString()))
         {
             filtersMatch = false;
             break;
