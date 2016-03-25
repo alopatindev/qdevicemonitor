@@ -165,8 +165,9 @@ void TextFileDevice::reloadTextEdit()
 
 void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
 {
-    for (const auto& logFile : s_filesToOpen)
+    for (auto logFileIt = s_filesToOpen.constBegin(); logFileIt != s_filesToOpen.constEnd(); ++logFileIt)
     {
+        const QString& logFile = *logFileIt;
         const auto it = map.find(logFile);
         if (it == map.end())
         {

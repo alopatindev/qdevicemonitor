@@ -192,8 +192,8 @@ void DeviceAdapter::loadSettings(const QSettings& s)
     const QVariant logFiles = s.value("logFiles");
     if (logFiles.isValid())
     {
-        const QStringList lf = logFiles.toStringList();
-        for (const auto& i : lf)
+        const QStringList list = logFiles.toStringList();
+        for (const auto& i : list)
         {
             TextFileDevice::openLogFile(i);
         }
