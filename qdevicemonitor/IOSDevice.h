@@ -53,6 +53,7 @@ public:
     static void removedDeviceByTabClose(const QString& id);
 
 private:
+    void stopDeviceInfoProcess();
     void updateDeviceModel();
     void startLogger();
     void stopLogger();

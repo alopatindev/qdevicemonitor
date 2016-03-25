@@ -46,9 +46,17 @@ AndroidDevice::~AndroidDevice()
 {
     qDebug() << "AndroidDevice::~AndroidDevice";
     stopLogger();
+    stopDeviceInfoProcess();
+}
 
-    m_deviceInfoProcess.terminate();
-    m_deviceInfoProcess.close();
+void AndroidDevice::stopDeviceInfoProcess()
+{
+    if (m_deviceInfoProcess.state() != QProcess::NotRunning)
+    {
+        m_deviceInfoProcess.terminate();
+        m_deviceInfoProcess.kill();
+        m_deviceInfoProcess.close();
+    }
 }
 
 void AndroidDevice::updateDeviceModel()
@@ -101,8 +109,12 @@ void AndroidDevice::stopLogger()
 {
     qDebug() << "AndroidDevice::stopLogger";
 
-    m_deviceLogProcess.terminate();
-    m_deviceLogProcess.close();
+    if (m_deviceLogProcess.state() != QProcess::NotRunning)
+    {
+        m_deviceLogProcess.terminate();
+        m_deviceLogProcess.kill();
+        m_deviceLogProcess.close();
+    }
 
     m_deviceLogFileStream.clear();
     m_deviceLogFile.close();
@@ -121,13 +133,12 @@ void AndroidDevice::update()
                 m_humanReadableName = model;
                 updateTabWidget();
                 m_didReadDeviceModel = true;
-                stopLogger();
+                //stopLogger();
                 startLogger();
             }
         }
 
-        m_deviceInfoProcess.terminate();
-        m_deviceInfoProcess.close();
+        stopDeviceInfoProcess();
 
         if (!m_didReadDeviceModel)
         {
@@ -139,7 +150,12 @@ void AndroidDevice::update()
     {
     case QProcess::Running:
         {
-            if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
+            if (!isOnline())
+            {
+                qDebug() << "not updating '" << m_id << "' because it's offline";
+                //stopLogger();
+            }
+            else if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
             {
                 m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
                 reloadTextEdit();
@@ -176,9 +192,12 @@ void AndroidDevice::update()
         break;
     case QProcess::NotRunning:
         {
-            qDebug() << "m_deviceLogProcess not running";
-            stopLogger();
-            startLogger();
+            if (isOnline())
+            {
+                qDebug() << "m_deviceLogProcess not running; are we still online?";
+                //stopLogger();
+                //startLogger();
+            }
         }
         break;
     case QProcess::Starting:
@@ -290,6 +309,11 @@ void AndroidDevice::onOnlineChange(const bool online)
     if (online)
     {
         maybeClearAdbLog();
+        startLogger();
+    }
+    else
+    {
+        stopLogger();
     }
 }
 
@@ -308,6 +332,7 @@ void AndroidDevice::maybeClearAdbLog()
         m_deviceClearLogProcess.start("adb", args);
         m_deviceClearLogProcess.waitForFinished(1000);
         m_deviceClearLogProcess.terminate();
+        m_deviceClearLogProcess.kill();
         m_deviceClearLogProcess.close();
     }
 }
@@ -459,9 +484,12 @@ void AndroidDevice::releaseTempBuffer()
 
 void AndroidDevice::stopDevicesListProcess()
 {
-    s_devicesListProcess.terminate();
-    s_devicesListProcess.kill();
-    s_devicesListProcess.close();
+    if (s_devicesListProcess.state() != QProcess::NotRunning)
+    {
+        s_devicesListProcess.terminate();
+        s_devicesListProcess.kill();
+        s_devicesListProcess.close();
+    }
 }
 
 void AndroidDevice::removedDeviceByTabClose(const QString& id)

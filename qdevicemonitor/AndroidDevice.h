@@ -57,6 +57,7 @@ public:
     void onOnlineChange(const bool online) override;
 
 private:
+    void stopDeviceInfoProcess();
     void updateDeviceModel();
     void startLogger();
     void stopLogger();
