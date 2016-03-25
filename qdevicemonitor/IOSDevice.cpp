@@ -50,9 +50,17 @@ IOSDevice::~IOSDevice()
     qDebug() << "IOSDevice::~IOSDevice";
     stopLogger();
     disconnect(&m_deviceInfoProcess, nullptr, this, nullptr);
-    m_deviceInfoProcess.terminate();
-    m_deviceInfoProcess.kill();
-    m_deviceInfoProcess.close();
+    stopDeviceInfoProcess();
+}
+
+void IOSDevice::stopDeviceInfoProcess()
+{
+    if (m_deviceInfoProcess.state() != QProcess::NotRunning)
+    {
+        m_deviceInfoProcess.terminate();
+        m_deviceInfoProcess.kill();
+        m_deviceInfoProcess.close();
+    }
 }
 
 void IOSDevice::updateDeviceModel()
@@ -101,9 +109,12 @@ void IOSDevice::stopLogger()
 {
     qDebug() << "IOSDevice::stopLogger";
 
-    m_deviceLogProcess.terminate();
-    m_deviceLogProcess.kill();
-    m_deviceLogProcess.close();
+    if (m_deviceLogProcess.state() != QProcess::NotRunning)
+    {
+        m_deviceLogProcess.terminate();
+        m_deviceLogProcess.kill();
+        m_deviceLogProcess.close();
+    }
     m_deviceLogFileStream.clear();
     m_deviceLogFile.close();
 }
@@ -126,7 +137,7 @@ void IOSDevice::update()
             }
         }
 
-        m_deviceInfoProcess.close();
+        stopDeviceInfoProcess();
 
         if (!m_didReadDeviceModel)
         {
@@ -426,9 +437,12 @@ void IOSDevice::releaseTempBuffer()
 
 void IOSDevice::stopDevicesListProcess()
 {
-    s_devicesListProcess.terminate();
-    s_devicesListProcess.kill();
-    s_devicesListProcess.close();
+    if (s_devicesListProcess.state() != QProcess::NotRunning)
+    {
+        s_devicesListProcess.terminate();
+        s_devicesListProcess.kill();
+        s_devicesListProcess.close();
+    }
 }
 
 void IOSDevice::removedDeviceByTabClose(const QString& id)
