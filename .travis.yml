@@ -1,3 +1,5 @@
+sudo: required
+
 language: cpp
 compiler: clang
 
@@ -133,9 +135,10 @@ script:
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
 
-        macdeployqt "${APP_DIR}" -dmg -verbose=3;
+        sudo dtrace macdeployqt "${APP_DIR}" -dmg -verbose=3;
         ls -la;
         ls -la "${PROGRAMNAME}";
+        sudo chown travis:staff "${PROGRAMNAME}/${PROGRAMNAME}.dmg";
         export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.dmg";
         mv -v "${PROGRAMNAME}/${PROGRAMNAME}.dmg" "${OUTPUT_FILENAME}";
     fi
