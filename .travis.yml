@@ -135,7 +135,7 @@ script:
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
 
-        sudo dtrace macdeployqt "${APP_DIR}" -dmg -verbose=3;
+        sudo dtruss macdeployqt "${APP_DIR}" -dmg -verbose=3;
         ls -la;
         ls -la "${PROGRAMNAME}";
         sudo chown travis:staff "${PROGRAMNAME}/${PROGRAMNAME}.dmg";
