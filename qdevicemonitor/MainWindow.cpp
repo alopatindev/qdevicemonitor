@@ -32,10 +32,6 @@
 #include <QStringList>
 #include <QtCore/QStringBuilder>
 
-#if __MINGW32__
-extern "C" int putenv(char*);  // FIXME: MinGW compilation bug
-#endif
-
 MainWindow::MainWindow(QPointer<QWidget> parent)
     : QMainWindow(parent)
 {
