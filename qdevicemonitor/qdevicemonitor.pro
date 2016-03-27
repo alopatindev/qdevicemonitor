@@ -58,7 +58,6 @@ linux-clang {
 }
 
 win32 {
-    DEFINES += __NO_INLINE__  # FIXME: MinGW math compilation bug
     RC_FILE = winicon.rc
 }
 
