@@ -105,7 +105,7 @@ void MainWindow::on_actionAboutQt_triggered()
     QMessageBox::aboutQt(this);
 }
 
-void MainWindow::on_tabWidget_tabCloseRequested(int index)
+void MainWindow::on_tabWidget_tabCloseRequested(const int index)
 {
     qDebug() << "MainWindow::on_tabWidget_tabCloseRequested" << index;
     if (index != -1)

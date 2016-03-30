@@ -20,7 +20,6 @@
 #include "ThemeColors.h"
 
 #include <QDebug>
-#include <QPalette>
 #include <QProcess>
 #include <QScrollBar>
 
@@ -34,6 +33,10 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
 {
     m_ui = QSharedPointer<Ui::DeviceWidget>::create();
     m_ui->setupUi(this);
+
+    m_defaultTextEditPalette = m_ui->textEdit->palette();
+    m_redPalette = QPalette(Qt::red);
+    m_redPalette.setColor(QPalette::Highlight, Qt::red);
 
     m_textStream.setCodec("UTF-8");
     m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
@@ -61,31 +64,27 @@ void DeviceWidget::hideVerbosity()
     m_ui->verbosityLabel->setVisible(false);
 }
 
-void DeviceWidget::on_verbositySlider_valueChanged(int value)
+void DeviceWidget::on_verbositySlider_valueChanged(const int value)
 {
     qDebug() << "verbosity" << value;
     const char* const v = Verbosity[value];
     m_ui->verbosityLabel->setText(tr(v));
 }
 
-void DeviceWidget::on_wrapCheckBox_toggled(bool checked)
+void DeviceWidget::on_wrapCheckBox_toggled(const bool checked)
 {
     m_ui->textEdit->setLineWrapMode(checked ? QTextEdit::WidgetWidth : QTextEdit::NoWrap);
     maybeScrollTextEditToEnd();
 }
 
-void DeviceWidget::on_scrollLockCheckBox_toggled(bool)
+void DeviceWidget::on_scrollLockCheckBox_toggled(const bool)
 {
     maybeScrollTextEditToEnd();
 }
 
-void DeviceWidget::highlightFilterLineEdit(bool red)
+void DeviceWidget::highlightFilterLineEdit(const bool red)
 {
-    static QPalette normalPal = m_ui->filterLineEdit->palette();
-    static QPalette redPal(Qt::red);
-    redPal.setColor(QPalette::Highlight, Qt::red);
-
-    m_ui->filterLineEdit->setPalette(red ? redPal : normalPal);
+    m_ui->filterLineEdit->setPalette(red ? m_redPalette : m_defaultTextEditPalette);
 }
 
 void DeviceWidget::maybeScrollTextEditToEnd()
@@ -120,9 +119,8 @@ void DeviceWidget::flushText()
     m_ui->textEdit->setUpdatesEnabled(true);
 }
 
-void DeviceWidget::clearTextEdit()
+void DeviceWidget::updateTextEditPalette()
 {
-    static QPalette defaultPal = m_ui->textEdit->palette();
     QPalette pal;
     if (m_deviceAdapter->isDarkTheme())
     {
@@ -131,10 +129,14 @@ void DeviceWidget::clearTextEdit()
     }
     else
     {
-        pal = defaultPal;
+        pal = m_defaultTextEditPalette;
     }
     m_ui->textEdit->setPalette(pal);
+}
 
+void DeviceWidget::clearTextEdit()
+{
+    updateTextEditPalette();
     getTextEdit().clear();
 }
 

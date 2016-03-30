@@ -30,13 +30,13 @@ class AndroidDevice : public BaseDevice
 {
     Q_OBJECT
 
-    QProcess m_deviceInfoProcess;
-    QProcess m_deviceLogProcess;
-    QProcess m_deviceClearLogProcess;
-    QFile m_deviceLogFile;
-    QSharedPointer<QTextStream> m_deviceLogFileStream;
+    QProcess m_infoProcess;
+    QProcess m_logProcess;
+    QProcess m_clearLogProcess;
+    QFile m_logFile;
+    QSharedPointer<QTextStream> m_logFileStream;
     int m_lastVerbosityLevel;
-    bool m_didReadDeviceModel;
+    bool m_didReadModel;
 
 public:
     explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
@@ -48,7 +48,6 @@ public:
     const char* getPlatformString() const override { return getPlatformStringStatic(); }
     void reloadTextEdit() override;
 
-    static void updateDeviceStatus(const QString& deviceStatus, BaseDevice& device, const QString& deviceId);
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void releaseTempBuffer();
     static void stopDevicesListProcess();
@@ -57,8 +56,8 @@ public:
     void onOnlineChange(const bool online) override;
 
 private:
-    void stopDeviceInfoProcess();
-    void updateDeviceModel();
+    void stopInfoProcess();
+    void updateModel();
     void startLogger();
     void stopLogger();
     void maybeClearAdbLog();

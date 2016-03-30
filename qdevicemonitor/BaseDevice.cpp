@@ -178,3 +178,17 @@ bool BaseDevice::columnTextMatches(const QStringRef& filter, const QString& text
 
     return true;
 }
+
+void BaseDevice::updateInfo(const bool online, const QString& additional)
+{
+    const QString additionalWithNewLine = additional.isEmpty() ? additional : ("\n" % additional);
+    setHumanReadableDescription(
+        tr("%1\nStatus: %2\nID: %3%4")
+            .arg(tr(getPlatformString()))
+            .arg(tr(online ? "Online" : "Offline"))
+            .arg(m_id)
+            .arg(additionalWithNewLine)
+    );
+    setOnline(online);
+    setVisited(true);
+}

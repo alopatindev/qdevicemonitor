@@ -35,46 +35,46 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, con
                              const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
     : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
-    , m_didReadDeviceModel(false)
+    , m_didReadModel(false)
 {
     qDebug() << "AndroidDevice::AndroidDevice";
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefixes (<b>pid:</b>, <b>tid:</b>, <b>tag:</b> or <b>text:</b>) with Plain Text</li><li>Regular Expressions</li></ul>"));
-    updateDeviceModel();
+    updateModel();
 }
 
 AndroidDevice::~AndroidDevice()
 {
     qDebug() << "AndroidDevice::~AndroidDevice";
     stopLogger();
-    stopDeviceInfoProcess();
+    stopInfoProcess();
 }
 
-void AndroidDevice::stopDeviceInfoProcess()
+void AndroidDevice::stopInfoProcess()
 {
-    if (m_deviceInfoProcess.state() != QProcess::NotRunning)
+    if (m_infoProcess.state() != QProcess::NotRunning)
     {
-        m_deviceInfoProcess.terminate();
-        m_deviceInfoProcess.kill();
-        m_deviceInfoProcess.close();
+        m_infoProcess.terminate();
+        m_infoProcess.kill();
+        m_infoProcess.close();
     }
 }
 
-void AndroidDevice::updateDeviceModel()
+void AndroidDevice::updateModel()
 {
-    qDebug() << "updateDeviceModel" << m_id;
+    qDebug() << "updateModel" << m_id;
     QStringList args;
     args.append("-s");
     args.append(m_id);
     args.append("shell");
     args.append("getprop");
     args.append("ro.product.model");
-    m_deviceInfoProcess.setReadChannel(QProcess::StandardOutput);
-    m_deviceInfoProcess.start("adb", args);
+    m_infoProcess.setReadChannel(QProcess::StandardOutput);
+    m_infoProcess.start("adb", args);
 }
 
 void AndroidDevice::startLogger()
 {
-    if (!m_didReadDeviceModel)
+    if (!m_didReadModel)
     {
         return;
     }
@@ -83,16 +83,16 @@ void AndroidDevice::startLogger()
 
     const QString currentLogAbsFileName = Utils::getNewLogFilePath(
         QString("%1-%2-")
-            .arg(getPlatformStringStatic())
+            .arg(getPlatformString())
             .arg(Utils::removeSpecialCharacters(m_humanReadableName))
     );
     m_currentLogFileName = currentLogAbsFileName;
     m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
-    m_deviceLogFile.setFileName(currentLogAbsFileName);
-    m_deviceLogFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
-    m_deviceLogFileStream = QSharedPointer<QTextStream>::create(&m_deviceLogFile);
-    m_deviceLogFileStream->setCodec("UTF-8");
+    m_logFile.setFileName(currentLogAbsFileName);
+    m_logFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
+    m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
+    m_logFileStream->setCodec("UTF-8");
 
     QStringList args;
     args.append("-s");
@@ -101,52 +101,52 @@ void AndroidDevice::startLogger()
     args.append("-v");
     args.append("threadtime");
     args.append("*:v");
-    m_deviceLogProcess.setReadChannel(QProcess::StandardOutput);
-    m_deviceLogProcess.start("adb", args);
+    m_logProcess.setReadChannel(QProcess::StandardOutput);
+    m_logProcess.start("adb", args);
 }
 
 void AndroidDevice::stopLogger()
 {
     qDebug() << "AndroidDevice::stopLogger";
 
-    if (m_deviceLogProcess.state() != QProcess::NotRunning)
+    if (m_logProcess.state() != QProcess::NotRunning)
     {
-        m_deviceLogProcess.terminate();
-        m_deviceLogProcess.kill();
-        m_deviceLogProcess.close();
+        m_logProcess.terminate();
+        m_logProcess.kill();
+        m_logProcess.close();
     }
 
-    m_deviceLogFileStream.clear();
-    m_deviceLogFile.close();
+    m_logFileStream.clear();
+    m_logFile.close();
 }
 
 void AndroidDevice::update()
 {
-    if (!m_didReadDeviceModel && m_deviceInfoProcess.state() == QProcess::NotRunning)
+    if (!m_didReadModel && m_infoProcess.state() == QProcess::NotRunning)
     {
-        if (m_deviceInfoProcess.canReadLine())
+        if (m_infoProcess.canReadLine())
         {
-            const QString model = m_deviceInfoProcess.readLine().trimmed();
+            const QString model = m_infoProcess.readLine().trimmed();
             if (!model.isEmpty())
             {
-                qDebug() << "updateDeviceModel" << m_id << "=>" << model;
+                qDebug() << "updateModel" << m_id << "=>" << model;
                 m_humanReadableName = model;
                 updateTabWidget();
-                m_didReadDeviceModel = true;
+                m_didReadModel = true;
                 //stopLogger();
                 startLogger();
             }
         }
 
-        stopDeviceInfoProcess();
+        stopInfoProcess();
 
-        if (!m_didReadDeviceModel)
+        if (!m_didReadModel)
         {
-            updateDeviceModel();
+            updateModel();
         }
     }
 
-    switch (m_deviceLogProcess.state())
+    switch (m_logProcess.state())
     {
     case QProcess::Running:
         {
@@ -169,21 +169,21 @@ void AndroidDevice::update()
                 reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
             }
-            else if (!m_deviceLogFileStream->atEnd())
+            else if (!m_logFileStream->atEnd())
             {
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_deviceLogFileStream->atEnd(); ++i)
+                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_logFileStream->atEnd(); ++i)
                 {
-                    filterAndAddToTextEdit(m_deviceLogFileStream->readLine());
+                    filterAndAddToTextEdit(m_logFileStream->readLine());
                 }
             }
-            else if (m_deviceLogProcess.canReadLine())
+            else if (m_logProcess.canReadLine())
             {
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_deviceLogProcess.canReadLine(); ++i)
+                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
                 {
-                    m_tempStream << m_deviceLogProcess.readLine();
+                    m_tempStream << m_logProcess.readLine();
                     const QString line = m_tempStream.readLine();
-                    *m_deviceLogFileStream << line << "\n";
-                    m_deviceLogFileStream->flush();
+                    *m_logFileStream << line << "\n";
+                    m_logFileStream->flush();
                     addToLogBuffer(line);
                     filterAndAddToTextEdit(line);
                 }
@@ -194,7 +194,7 @@ void AndroidDevice::update()
         {
             if (isOnline())
             {
-                qDebug() << "m_deviceLogProcess not running; are we still online?";
+                qDebug() << "m_logProcess not running; are we still online?";
                 //stopLogger();
                 //startLogger();
             }
@@ -304,7 +304,7 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const V
 
 void AndroidDevice::reloadTextEdit()
 {
-    if (!m_didReadDeviceModel)
+    if (!m_didReadModel)
     {
         return;
     }
@@ -340,27 +340,13 @@ void AndroidDevice::maybeClearAdbLog()
         args.append(m_id);
         args.append("logcat");
         args.append("-c");
-        m_deviceClearLogProcess.setReadChannel(QProcess::StandardOutput);
-        m_deviceClearLogProcess.start("adb", args);
-        m_deviceClearLogProcess.waitForFinished(1000);
-        m_deviceClearLogProcess.terminate();
-        m_deviceClearLogProcess.kill();
-        m_deviceClearLogProcess.close();
+        m_clearLogProcess.setReadChannel(QProcess::StandardOutput);
+        m_clearLogProcess.start("adb", args);
+        m_clearLogProcess.waitForFinished(1000);
+        m_clearLogProcess.terminate();
+        m_clearLogProcess.kill();
+        m_clearLogProcess.close();
     }
-}
-
-void AndroidDevice::updateDeviceStatus(const QString& deviceStatus, BaseDevice& device, const QString& deviceId)
-{
-    const bool online = deviceStatus == "device";
-    device.setHumanReadableDescription(
-        tr("%1\nStatus: %2\nID: %3%4")
-            .arg(tr(getPlatformStringStatic()))
-            .arg(online ? "Online" : "Offline")
-            .arg(deviceId)
-            .arg(!online && !deviceStatus.isEmpty() ? "\n" + deviceStatus : "")
-    );
-    device.setOnline(online);
-    device.setVisited(true);
 }
 
 void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
@@ -440,7 +426,15 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                             }
                             else
                             {
-                                updateDeviceStatus(deviceStatus, *(*it), deviceId);
+                                const bool online = deviceStatus == "device";
+                                if (online)
+                                {
+                                    (*it)->updateInfo(online);
+                                }
+                                else
+                                {
+                                    (*it)->updateInfo(online, deviceStatus);
+                                }
                             }
                         }
                     }
@@ -455,7 +449,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                     {
                         if (!s_removedDeviceByTabClose.contains(dev->getId()))
                         {
-                            updateDeviceStatus("", *dev, dev->getId());
+                            dev->updateInfo(false);
                         }
                     }
                 }

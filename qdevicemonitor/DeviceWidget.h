@@ -21,6 +21,7 @@
 #include "ui_DeviceWidget.h"
 #include "DeviceAdapter.h"
 
+#include <QPalette>
 #include <QPointer>
 #include <QSharedPointer>
 #include <QTextStream>
@@ -35,6 +36,8 @@ class DeviceWidget : public QWidget
     Q_OBJECT
 
     QSharedPointer<Ui::DeviceWidget> m_ui;
+    QPalette m_defaultTextEditPalette;
+    QPalette m_redPalette;
     QPointer<DeviceAdapter> m_deviceAdapter;
     QTextStream m_textStream;
     QString m_stringStream;
@@ -62,13 +65,14 @@ public:
 signals:
 
 public slots:
-    void on_verbositySlider_valueChanged(int value);
-    void on_wrapCheckBox_toggled(bool checked);
-    void on_scrollLockCheckBox_toggled(bool checked);
+    void on_verbositySlider_valueChanged(const int value);
+    void on_wrapCheckBox_toggled(const bool checked);
+    void on_scrollLockCheckBox_toggled(const bool checked);
     void on_openLogFileButton_clicked();
     void on_markLogButton_clicked();
 
 private:
+    void updateTextEditPalette();
     void scrollTextEditToEnd();
 };
 

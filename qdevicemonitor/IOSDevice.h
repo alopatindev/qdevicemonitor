@@ -30,11 +30,11 @@ class IOSDevice : public BaseDevice
 {
     Q_OBJECT
 
-    QProcess m_deviceInfoProcess;
-    QProcess m_deviceLogProcess;
-    QFile m_deviceLogFile;
-    QSharedPointer<QTextStream> m_deviceLogFileStream;
-    bool m_didReadDeviceModel;
+    QProcess m_infoProcess;
+    QProcess m_logProcess;
+    QFile m_logFile;
+    QSharedPointer<QTextStream> m_logFileStream;
+    bool m_didReadModel;
 
 public:
     explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
@@ -46,15 +46,14 @@ public:
     const char* getPlatformString() const override { return getPlatformStringStatic(); }
     void reloadTextEdit() override;
 
-    static void updateDeviceStatus(const QString& deviceStatus, BaseDevice& device, const QString& deviceId);
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
     static void releaseTempBuffer();
     static void stopDevicesListProcess();
     static void removedDeviceByTabClose(const QString& id);
 
 private:
-    void stopDeviceInfoProcess();
-    void updateDeviceModel();
+    void stopInfoProcess();
+    void updateModel();
     void startLogger();
     void stopLogger();
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);

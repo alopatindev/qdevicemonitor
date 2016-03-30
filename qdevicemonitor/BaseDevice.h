@@ -69,6 +69,7 @@ public:
 
     inline const QString& getId() const { return m_id; }
     inline DeviceType getType() const { return m_type; }
+    void updateInfo(const bool online, const QString& additional = QString());
 
     inline const QString& getCurrentLogFileName() const { return m_currentLogFileName; }
 
