@@ -116,7 +116,7 @@ void DeviceWidget::flushText()
 {
     m_textStream.flush();
     m_ui->textEdit->setUpdatesEnabled(false);
-    m_ui->textEdit->append(m_textStream.readLine());
+    m_ui->textEdit->append(m_textStream.readAll());
     m_ui->textEdit->setUpdatesEnabled(true);
 }
 
@@ -177,6 +177,7 @@ void DeviceWidget::on_markLogButton_clicked()
     const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
     addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&MARK_LINE));
     //addToLogBuffer(MARK_LINE);
+    flushText();
 }
 
 void DeviceWidget::markLog()
