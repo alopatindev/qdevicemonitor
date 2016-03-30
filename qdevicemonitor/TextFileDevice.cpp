@@ -62,9 +62,12 @@ void TextFileDevice::stopLogger()
 {
     qDebug() << "TextFileDevice::stopLogger";
 
-    m_tailProcess.terminate();
-    m_tailProcess.kill();
-    m_tailProcess.close();
+    if (m_tailProcess.state() != QProcess::NotRunning)
+    {
+        m_tailProcess.terminate();
+        m_tailProcess.kill();
+        m_tailProcess.close();
+    }
 }
 
 void TextFileDevice::update()
