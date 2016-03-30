@@ -53,12 +53,14 @@ BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const Dev
     m_completionAddTimer.setSingleShot(true);
     connect(&m_completionAddTimer, &QTimer::timeout, this, &BaseDevice::addFilterAsCompletion);
     connect(&(m_deviceWidget->getFilterLineEdit()), &QLineEdit::textChanged, this, &BaseDevice::updateFilter);
+    connect(this, &BaseDevice::logReady, this, &BaseDevice::onLogReady);
 }
 
 BaseDevice::~BaseDevice()
 {
     qDebug() << "~BaseDevice" << m_id;
 
+    disconnect(this, &BaseDevice::logReady, this, &BaseDevice::onLogReady);
     disconnect(&m_completionAddTimer, nullptr, this, nullptr);
     disconnect(&m_deviceWidget->getFilterLineEdit(), nullptr, this, nullptr);
 

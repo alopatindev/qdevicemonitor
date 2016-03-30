@@ -80,10 +80,12 @@ public:
     bool columnTextMatches(const QStringRef& filter, const QString& text);
 
 signals:
+    void logReady();
 
 private slots:
     void addFilterAsCompletion();
     void updateFilter(const QString& filter);
+    virtual void onLogReady() {}; // FIXME: pure virtual?
 
 protected:
     const QString m_id;

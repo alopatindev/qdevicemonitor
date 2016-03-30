@@ -55,6 +55,9 @@ public:
 
     void onOnlineChange(const bool online) override;
 
+private slots:
+    void onLogReady() override;
+
 private:
     void stopInfoProcess();
     void updateModel();

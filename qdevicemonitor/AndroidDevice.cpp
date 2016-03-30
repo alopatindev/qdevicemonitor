@@ -40,12 +40,14 @@ AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, con
     qDebug() << "AndroidDevice::AndroidDevice";
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefixes (<b>pid:</b>, <b>tid:</b>, <b>tag:</b> or <b>text:</b>) with Plain Text</li><li>Regular Expressions</li></ul>"));
     updateModel();
+    connect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
 }
 
 AndroidDevice::~AndroidDevice()
 {
     qDebug() << "AndroidDevice::~AndroidDevice";
     stopLogger();
+    disconnect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
     stopInfoProcess();
 }
 
@@ -174,18 +176,6 @@ void AndroidDevice::update()
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_logFileStream->atEnd(); ++i)
                 {
                     filterAndAddToTextEdit(m_logFileStream->readLine());
-                }
-            }
-            else if (m_logProcess.canReadLine())
-            {
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
-                {
-                    m_tempStream << m_logProcess.readLine();
-                    const QString line = m_tempStream.readLine();
-                    *m_logFileStream << line << "\n";
-                    m_logFileStream->flush();
-                    addToLogBuffer(line);
-                    filterAndAddToTextEdit(line);
                 }
             }
         }
@@ -475,6 +465,24 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
         args.append("devices");
         s_devicesListProcess.setReadChannel(QProcess::StandardOutput);
         s_devicesListProcess.start("adb", args);
+    }
+}
+
+void AndroidDevice::onLogReady()
+{
+    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
+    {
+        m_tempStream << m_logProcess.readLine();
+        const QString line = m_tempStream.readLine();
+        *m_logFileStream << line << "\n";
+        m_logFileStream->flush();
+        addToLogBuffer(line);
+        filterAndAddToTextEdit(line);
+    }
+
+    if (m_logProcess.canReadLine())
+    {
+        emit logReady();
     }
 }
 
