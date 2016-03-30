@@ -51,6 +51,9 @@ private:
     static const char* getPlatformStringStatic() { return "Text File"; }
 
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
+
+private slots:
+    void onLogReady() override;
 };
 
 #endif // ANDROIDDEVICE_H

@@ -85,7 +85,7 @@ signals:
 private slots:
     void addFilterAsCompletion();
     void updateFilter(const QString& filter);
-    virtual void onLogReady() {}; // FIXME: pure virtual?
+    virtual void onLogReady() = 0;
 
 protected:
     const QString m_id;

@@ -195,3 +195,8 @@ void TextFileDevice::openLogFile(const QString& logFile)
 {
     s_filesToOpen.append(logFile);
 }
+
+void TextFileDevice::onLogReady()
+{
+    // TODO: implement
+}

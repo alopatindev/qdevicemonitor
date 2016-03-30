@@ -38,18 +38,24 @@ IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, const Devic
     , m_didReadModel(false)
 {
     qDebug() << "IOSDevice::IOSDevice";
+
+    m_tempErrorsStream.setCodec("UTF-8");
+    m_tempErrorsStream.setString(&m_tempErrorsBuffer, QIODevice::ReadWrite | QIODevice::Text);
+
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefix <b>text:</b> with Plain Text</li><li>Regular Expressions</li></ul>"));
     m_deviceWidget->hideVerbosity();
 
     updateModel();
-    connect(&m_infoProcess, &QProcess::readyReadStandardError, this, &IOSDevice::readStandardError);
+    connect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
+    connect(&m_infoProcess, &QProcess::readyReadStandardError, this, &BaseDevice::logReady);
 }
 
 IOSDevice::~IOSDevice()
 {
     qDebug() << "IOSDevice::~IOSDevice";
     stopLogger();
-    disconnect(&m_infoProcess, nullptr, this, nullptr);
+    disconnect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
+    disconnect(&m_infoProcess, &QProcess::readyReadStandardError, this, &BaseDevice::logReady);
     stopInfoProcess();
 }
 
@@ -163,18 +169,6 @@ void IOSDevice::update()
                 for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_logFileStream->atEnd(); ++i)
                 {
                     filterAndAddToTextEdit(m_logFileStream->readLine());
-                }
-            }
-            else if (m_logProcess.canReadLine())
-            {
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
-                {
-                    m_tempStream << m_logProcess.readLine();
-                    const QString line = m_tempStream.readLine();
-                    *m_logFileStream << line << "\n";
-                    m_logFileStream->flush();
-                    addToLogBuffer(line);
-                    filterAndAddToTextEdit(line);
                 }
             }
         }
@@ -412,6 +406,48 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
     }
 }
 
+void IOSDevice::onLogReady()
+{
+    maybeReadErrorsPart();
+    const bool allErrorsAreRead = m_tempErrorsStream.atEnd();
+
+    if (allErrorsAreRead)
+    {
+        maybeReadLogPart();
+    }
+
+    if (m_logProcess.canReadLine() || !allErrorsAreRead)
+    {
+        emit logReady();
+    }
+}
+
+void IOSDevice::maybeReadErrorsPart()
+{
+    m_tempErrorsStream << m_infoProcess.readAllStandardError();
+
+    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
+    {
+        const QString line = m_tempErrorsStream.readLine();
+        m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
+        m_deviceWidget->flushText();
+    }
+}
+
+void IOSDevice::maybeReadLogPart()
+{
+    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
+    {
+        m_tempStream << m_logProcess.readLine();
+        const QString line = m_tempStream.readLine();
+        *m_logFileStream << line << "\n";
+        m_logFileStream->flush();
+        addToLogBuffer(line);
+        filterAndAddToTextEdit(line);
+    }
+}
+
 void IOSDevice::releaseTempBuffer()
 {
     qDebug() << "IOSDevice::releaseTempBuffer";
@@ -435,17 +471,4 @@ void IOSDevice::stopDevicesListProcess()
 void IOSDevice::removedDeviceByTabClose(const QString& id)
 {
     s_removedDeviceByTabClose[id] = false;
-}
-
-void IOSDevice::readStandardError()
-{
-    qDebug() << "readStandardError";
-    m_tempStream << m_infoProcess.readAllStandardError();
-
-    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_tempStream.atEnd(); ++i)
-    {
-        const QString line = m_tempStream.readLine();
-        m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
-    }
 }

@@ -36,6 +36,9 @@ class IOSDevice : public BaseDevice
     QSharedPointer<QTextStream> m_logFileStream;
     bool m_didReadModel;
 
+    QString m_tempErrorsBuffer;
+    QTextStream m_tempErrorsStream;
+
 public:
     explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
                        const QString& humanReadableName, const QString& humanReadableDescription,
@@ -60,8 +63,11 @@ private:
 
     static const char* getPlatformStringStatic() { return "iOS"; }
 
+    void maybeReadErrorsPart();
+    void maybeReadLogPart();
+
 private slots:
-    void readStandardError();
+    void onLogReady() override;
 };
 
 #endif // ANDROIDDEVICE_H
