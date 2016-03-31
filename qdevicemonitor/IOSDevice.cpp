@@ -164,19 +164,12 @@ void IOSDevice::update()
                 reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
             }
-            else if (!m_logFileStream->atEnd())
-            {
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_logFileStream->atEnd(); ++i)
-                {
-                    filterAndAddToTextEdit(m_logFileStream->readLine());
-                }
-            }
         }
         break;
     case QProcess::NotRunning:
         {
             qDebug() << "m_logProcess not running";
-            stopLogger();
+            stopLogger();  // FIXME: remove?
             startLogger();
         }
         break;
@@ -335,9 +328,15 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
             {
                 *s_tempStream << s_devicesListProcess.readAll();
 
+                QString deviceId;
                 while (!s_tempStream->atEnd())
                 {
-                    const QString deviceId = s_tempStream->readLine();
+                    const bool lineIsRead = s_tempStream->readLineInto(&deviceId);
+                    if (!lineIsRead)
+                    {
+                        break;
+                    }
+
                     //qDebug() << "deviceId" << deviceId;
                     if (s_removedDeviceByTabClose.contains(deviceId))
                     {

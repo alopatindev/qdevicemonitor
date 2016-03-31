@@ -171,13 +171,6 @@ void AndroidDevice::update()
                 reloadTextEdit();
                 maybeAddCompletionAfterDelay(filter);
             }
-            else if (!m_logFileStream->atEnd())
-            {
-                for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_logFileStream->atEnd(); ++i)
-                {
-                    filterAndAddToTextEdit(m_logFileStream->readLine());
-                }
-            }
         }
         break;
     case QProcess::NotRunning:
@@ -377,10 +370,15 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
             {
                 *s_tempStream << s_devicesListProcess.readAll();
 
+                QString line;
                 while (!s_tempStream->atEnd())
                 {
-                    const QString line = s_tempStream->readLine();
-                    if (line.contains("List of devices attached"))
+                    const bool lineIsRead = s_tempStream->readLineInto(&line);
+                    if (!lineIsRead)
+                    {
+                        break;
+                    }
+                    else if (line.contains("List of devices attached"))
                     {
                         continue;
                     }
@@ -470,14 +468,17 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 
 void AndroidDevice::onLogReady()
 {
+    QString line;
     for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
         m_tempStream << m_logProcess.readLine();
-        const QString line = m_tempStream.readLine();
-        *m_logFileStream << line << "\n";
-        m_logFileStream->flush();
-        addToLogBuffer(line);
-        filterAndAddToTextEdit(line);
+        if (m_tempStream.readLineInto(&line))
+        {
+            *m_logFileStream << line << "\n";
+            m_logFileStream->flush();
+            addToLogBuffer(line);
+            filterAndAddToTextEdit(line);
+        }
     }
 
     if (m_logProcess.canReadLine())
