@@ -19,7 +19,7 @@
 #define BASEDEVICE_H
 
 #include "DeviceWidget.h"
-#include "DeviceAdapter.h"
+#include "DeviceFacade.h"
 #include "DataTypes.h"
 
 #include <QPointer>
@@ -41,7 +41,7 @@ class BaseDevice : public QObject
 public:
     static QSharedPointer<BaseDevice> create(
         QPointer<QTabWidget> parent,
-        QPointer<DeviceAdapter> deviceAdapter,
+        QPointer<DeviceFacade> deviceFacade,
         const DeviceType type,
         const QString& id
     );
@@ -53,7 +53,7 @@ public:
         const DeviceType type,
         const QString& humanReadableName,
         const QString& humanReadableDescription,
-        QPointer<DeviceAdapter> deviceAdapter
+        QPointer<DeviceFacade> deviceFacade
     );
     ~BaseDevice() override;
 
@@ -110,7 +110,7 @@ protected:
     QPointer<QTabWidget> m_tabWidget;
     QSharedPointer<DeviceWidget> m_deviceWidget;
     int m_tabIndex;
-    QPointer<DeviceAdapter> m_deviceAdapter;
+    QPointer<DeviceFacade> m_deviceFacade;
     QString m_currentLogFileName;
     bool m_dirtyFilter;
     bool m_filtersValid;

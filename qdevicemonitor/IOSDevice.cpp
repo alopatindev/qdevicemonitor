@@ -37,9 +37,9 @@ IOSDevice::IOSDevice(
     const QString& id,
     const DeviceType type,
     const QString& humanReadableDescription,
-    QPointer<DeviceAdapter> deviceAdapter
+    QPointer<DeviceFacade> deviceFacade
 )
-    : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceAdapter)
+    : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
     , m_didReadModel(false)
 {
     qDebug() << "IOSDevice::IOSDevice";
@@ -228,7 +228,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
-    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
@@ -277,7 +277,7 @@ void IOSDevice::reloadTextEdit()
     filterAndAddFromLogBufferToTextEdit();
 }
 
-void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
+void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade)
 {
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
@@ -354,7 +354,7 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
                         {
                             map[deviceId] = BaseDevice::create(
                                 parent,
-                                deviceAdapter,
+                                deviceFacade,
                                 DeviceType::IOS,
                                 deviceId
                             );
@@ -428,8 +428,8 @@ void IOSDevice::maybeReadErrorsPart()
 {
     m_tempErrorsStream << m_infoProcess.readAllStandardError();
 
-    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
-    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
+    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
+    for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
     {
         const QString line = m_tempErrorsStream.readLine();
         m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
@@ -439,7 +439,7 @@ void IOSDevice::maybeReadErrorsPart()
 
 void IOSDevice::maybeReadLogPart()
 {
-    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
+    for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
         m_tempStream << m_logProcess.readLine();
         const QString line = m_tempStream.readLine();

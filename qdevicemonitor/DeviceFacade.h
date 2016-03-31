@@ -15,8 +15,8 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEVICEADAPTER_H
-#define DEVICEADAPTER_H
+#ifndef DEVICEFACADE_H
+#define DEVICEFACADE_H
 
 #include "DataTypes.h"
 
@@ -31,7 +31,7 @@
 
 class DeviceWidget;
 
-class DeviceAdapter : public QObject
+class DeviceFacade : public QObject
 {
     Q_OBJECT
 
@@ -59,8 +59,8 @@ public:
     static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
     static const int MAX_LINES_UPDATE = 30;
 
-    explicit DeviceAdapter(QPointer<QTabWidget> parent = 0);
-    ~DeviceAdapter();
+    explicit DeviceFacade(QPointer<QTabWidget> parent = 0);
+    ~DeviceFacade();
 
     void removeDeviceByTabIndex(const int index);
     void focusFilterInput();
@@ -98,4 +98,4 @@ private:
     QPointer<DeviceWidget> getCurrentDeviceWidget();
 };
 
-#endif // DEVICEADAPTER_H
+#endif // DEVICEFACADE_H

@@ -27,9 +27,9 @@ using namespace DataTypes;
 
 const QString MARK_LINE("========================== MARK ==========================");
 
-DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter)
+DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceFacade> deviceFacade)
     : QWidget(parent)
-    , m_deviceAdapter(deviceAdapter)
+    , m_deviceFacade(deviceFacade)
 {
     m_ui = QSharedPointer<Ui::DeviceWidget>::create();
     m_ui->setupUi(this);
@@ -41,11 +41,11 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> dev
     m_textStream.setCodec("UTF-8");
     m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
-    //ui->textEdit->setFontFamily(m_deviceAdapter->getFont());
-    //ui->textEdit->setFontPointSize(m_deviceAdapter->getFontSize());
+    //ui->textEdit->setFontFamily(m_deviceFacade->getFont());
+    //ui->textEdit->setFontPointSize(m_deviceFacade->getFontSize());
     m_ui->textEdit->setAttribute(Qt::WA_OpaquePaintEvent);
     m_ui->textEdit->setUndoRedoEnabled(false);
-    m_ui->textEdit->document()->setMaximumBlockCount(m_deviceAdapter->getVisibleLines());
+    m_ui->textEdit->document()->setMaximumBlockCount(m_deviceFacade->getVisibleLines());
 
     clearTextEdit();
 
@@ -98,9 +98,9 @@ void DeviceWidget::maybeScrollTextEditToEnd()
 void DeviceWidget::addText(const QColor& color, const QStringRef& text)
 {
     m_textStream
-        << "<font style=\"font-family: " << m_deviceAdapter->getFont()
-        << "; font-size: " << m_deviceAdapter->getFontSize()
-        << "pt; font-weight: " << (m_deviceAdapter->isFontBold() ? "bold" : "none")
+        << "<font style=\"font-family: " << m_deviceFacade->getFont()
+        << "; font-size: " << m_deviceFacade->getFontSize()
+        << "pt; font-weight: " << (m_deviceFacade->isFontBold() ? "bold" : "none")
         << ";\" color=\"" << color.name()
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
         // FIXME: remove this hack
@@ -122,7 +122,7 @@ void DeviceWidget::flushText()
 void DeviceWidget::updateTextEditPalette()
 {
     QPalette pal;
-    if (m_deviceAdapter->isDarkTheme())
+    if (m_deviceFacade->isDarkTheme())
     {
         pal.setColor(QPalette::Text, Qt::white);
         pal.setColor(QPalette::Base, Qt::black);
@@ -153,13 +153,13 @@ void DeviceWidget::on_openLogFileButton_clicked()
 {
     if (!m_currentLogFileName.isEmpty())
     {
-        const QString textEditor = m_deviceAdapter->getTextEditorPath();
+        const QString textEditor = m_deviceFacade->getTextEditorPath();
         qDebug() << "open" << m_currentLogFileName << "in text editor" << textEditor;
         if (!textEditor.isEmpty())
         {
             QStringList args;
             args.append(m_currentLogFileName);
-            QProcess::startDetached(m_deviceAdapter->getTextEditorPath(), args);
+            QProcess::startDetached(m_deviceFacade->getTextEditorPath(), args);
         }
     }
 }
@@ -176,7 +176,7 @@ void DeviceWidget::focusFilterInput()
 
 void DeviceWidget::on_markLogButton_clicked()
 {
-    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
     addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&MARK_LINE));
     //addToLogBuffer(MARK_LINE);
     flushText();

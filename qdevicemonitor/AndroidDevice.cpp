@@ -36,8 +36,8 @@ AndroidDevice::AndroidDevice(
     const QString& id,
     const DeviceType type,
     const QString& humanReadableDescription,
-    QPointer<DeviceAdapter> deviceAdapter
-) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceAdapter)
+    QPointer<DeviceFacade> deviceFacade
+) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
     , m_didReadModel(false)
 {
@@ -201,7 +201,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     );
 
     bool filtersMatch = true;
-    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
 
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
@@ -318,7 +318,7 @@ void AndroidDevice::onOnlineChange(const bool online)
 
 void AndroidDevice::maybeClearAdbLog()
 {
-    if (m_deviceAdapter->getClearAndroidLog() && isOnline())
+    if (m_deviceFacade->getClearAndroidLog() && isOnline())
     {
         qDebug() << "clearing adb log";
 
@@ -336,7 +336,7 @@ void AndroidDevice::maybeClearAdbLog()
     }
 }
 
-void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
+void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade)
 {
     if (s_devicesListProcess.state() == QProcess::NotRunning)
     {
@@ -405,7 +405,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                             {
                                 map[deviceId] = BaseDevice::create(
                                     parent,
-                                    deviceAdapter,
+                                    deviceFacade,
                                     DeviceType::Android,
                                     deviceId
                                 );
@@ -471,7 +471,7 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
 void AndroidDevice::onLogReady()
 {
     QString line;
-    for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
+    for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
         m_tempStream << m_logProcess.readLine();
         if (m_tempStream.readLineInto(&line))

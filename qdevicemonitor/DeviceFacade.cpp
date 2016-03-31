@@ -15,7 +15,7 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "DeviceAdapter.h"
+#include "DeviceFacade.h"
 #include "SettingsDialog.h"
 #include "Utils.h"
 
@@ -29,7 +29,7 @@
 
 using namespace DataTypes;
 
-DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
+DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
     : QObject(parent)
     , m_visibleBlocks(500)
     , m_fontSize(12)
@@ -38,32 +38,32 @@ DeviceAdapter::DeviceAdapter(QPointer<QTabWidget> parent)
     , m_clearAndroidLog(true)
     , m_autoRemoveFilesHours(48)
 {
-    qDebug() << "DeviceAdapter";
+    qDebug() << "DeviceFacade";
     m_filterCompleter.setModel(&m_filterCompleterModel);
 
-    connect(&m_filesRemovalTimer, &QTimer::timeout, this, &DeviceAdapter::removeOldLogFiles);
+    connect(&m_filesRemovalTimer, &QTimer::timeout, this, &DeviceFacade::removeOldLogFiles);
     m_filesRemovalTimer.start(LOG_REMOVAL_FREQUENCY);
 }
 
-DeviceAdapter::~DeviceAdapter()
+DeviceFacade::~DeviceFacade()
 {
-    qDebug() << "~DeviceAdapter";
+    qDebug() << "~DeviceFacade";
     disconnect(&m_filesRemovalTimer, nullptr, this, nullptr);
 }
 
-void DeviceAdapter::start()
+void DeviceFacade::start()
 {
-    qDebug() << "DeviceAdapter::start";
+    qDebug() << "DeviceFacade::start";
     update();
-    connect(&m_updateTimer, &QTimer::timeout, this, &DeviceAdapter::update);
+    connect(&m_updateTimer, &QTimer::timeout, this, &DeviceFacade::update);
     m_updateTimer.start(UPDATE_FREQUENCY);
 }
 
-void DeviceAdapter::stop()
+void DeviceFacade::stop()
 {
-    qDebug() << "DeviceAdapter::stop";
+    qDebug() << "DeviceFacade::stop";
     m_updateTimer.stop();
-    disconnect(&m_updateTimer, &QTimer::timeout, this, &DeviceAdapter::update);
+    disconnect(&m_updateTimer, &QTimer::timeout, this, &DeviceFacade::update);
 
     AndroidDevice::stopDevicesListProcess();
     IOSDevice::stopDevicesListProcess();
@@ -72,12 +72,12 @@ void DeviceAdapter::stop()
     IOSDevice::releaseTempBuffer();
 }
 
-void DeviceAdapter::update()
+void DeviceFacade::update()
 {
     updateDevicesMap();
 }
 
-void DeviceAdapter::updateDevicesMap()
+void DeviceFacade::updateDevicesMap()
 {
     for (int t = 0; t != static_cast<int>(DeviceType::DeviceTypeEnd); ++t)
     {
@@ -105,7 +105,7 @@ void DeviceAdapter::updateDevicesMap()
     }
 }
 
-void DeviceAdapter::loadSettings(const QSettings& s)
+void DeviceFacade::loadSettings(const QSettings& s)
 {
     const QVariant visibleBlocks = s.value("visibleBlocks");
     if (visibleBlocks.isValid())
@@ -200,9 +200,9 @@ void DeviceAdapter::loadSettings(const QSettings& s)
     }
 }
 
-void DeviceAdapter::saveSettings(QSettings& s)
+void DeviceFacade::saveSettings(QSettings& s)
 {
-    qDebug() << "DeviceAdapter::saveSettings";
+    qDebug() << "DeviceFacade::saveSettings";
     s.setValue("visibleBlocks", m_visibleBlocks);
     s.setValue("font", m_font);
     s.setValue("fontSize", m_fontSize);
@@ -224,7 +224,7 @@ void DeviceAdapter::saveSettings(QSettings& s)
     s.setValue("logFiles", logFiles);
 }
 
-void DeviceAdapter::addFilterAsCompletion(const QString& completionToAdd)
+void DeviceFacade::addFilterAsCompletion(const QString& completionToAdd)
 {
     qDebug() << "addFilterAsCompletion" << completionToAdd;
     if (m_filterCompletions.contains(completionToAdd))
@@ -248,7 +248,7 @@ void DeviceAdapter::addFilterAsCompletion(const QString& completionToAdd)
     }
 }
 
-void DeviceAdapter::removeOldLogFiles()
+void DeviceFacade::removeOldLogFiles()
 {
     qDebug() << "removeOldLogFiles older than" << m_autoRemoveFilesHours << "hours (" << m_autoRemoveFilesHours * 60 * 60 << "seconds )";
     QStringList nameFilters;
@@ -286,7 +286,7 @@ void DeviceAdapter::removeOldLogFiles()
     }
 }
 
-void DeviceAdapter::allDevicesReloadText()
+void DeviceFacade::allDevicesReloadText()
 {
     for (auto& device : m_devicesMap)
     {
@@ -294,7 +294,7 @@ void DeviceAdapter::allDevicesReloadText()
     }
 }
 
-void DeviceAdapter::removeDeviceByTabIndex(const int index)
+void DeviceFacade::removeDeviceByTabIndex(const int index)
 {
     qDebug() << "removeDeviceByTabIndex" << index;
 
@@ -332,7 +332,7 @@ void DeviceAdapter::removeDeviceByTabIndex(const int index)
     Q_ASSERT_X(success, "removeDeviceByTabIndex", "tab is not found");
 }
 
-void DeviceAdapter::fixTabIndexes(const int removedTabIndex)
+void DeviceFacade::fixTabIndexes(const int removedTabIndex)
 {
     for (auto it = m_devicesMap.begin(); it != m_devicesMap.end(); ++it)
     {
@@ -346,31 +346,31 @@ void DeviceAdapter::fixTabIndexes(const int removedTabIndex)
     }
 }
 
-void DeviceAdapter::focusFilterInput()
+void DeviceFacade::focusFilterInput()
 {
     qDebug() << "focusFilterInput";
     getCurrentDeviceWidget()->focusFilterInput();
 }
 
-void DeviceAdapter::markLog()
+void DeviceFacade::markLog()
 {
     qDebug() << "markLog";
     getCurrentDeviceWidget()->markLog();
 }
 
-void DeviceAdapter::clearLog()
+void DeviceFacade::clearLog()
 {
     qDebug() << "clearLog";
     getCurrentDeviceWidget()->clearLog();
 }
 
-void DeviceAdapter::openLogFile()
+void DeviceFacade::openLogFile()
 {
     qDebug() << "openLogFile";
     getCurrentDeviceWidget()->openLogFile();
 }
 
-QPointer<DeviceWidget> DeviceAdapter::getCurrentDeviceWidget()
+QPointer<DeviceWidget> DeviceFacade::getCurrentDeviceWidget()
 {
     QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
     QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());

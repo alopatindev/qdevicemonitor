@@ -19,7 +19,7 @@
 #define DEVICEWIDGET_H
 
 #include "ui_DeviceWidget.h"
-#include "DeviceAdapter.h"
+#include "DeviceFacade.h"
 
 #include <QPalette>
 #include <QPointer>
@@ -38,13 +38,13 @@ class DeviceWidget : public QWidget
     QSharedPointer<Ui::DeviceWidget> m_ui;
     QPalette m_defaultTextEditPalette;
     QPalette m_redPalette;
-    QPointer<DeviceAdapter> m_deviceAdapter;
+    QPointer<DeviceFacade> m_deviceFacade;
     QTextStream m_textStream;
     QString m_stringStream;
     QString m_currentLogFileName;
 
 public:
-    explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceAdapter> deviceAdapter);
+    explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceFacade> deviceFacade);
     ~DeviceWidget() override;
     void hideVerbosity();
 

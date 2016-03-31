@@ -19,7 +19,7 @@
 #define MAINWINDOW_H
 
 #include "ui_MainWindow.h"
-#include "DeviceAdapter.h"
+#include "DeviceFacade.h"
 
 #include <QKeyEvent>
 #include <QMainWindow>
@@ -34,7 +34,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    DeviceAdapter m_deviceAdapter;
+    DeviceFacade m_deviceFacade;
     QString m_lastLogDirectory;
 
 public:

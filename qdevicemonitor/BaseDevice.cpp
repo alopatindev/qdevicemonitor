@@ -32,7 +32,7 @@ BaseDevice::BaseDevice(
     const QString& id, const DeviceType type,
     const QString& humanReadableName,
     const QString& humanReadableDescription,
-    QPointer<DeviceAdapter> deviceAdapter
+    QPointer<DeviceFacade> deviceFacade
 )
     : QObject(parent)
     , m_id(id)
@@ -42,7 +42,7 @@ BaseDevice::BaseDevice(
     , m_online(false)
     , m_tabWidget(parent)
     , m_tabIndex(-1)
-    , m_deviceAdapter(deviceAdapter)
+    , m_deviceFacade(deviceFacade)
     , m_dirtyFilter(false)
     , m_filtersValid(true)
     , m_visited(true)
@@ -54,8 +54,8 @@ BaseDevice::BaseDevice(
 
     updateLogBufferSpace();
 
-    m_deviceWidget = QSharedPointer<DeviceWidget>::create(static_cast<QTabWidget*>(m_tabWidget), m_deviceAdapter);
-    m_deviceWidget->getFilterLineEdit().setCompleter(&m_deviceAdapter->getFilterCompleter());
+    m_deviceWidget = QSharedPointer<DeviceWidget>::create(static_cast<QTabWidget*>(m_tabWidget), m_deviceFacade);
+    m_deviceWidget->getFilterLineEdit().setCompleter(&m_deviceFacade->getFilterCompleter());
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget.data(), humanReadableName);
 
     m_completionAddTimer.setSingleShot(true);
@@ -78,7 +78,7 @@ BaseDevice::~BaseDevice()
 
 QSharedPointer<BaseDevice> BaseDevice::create(
     QPointer<QTabWidget> parent,
-    QPointer<DeviceAdapter> deviceAdapter,
+    QPointer<DeviceFacade> deviceFacade,
     const DeviceType type,
     const QString& id
 )
@@ -88,15 +88,15 @@ QSharedPointer<BaseDevice> BaseDevice::create(
     {
     case DeviceType::TextFile:
         return QSharedPointer<TextFileDevice>::create(
-            parent, id, type, description, deviceAdapter
+            parent, id, type, description, deviceFacade
         );
     case DeviceType::Android:
         return QSharedPointer<AndroidDevice>::create(
-            parent, id, type, description, deviceAdapter
+            parent, id, type, description, deviceFacade
         );
     case DeviceType::IOS:
         return QSharedPointer<IOSDevice>::create(
-            parent, id, type, description, deviceAdapter
+            parent, id, type, description, deviceFacade
         );
     default:
         Q_ASSERT_X(false, "BaseDevice::create", "device is not implemented");
@@ -137,13 +137,13 @@ void BaseDevice::maybeAddCompletionAfterDelay(const QString& filter)
     qDebug() << "BaseDevice::maybeAddCompletionAfterDelay" << filter;
     m_completionToAdd = filter;
     m_completionAddTimer.stop();
-    m_completionAddTimer.start(DeviceAdapter::COMPLETION_ADD_TIMEOUT);
+    m_completionAddTimer.start(DeviceFacade::COMPLETION_ADD_TIMEOUT);
 }
 
 void BaseDevice::addFilterAsCompletion()
 {
     qDebug() << "BaseDevice::addFilterAsCompletion";
-    m_deviceAdapter->addFilterAsCompletion(m_completionToAdd);
+    m_deviceFacade->addFilterAsCompletion(m_completionToAdd);
 }
 
 void BaseDevice::updateFilter(const QString& filter)
@@ -158,7 +158,7 @@ void BaseDevice::updateFilter(const QString& filter)
 
 void BaseDevice::addToLogBuffer(const QString& text)
 {
-    if (m_logBuffer.size() >= m_deviceAdapter->getVisibleLines())
+    if (m_logBuffer.size() >= m_deviceFacade->getVisibleLines())
     {
         m_logBuffer.removeFirst();
     }
@@ -167,14 +167,14 @@ void BaseDevice::addToLogBuffer(const QString& text)
 
 void BaseDevice::updateLogBufferSpace()
 {
-    qDebug() << "updateLogBufferSpace" << m_deviceAdapter->getVisibleLines();
-    const int64_t extraLines = static_cast<int64_t>(m_logBuffer.size()) - m_deviceAdapter->getVisibleLines();
+    qDebug() << "updateLogBufferSpace" << m_deviceFacade->getVisibleLines();
+    const int64_t extraLines = static_cast<int64_t>(m_logBuffer.size()) - m_deviceFacade->getVisibleLines();
     if (extraLines > 0)
     {
         qDebug() << "removing" << extraLines << "extra lines from log buffer";
         m_logBuffer.erase(m_logBuffer.begin(), m_logBuffer.begin() + extraLines);
     }
-    m_logBuffer.reserve(m_deviceAdapter->getVisibleLines());
+    m_logBuffer.reserve(m_deviceFacade->getVisibleLines());
 }
 
 void BaseDevice::filterAndAddFromLogBufferToTextEdit()

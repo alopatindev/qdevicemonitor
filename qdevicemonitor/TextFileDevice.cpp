@@ -33,8 +33,8 @@ TextFileDevice::TextFileDevice(
     const QString& id,
     const DeviceType type,
     const QString& humanReadableDescription,
-    QPointer<DeviceAdapter> deviceAdapter
-) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceAdapter)
+    QPointer<DeviceFacade> deviceFacade
+) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
 {
     qDebug() << "TextFileDevice::TextFileDevice";
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefix <b>text:</b> with Plain Text</li><li>Regular Expressions</li></ul>"));
@@ -57,7 +57,7 @@ void TextFileDevice::startLogger()
     QStringList args;
     args.append("-F");
     args.append("-n");
-    args.append(QString("%1").arg(m_deviceAdapter->getVisibleLines()));
+    args.append(QString("%1").arg(m_deviceFacade->getVisibleLines()));
     args.append(m_id);
     m_tailProcess.start("tail", args);
 }
@@ -90,7 +90,7 @@ void TextFileDevice::update()
                 maybeAddCompletionAfterDelay(filter);
             }
 
-            for (int i = 0; i < DeviceAdapter::MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
+            for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
             {
                 m_tempStream << m_tailProcess.readLine();
                 const QString line = m_tempStream.readLine();
@@ -131,7 +131,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
-    const int themeIndex = m_deviceAdapter->isDarkTheme() ? 1 : 0;
+    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
@@ -172,7 +172,7 @@ void TextFileDevice::reloadTextEdit()
     filterAndAddFromLogBufferToTextEdit();
 }
 
-void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter)
+void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade)
 {
     for (auto logFileIt = s_filesToOpen.constBegin(); logFileIt != s_filesToOpen.constEnd(); ++logFileIt)
     {
@@ -184,7 +184,7 @@ void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, D
 
             map[logFile] = BaseDevice::create(
                 parent,
-                deviceAdapter,
+                deviceFacade,
                 DeviceType::TextFile,
                 logFile
             );

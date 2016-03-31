@@ -42,14 +42,14 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
     loadSettings();
     checkExternalPrograms();
 
-    m_deviceAdapter.setParent(m_ui->tabWidget);
-    m_deviceAdapter.start();
+    m_deviceFacade.setParent(m_ui->tabWidget);
+    m_deviceFacade.start();
 }
 
 MainWindow::~MainWindow()
 {
     saveSettings();
-    m_deviceAdapter.stop();
+    m_deviceFacade.stop();
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -79,7 +79,7 @@ void MainWindow::on_actionSettings_triggered()
     {
         dialog.saveSettings(s);
         loadSettings();
-        m_deviceAdapter.allDevicesReloadText();
+        m_deviceFacade.allDevicesReloadText();
     }
 }
 
@@ -110,7 +110,7 @@ void MainWindow::on_tabWidget_tabCloseRequested(const int index)
     qDebug() << "MainWindow::on_tabWidget_tabCloseRequested" << index;
     if (index != -1)
     {
-        m_deviceAdapter.removeDeviceByTabIndex(index);
+        m_deviceFacade.removeDeviceByTabIndex(index);
     }
 }
 
@@ -121,13 +121,13 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
         switch (event->key())
         {
         case Qt::Key_F:
-            m_deviceAdapter.focusFilterInput();
+            m_deviceFacade.focusFilterInput();
             break;
         case Qt::Key_E:
-            m_deviceAdapter.openLogFile();
+            m_deviceFacade.openLogFile();
             break;
         case Qt::Key_M:
-            m_deviceAdapter.markLog();
+            m_deviceFacade.markLog();
             break;
         default:
             break;
@@ -138,7 +138,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
         switch (event->key())
         {
         case Qt::Key_C:
-            m_deviceAdapter.clearLog();
+            m_deviceFacade.clearLog();
             break;
         default:
             break;
@@ -194,7 +194,7 @@ void MainWindow::loadSettings()
 #endif
     }
 
-    m_deviceAdapter.loadSettings(s);
+    m_deviceFacade.loadSettings(s);
 }
 
 void MainWindow::saveSettings()
@@ -204,7 +204,7 @@ void MainWindow::saveSettings()
 
     s.setValue("geometry", geometry());
     s.setValue("lastLogDirectory", m_lastLogDirectory);
-    m_deviceAdapter.saveSettings(s);
+    m_deviceFacade.saveSettings(s);
 
     s.sync();
 }

@@ -16,7 +16,7 @@ RESOURCES = resources.qrc
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    DeviceAdapter.cpp \
+    DeviceFacade.cpp \
     AndroidDevice.cpp \
     IOSDevice.cpp \
     TextFileDevice.cpp \
@@ -26,7 +26,7 @@ SOURCES += main.cpp\
     Utils.cpp
 
 HEADERS  += MainWindow.h \
-    DeviceAdapter.h \
+    DeviceFacade.h \
     AndroidDevice.h \
     IOSDevice.h \
     TextFileDevice.h \

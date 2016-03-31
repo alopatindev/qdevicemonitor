@@ -45,7 +45,7 @@ public:
         const QString& id,
         const DeviceType type,
         const QString& humanReadableDescription,
-        QPointer<DeviceAdapter> deviceAdapter
+        QPointer<DeviceFacade> deviceFacade
     );
     ~IOSDevice() override;
 
@@ -54,7 +54,7 @@ public:
     const char* getPlatformName() const override { return "iOS"; }
     void reloadTextEdit() override;
 
-    static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
+    static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade);
     static void releaseTempBuffer();
     static void stopDevicesListProcess();
     static void removedDeviceByTabClose(const QString& id);
