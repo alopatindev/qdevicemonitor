@@ -39,13 +39,18 @@ class AndroidDevice : public BaseDevice
     bool m_didReadModel;
 
 public:
-    explicit AndroidDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                           const QString& humanReadableName, const QString& humanReadableDescription,
-                           QPointer<DeviceAdapter> deviceAdapter);
+    explicit AndroidDevice(
+        QPointer<QTabWidget> parent,
+        const QString& id,
+        const DeviceType type,
+        const QString& humanReadableDescription,
+        QPointer<DeviceAdapter> deviceAdapter
+    );
     ~AndroidDevice() override;
+
     void update() override;
     void filterAndAddToTextEdit(const QString& line) override;
-    const char* getPlatformString() const override { return getPlatformStringStatic(); }
+    const char* getPlatformName() const override { return "Android"; }
     void reloadTextEdit() override;
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
@@ -72,7 +77,6 @@ private:
                       const QStringRef& tid = QStringRef(),
                       const QStringRef& tag = QStringRef(),
                       const QStringRef& text = QStringRef());
-    static const char* getPlatformStringStatic() { return "Android"; }
 };
 
 #endif // ANDROIDDEVICE_H

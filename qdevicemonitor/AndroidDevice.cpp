@@ -31,9 +31,13 @@ static QSharedPointer<QTextStream> s_tempStream;
 static QProcess s_devicesListProcess;
 static QHash<QString, bool> s_removedDeviceByTabClose;
 
-AndroidDevice::AndroidDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                             const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
-    : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
+AndroidDevice::AndroidDevice(
+    QPointer<QTabWidget> parent,
+    const QString& id,
+    const DeviceType type,
+    const QString& humanReadableDescription,
+    QPointer<DeviceAdapter> deviceAdapter
+) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceAdapter)
     , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
     , m_didReadModel(false)
 {
@@ -85,7 +89,7 @@ void AndroidDevice::startLogger()
 
     const QString currentLogAbsFileName = Utils::getNewLogFilePath(
         QString("%1-%2-")
-            .arg(getPlatformString())
+            .arg(getPlatformName())
             .arg(Utils::removeSpecialCharacters(m_humanReadableName))
     );
     m_currentLogFileName = currentLogAbsFileName;
@@ -399,13 +403,11 @@ void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, De
                             auto it = map.find(deviceId);
                             if (it == map.end())
                             {
-                                map[deviceId] = QSharedPointer<AndroidDevice>::create(
+                                map[deviceId] = BaseDevice::create(
                                     parent,
-                                    deviceId,
+                                    deviceAdapter,
                                     DeviceType::Android,
-                                    QString(getPlatformStringStatic()),
-                                    tr("Initializing..."),
-                                    deviceAdapter
+                                    deviceId
                                 );
                             }
                             else if ((*it)->getType() != DeviceType::Android)

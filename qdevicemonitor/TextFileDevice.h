@@ -32,13 +32,18 @@ class TextFileDevice : public BaseDevice
     QProcess m_tailProcess;
 
 public:
-    explicit TextFileDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                           const QString& humanReadableName, const QString& humanReadableDescription,
-                           QPointer<DeviceAdapter> deviceAdapter);
+    explicit TextFileDevice(
+        QPointer<QTabWidget> parent,
+        const QString& id,
+        const DeviceType type,
+        const QString& humanReadableDescription,
+        QPointer<DeviceAdapter> deviceAdapter
+    );
     ~TextFileDevice() override;
+
     void update() override;
     void filterAndAddToTextEdit(const QString& line) override;
-    const char* getPlatformString() const override { return getPlatformStringStatic(); }
+    const char* getPlatformName() const override { return "Text File"; }
     void reloadTextEdit() override;
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
@@ -47,8 +52,6 @@ public:
 private:
     void startLogger();
     void stopLogger();
-
-    static const char* getPlatformStringStatic() { return "Text File"; }
 
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
 

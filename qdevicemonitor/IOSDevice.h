@@ -40,13 +40,18 @@ class IOSDevice : public BaseDevice
     QTextStream m_tempErrorsStream;
 
 public:
-    explicit IOSDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                       const QString& humanReadableName, const QString& humanReadableDescription,
-                       QPointer<DeviceAdapter> deviceAdapter);
+    explicit IOSDevice(
+        QPointer<QTabWidget> parent,
+        const QString& id,
+        const DeviceType type,
+        const QString& humanReadableDescription,
+        QPointer<DeviceAdapter> deviceAdapter
+    );
     ~IOSDevice() override;
+
     void update() override;
     void filterAndAddToTextEdit(const QString& line) override;
-    const char* getPlatformString() const override { return getPlatformStringStatic(); }
+    const char* getPlatformName() const override { return "iOS"; }
     void reloadTextEdit() override;
 
     static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceAdapter> deviceAdapter);
@@ -60,8 +65,6 @@ private:
     void startLogger();
     void stopLogger();
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
-
-    static const char* getPlatformStringStatic() { return "iOS"; }
 
     void maybeReadErrorsPart();
     void maybeReadLogPart();

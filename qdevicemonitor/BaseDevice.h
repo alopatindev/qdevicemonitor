@@ -25,6 +25,7 @@
 #include <QPointer>
 #include <QProcess>
 #include <QRegularExpression>
+#include <QSharedPointer>
 #include <QString>
 #include <QStringRef>
 #include <QTabWidget>
@@ -38,15 +39,28 @@ class BaseDevice : public QObject
     Q_OBJECT
 
 public:
-    explicit BaseDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                        const QString& humanReadableName, const QString& humanReadableDescription,
-                        QPointer<DeviceAdapter> deviceAdapter);
+    static QSharedPointer<BaseDevice> create(
+        QPointer<QTabWidget> parent,
+        QPointer<DeviceAdapter> deviceAdapter,
+        const DeviceType type,
+        const QString& id
+    );
+
+    // FIXME: constructor should be private?
+    explicit BaseDevice(
+        QPointer<QTabWidget> parent,
+        const QString& id,
+        const DeviceType type,
+        const QString& humanReadableName,
+        const QString& humanReadableDescription,
+        QPointer<DeviceAdapter> deviceAdapter
+    );
     ~BaseDevice() override;
 
     void updateTabWidget();
     virtual void update() = 0;
     virtual void filterAndAddToTextEdit(const QString& line) = 0;
-    virtual const char* getPlatformString() const = 0;
+    virtual const char* getPlatformName() const = 0;
     virtual void reloadTextEdit() = 0;
 
     void maybeAddCompletionAfterDelay(const QString& filter);

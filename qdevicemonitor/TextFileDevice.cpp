@@ -28,9 +28,13 @@ using namespace DataTypes;
 
 static QStringList s_filesToOpen;
 
-TextFileDevice::TextFileDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                               const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
-    : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
+TextFileDevice::TextFileDevice(
+    QPointer<QTabWidget> parent,
+    const QString& id,
+    const DeviceType type,
+    const QString& humanReadableDescription,
+    QPointer<DeviceAdapter> deviceAdapter
+) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceAdapter)
 {
     qDebug() << "TextFileDevice::TextFileDevice";
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefix <b>text:</b> with Plain Text</li><li>Regular Expressions</li></ul>"));
@@ -177,14 +181,18 @@ void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, D
         if (it == map.end())
         {
             const QString fileName = QFileInfo(logFile).fileName();
-            map[logFile] = QSharedPointer<TextFileDevice>::create(
+
+            map[logFile] = BaseDevice::create(
                 parent,
-                logFile,
+                deviceAdapter,
                 DeviceType::TextFile,
-                fileName,
-                logFile,
-                deviceAdapter
+                logFile
             );
+
+            const auto it = map.find(logFile);
+            (*it)->setHumanReadableName(fileName);
+            (*it)->setHumanReadableDescription(logFile);
+            (*it)->updateTabWidget();
         }
     }
 

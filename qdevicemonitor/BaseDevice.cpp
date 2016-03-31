@@ -17,15 +17,23 @@
 
 #include "BaseDevice.h"
 
+#include "AndroidDevice.h"
+#include "IOSDevice.h"
+#include "TextFileDevice.h"
+
 #include <QDebug>
 #include <QIcon>
 #include <QtCore/QStringBuilder>
 
 using namespace DataTypes;
 
-BaseDevice::BaseDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                       const QString& humanReadableName, const QString& humanReadableDescription,
-                       QPointer<DeviceAdapter> deviceAdapter)
+BaseDevice::BaseDevice(
+    QPointer<QTabWidget> parent,
+    const QString& id, const DeviceType type,
+    const QString& humanReadableName,
+    const QString& humanReadableDescription,
+    QPointer<DeviceAdapter> deviceAdapter
+)
     : QObject(parent)
     , m_id(id)
     , m_type(type)
@@ -68,13 +76,41 @@ BaseDevice::~BaseDevice()
     m_tabWidget.clear();
 }
 
+QSharedPointer<BaseDevice> BaseDevice::create(
+    QPointer<QTabWidget> parent,
+    QPointer<DeviceAdapter> deviceAdapter,
+    const DeviceType type,
+    const QString& id
+)
+{
+    const QString description = tr("Initializing...");
+    switch (type)
+    {
+    case DeviceType::TextFile:
+        return QSharedPointer<TextFileDevice>::create(
+            parent, id, type, description, deviceAdapter
+        );
+    case DeviceType::Android:
+        return QSharedPointer<AndroidDevice>::create(
+            parent, id, type, description, deviceAdapter
+        );
+    case DeviceType::IOS:
+        return QSharedPointer<IOSDevice>::create(
+            parent, id, type, description, deviceAdapter
+        );
+    default:
+        Q_ASSERT_X(false, "BaseDevice::create", "device is not implemented");
+        return QSharedPointer<BaseDevice>();
+    }
+}
+
 void BaseDevice::updateTabWidget()
 {
     m_tabWidget->setTabText(m_tabIndex, m_humanReadableName);
     m_tabWidget->setTabToolTip(m_tabIndex, m_humanReadableDescription);
 
     const QIcon icon(QString(":/icons/%1_%2.png")
-        .arg(getPlatformString())
+        .arg(getPlatformName())
         .arg(m_online ? "online" : "offline"));
     m_tabWidget->setTabIcon(m_tabIndex, icon);
 }
@@ -187,7 +223,7 @@ void BaseDevice::updateInfo(const bool online, const QString& additional)
     const QString additionalWithNewLine = additional.isEmpty() ? additional : ("\n" % additional);
     setHumanReadableDescription(
         tr("%1\nStatus: %2\nID: %3%4")
-            .arg(tr(getPlatformString()))
+            .arg(tr(getPlatformName()))
             .arg(tr(online ? "Online" : "Offline"))
             .arg(m_id)
             .arg(additionalWithNewLine)

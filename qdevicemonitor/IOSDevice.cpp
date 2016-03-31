@@ -32,9 +32,14 @@ static QSharedPointer<QTextStream> s_tempStream;
 static QProcess s_devicesListProcess;
 static QHash<QString, bool> s_removedDeviceByTabClose;
 
-IOSDevice::IOSDevice(QPointer<QTabWidget> parent, const QString& id, const DeviceType type,
-                     const QString& humanReadableName, const QString& humanReadableDescription, QPointer<DeviceAdapter> deviceAdapter)
-    : BaseDevice(parent, id, type, humanReadableName, humanReadableDescription, deviceAdapter)
+IOSDevice::IOSDevice(
+    QPointer<QTabWidget> parent,
+    const QString& id,
+    const DeviceType type,
+    const QString& humanReadableDescription,
+    QPointer<DeviceAdapter> deviceAdapter
+)
+    : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceAdapter)
     , m_didReadModel(false)
 {
     qDebug() << "IOSDevice::IOSDevice";
@@ -93,7 +98,7 @@ void IOSDevice::startLogger()
 
     const QString currentLogAbsFileName = Utils::getNewLogFilePath(
         QString("%1-%2-")
-            .arg(getPlatformString())
+            .arg(getPlatformName())
             .arg(Utils::removeSpecialCharacters(m_humanReadableName))
     );
     m_currentLogFileName = currentLogAbsFileName;
@@ -347,13 +352,11 @@ void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, Device
                         auto it = map.find(deviceId);
                         if (it == map.end())
                         {
-                            map[deviceId] = QSharedPointer<IOSDevice>::create(
+                            map[deviceId] = BaseDevice::create(
                                 parent,
-                                deviceId,
+                                deviceAdapter,
                                 DeviceType::IOS,
-                                QString(getPlatformStringStatic()),
-                                tr("Initializing..."),
-                                deviceAdapter
+                                deviceId
                             );
                         }
                         else if ((*it)->getType() != DeviceType::IOS)
