@@ -63,6 +63,7 @@ public:
     void openLogFile();
 
 signals:
+    void verbosityLevelChanged(const int level);
 
 public slots:
     void on_verbositySlider_valueChanged(const int value);

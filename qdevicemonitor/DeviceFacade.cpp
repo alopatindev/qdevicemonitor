@@ -19,6 +19,7 @@
 #include "SettingsDialog.h"
 #include "Utils.h"
 
+#include "BaseDevice.h"
 #include "AndroidDevice.h"
 #include "IOSDevice.h"
 #include "TextFileDevice.h"
@@ -26,6 +27,8 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QSet>
+
+#include <algorithm>
 
 using namespace DataTypes;
 
@@ -43,65 +46,23 @@ DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
 
     connect(&m_filesRemovalTimer, &QTimer::timeout, this, &DeviceFacade::removeOldLogFiles);
     m_filesRemovalTimer.start(LOG_REMOVAL_FREQUENCY);
+
+    for (auto it = m_trackers.constBegin(); it != m_trackers.constEnd(); ++it)
+    {
+        connect(it->data(), &BaseDevicesTracker::deviceConnected, this, &DeviceFacade::onDeviceConnected);
+        connect(it->data(), &BaseDevicesTracker::deviceDisconnected, this, &DeviceFacade::onDeviceDisconnected);
+    }
 }
 
 DeviceFacade::~DeviceFacade()
 {
     qDebug() << "~DeviceFacade";
     disconnect(&m_filesRemovalTimer, nullptr, this, nullptr);
-}
 
-void DeviceFacade::start()
-{
-    qDebug() << "DeviceFacade::start";
-    update();
-    connect(&m_updateTimer, &QTimer::timeout, this, &DeviceFacade::update);
-    m_updateTimer.start(UPDATE_FREQUENCY);
-}
-
-void DeviceFacade::stop()
-{
-    qDebug() << "DeviceFacade::stop";
-    m_updateTimer.stop();
-    disconnect(&m_updateTimer, &QTimer::timeout, this, &DeviceFacade::update);
-
-    AndroidDevice::stopDevicesListProcess();
-    IOSDevice::stopDevicesListProcess();
-
-    AndroidDevice::releaseTempBuffer();
-    IOSDevice::releaseTempBuffer();
-}
-
-void DeviceFacade::update()
-{
-    updateDevicesMap();
-}
-
-void DeviceFacade::updateDevicesMap()
-{
-    for (int t = 0; t != static_cast<int>(DeviceType::DeviceTypeEnd); ++t)
+    for (auto it = m_trackers.constBegin(); it != m_trackers.constEnd(); ++it)
     {
-        const DeviceType type = static_cast<DeviceType>(t);
-
-        switch (type)
-        {
-        case DeviceType::TextFile:
-            TextFileDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
-            break;
-        case DeviceType::Android:
-            AndroidDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
-            break;
-        case DeviceType::IOS:
-            IOSDevice::maybeAddNewDevicesOfThisType(static_cast<QTabWidget*>(parent()), m_devicesMap, this);
-            break;
-        default:
-            break;
-        }
-    }
-
-    for (auto& device : m_devicesMap)
-    {
-        device->update();
+        disconnect(it->data(), &BaseDevicesTracker::deviceConnected, this, &DeviceFacade::onDeviceConnected);
+        disconnect(it->data(), &BaseDevicesTracker::deviceDisconnected, this, &DeviceFacade::onDeviceDisconnected);
     }
 }
 
@@ -193,9 +154,9 @@ void DeviceFacade::loadSettings(const QSettings& s)
     if (logFiles.isValid())
     {
         const QStringList list = logFiles.toStringList();
-        for (const auto& i : list)
+        for (const auto& id : list)
         {
-            TextFileDevice::openLogFile(i);
+            openTextFileDevice(id);
         }
     }
 }
@@ -286,6 +247,103 @@ void DeviceFacade::removeOldLogFiles()
     }
 }
 
+void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QString& id)
+{
+    qDebug() << "DeviceFacade::onDeviceConnected" << type << id;
+
+    const auto it = m_devicesMap.find(id);
+    if (it != m_devicesMap.end())
+    {
+        if ((*it)->isOnline())
+        {
+            qDebug() << "device" << id << "is already connected";
+        }
+        else
+        {
+            (*it)->updateInfo(true);
+        }
+        return;
+    }
+
+    const QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent()); // TODO: refactor
+
+    switch (type)
+    {
+    case DeviceType::TextFile:
+        {
+            const QString fileName = QFileInfo(id).fileName();
+
+            m_devicesMap[id] = BaseDevice::create(
+                tabWidget,
+                QPointer<DeviceFacade>(this),
+                DeviceType::TextFile,
+                id
+            );
+
+            const auto it = m_devicesMap.find(id);
+            (*it)->setHumanReadableName(fileName);
+            (*it)->setHumanReadableDescription(id);
+            (*it)->updateTabWidget();
+        }
+        break;
+    case DeviceType::Android:
+        {
+            m_devicesMap[id] = BaseDevice::create(
+                tabWidget,
+                QPointer<DeviceFacade>(this),
+                DeviceType::Android,
+                id
+            );
+
+            const auto it = m_devicesMap.find(id);
+            (*it)->updateInfo(true);
+        }
+        break;
+    case DeviceType::IOS:
+        {
+            m_devicesMap[id] = BaseDevice::create(
+                tabWidget,
+                QPointer<DeviceFacade>(this),
+                DeviceType::IOS,
+                id
+            );
+
+            const auto it = m_devicesMap.find(id);
+            (*it)->updateInfo(true);
+        }
+        break;
+    default:
+        Q_ASSERT_X(false, "DeviceFacade::onDeviceConnected", "device is not implemented");
+        break;
+    }
+}
+
+void DeviceFacade::onDeviceDisconnected(const DataTypes::DeviceType type, const QString& id)
+{
+    qDebug() << "DeviceFacade::onDeviceDisconnected" << type << id;
+    const auto it = m_devicesMap.find(id);
+    if (it == m_devicesMap.end())
+    {
+        qDebug() << "already closed (by tab close?)";
+        return;
+    }
+
+    switch (type)
+    {
+    case DeviceType::TextFile:
+        break;
+    case DeviceType::Android:
+        (*it)->updateInfo(false);
+        break;
+    case DeviceType::IOS:
+        (*it)->updateInfo(false);
+        break;
+    default:
+        Q_ASSERT_X(false, "DeviceFacade::onDeviceDisconnected", "device is not implemented");
+        break;
+    }
+}
+
 void DeviceFacade::allDevicesReloadText()
 {
     for (auto& device : m_devicesMap)
@@ -298,38 +356,19 @@ void DeviceFacade::removeDeviceByTabIndex(const int index)
 {
     qDebug() << "removeDeviceByTabIndex" << index;
 
-    bool success = false;
-    for (auto it = m_devicesMap.begin(); !success && it != m_devicesMap.end(); ++it)
-    {
-        qDebug() << "tabIndex" << it.value()->getTabIndex();
-        if (it.value()->getTabIndex() == index)
+    auto it = std::find_if(
+        m_devicesMap.begin(),
+        m_devicesMap.end(),
+        [&index](const QSharedPointer<BaseDevice>& value)
         {
-            const QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
-            tabWidget->removeTab(index);
-            if (it.value()->isOnline())
-            {
-                switch (it.value()->getType())
-                {
-                case DeviceType::Android:
-                    AndroidDevice::removedDeviceByTabClose(it.key());
-                    break;
-                case DeviceType::IOS:
-                    IOSDevice::removedDeviceByTabClose(it.key());
-                    break;
-                case DeviceType::TextFile:
-                default:
-                    break;
-                }
-            }
-
-            m_devicesMap.remove(it.key());
-            fixTabIndexes(index);
-            success = true;
-            break;
+            return value->getTabIndex() == index;
         }
-    }
+    );
 
-    Q_ASSERT_X(success, "removeDeviceByTabIndex", "tab is not found");
+    Q_ASSERT_X(it != m_devicesMap.end(), "removeDeviceByTabIndex", "tab is not found");
+
+    m_devicesMap.remove(it.key());
+    fixTabIndexes(index);
 }
 
 void DeviceFacade::fixTabIndexes(const int removedTabIndex)
@@ -368,6 +407,11 @@ void DeviceFacade::openLogFile()
 {
     qDebug() << "openLogFile";
     getCurrentDeviceWidget()->openLogFile();
+}
+
+void DeviceFacade::openTextFileDevice(const QString& fullPath)
+{
+    m_textFileDevicesTracker.openFile(fullPath);
 }
 
 QPointer<DeviceWidget> DeviceFacade::getCurrentDeviceWidget()

@@ -38,18 +38,18 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
     m_ui = QSharedPointer<Ui::MainWindow>::create();
     m_ui->setupUi(this);
 
+    m_deviceFacade.setParent(m_ui->tabWidget);
+    //m_deviceFacade.start();
+
     setupEnvironment();
     loadSettings();
     checkExternalPrograms();
-
-    m_deviceFacade.setParent(m_ui->tabWidget);
-    m_deviceFacade.start();
 }
 
 MainWindow::~MainWindow()
 {
     saveSettings();
-    m_deviceFacade.stop();
+    //m_deviceFacade.stop();
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -59,7 +59,8 @@ void MainWindow::on_actionOpen_triggered()
     {
         const QFileInfo fi(fileName);
         m_lastLogDirectory = fi.absolutePath();
-        TextFileDevice::openLogFile(fi.absoluteFilePath());
+        m_deviceFacade.openTextFileDevice(fi.absoluteFilePath());
+        //TextFileDevice::openLogFile(fi.absoluteFilePath());
     }
 }
 

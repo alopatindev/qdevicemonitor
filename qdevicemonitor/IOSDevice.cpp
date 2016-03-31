@@ -21,16 +21,9 @@
 
 #include <QDebug>
 #include <QFileInfo>
-#include <QHash>
 #include <QRegularExpression>
 
 using namespace DataTypes;
-
-static QSharedPointer<QString> s_tempBuffer;
-static QSharedPointer<QTextStream> s_tempStream;
-
-static QProcess s_devicesListProcess;
-static QHash<QString, bool> s_removedDeviceByTabClose;
 
 IOSDevice::IOSDevice(
     QPointer<QTabWidget> parent,
@@ -50,18 +43,23 @@ IOSDevice::IOSDevice(
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefix <b>text:</b> with Plain Text</li><li>Regular Expressions</li></ul>"));
     m_deviceWidget->hideVerbosity();
 
-    updateModel();
     connect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
     connect(&m_infoProcess, &QProcess::readyReadStandardError, this, &BaseDevice::logReady);
+    connect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &IOSDevice::onUpdateModel);
+
+    startInfoProcess();
 }
 
 IOSDevice::~IOSDevice()
 {
     qDebug() << "IOSDevice::~IOSDevice";
+
     stopLogger();
+    stopInfoProcess();
+
     disconnect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
     disconnect(&m_infoProcess, &QProcess::readyReadStandardError, this, &BaseDevice::logReady);
-    stopInfoProcess();
+    disconnect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &IOSDevice::onUpdateModel);
 }
 
 void IOSDevice::stopInfoProcess()
@@ -74,9 +72,9 @@ void IOSDevice::stopInfoProcess()
     }
 }
 
-void IOSDevice::updateModel()
+void IOSDevice::startInfoProcess()
 {
-    qDebug() << "updateModel" << m_id;
+    qDebug() << "IOSDevice::startInfoProcess" << m_id;
     QStringList args;
     args.append("-u");
     args.append(m_id);
@@ -87,14 +85,43 @@ void IOSDevice::updateModel()
     m_infoProcess.start("ideviceinfo", args);
 }
 
-void IOSDevice::startLogger()
+void IOSDevice::onUpdateModel()
 {
-    if (!m_didReadModel)
+    qDebug() << "IOSDevice::onUpdateModel";
+
+    if (m_infoProcess.canReadLine())
     {
-        return;
+        const QString model = m_infoProcess.readLine().trimmed();
+        if (!model.isEmpty())
+        {
+            qDebug() << "IOSDevice::onUpdateModel" << m_id << "=>" << model;
+            m_humanReadableName = model;
+            updateTabWidget();
+            m_didReadModel = true;
+            startLogger();
+        }
     }
 
-    qDebug() << "IOSDevice::startLogger";
+    stopInfoProcess();
+
+    if (!m_didReadModel)
+    {
+        qDebug() << "IOSDevice::onUpdateModel failed; retrying";
+        startInfoProcess();
+    }
+}
+
+void IOSDevice::startLogger()
+{
+    if (!m_didReadModel || m_logProcess.state() != QProcess::NotRunning)
+    {
+        qDebug() << "IOSDevice::startLogger skipping; m_didReadModel =" << m_didReadModel << "m_logProcess.state =" << m_logProcess.state();
+        return;
+    }
+    else
+    {
+        qDebug() << "IOSDevice::startLogger";
+    }
 
     const QString currentLogAbsFileName = Utils::getNewLogFilePath(
         QString("%1-%2-")
@@ -118,69 +145,27 @@ void IOSDevice::startLogger()
 
 void IOSDevice::stopLogger()
 {
-    qDebug() << "IOSDevice::stopLogger";
-
     if (m_logProcess.state() != QProcess::NotRunning)
     {
+        qDebug() << "IOSDevice::stopLogger";
+
         m_logProcess.terminate();
         m_logProcess.kill();
         m_logProcess.close();
+
+        m_logFileStream.clear();
+        m_logFile.close();
     }
-    m_logFileStream.clear();
-    m_logFile.close();
 }
 
-void IOSDevice::update()
+void IOSDevice::onUpdateFilter(const QString& filter)
 {
-    if (!m_didReadModel && m_infoProcess.state() == QProcess::NotRunning)
+    if (m_logProcess.state() == QProcess::Running)
     {
-        if (m_infoProcess.canReadLine())
-        {
-            const QString model = m_infoProcess.readLine().trimmed();
-            if (!model.isEmpty())
-            {
-                qDebug() << "updateModel" << m_id << "=>" << model;
-                m_humanReadableName = model;
-                updateTabWidget();
-                m_didReadModel = true;
-                stopLogger();
-                startLogger();
-            }
-        }
-
-        stopInfoProcess();
-
-        if (!m_didReadModel)
-        {
-            updateModel();
-        }
-    }
-
-    switch (m_logProcess.state())
-    {
-    case QProcess::Running:
-        {
-            if (m_dirtyFilter)
-            {
-                m_dirtyFilter = false;
-                const QString filter = m_deviceWidget->getFilterLineEdit().text();
-                m_filters = filter.split(' ');
-                m_filtersValid = true;
-                reloadTextEdit();
-                maybeAddCompletionAfterDelay(filter);
-            }
-        }
-        break;
-    case QProcess::NotRunning:
-        {
-            qDebug() << "m_logProcess not running";
-            stopLogger();  // FIXME: remove?
-            startLogger();
-        }
-        break;
-    case QProcess::Starting:
-    default:
-        break;
+        m_filters = filter.split(' ');
+        m_filtersValid = true;
+        reloadTextEdit();
+        maybeAddCompletionAfterDelay(filter);
     }
 }
 
@@ -277,137 +262,6 @@ void IOSDevice::reloadTextEdit()
     filterAndAddFromLogBufferToTextEdit();
 }
 
-void IOSDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade)
-{
-    if (s_devicesListProcess.state() == QProcess::NotRunning)
-    {
-        if (s_tempStream.isNull())
-        {
-            s_tempStream = QSharedPointer<QTextStream>::create();
-            s_tempBuffer = QSharedPointer<QString>::create();
-            s_tempStream->setCodec("UTF-8");
-            s_tempStream->setString(&(*s_tempBuffer), QIODevice::ReadWrite | QIODevice::Text);
-        }
-
-        bool deviceListError = false;
-
-        if (s_devicesListProcess.exitCode() != 0 ||
-            s_devicesListProcess.exitStatus() == QProcess::ExitStatus::CrashExit)
-        {
-            deviceListError = true;
-
-            *s_tempStream << s_devicesListProcess.readAllStandardError();
-            const QString errorText = s_tempStream->readLine();
-
-            if (s_devicesListProcess.exitCode() != 0xFF || errorText != "ERROR: Unable to retrieve device list!")
-            {
-                qDebug() << "IOSDevice::s_devicesListProcess exitCode" << s_devicesListProcess.exitCode()
-                         << "; exitStatus" << s_devicesListProcess.exitStatus()
-                         << "; stderr" << errorText;
-            }
-            else
-            {
-#if defined(Q_OS_LINUX)
-                // TODO: if ps uax | grep usbmuxd
-                deviceListError = false;
-#endif
-            }
-        }
-
-        if (!deviceListError)
-        {
-            for (auto& i : s_removedDeviceByTabClose)
-            {
-                i = false;  // not visited
-            }
-
-            for (auto& dev : map)
-            {
-                if (dev->getType() == DeviceType::IOS)
-                {
-                    dev->setVisited(false);
-                }
-            }
-
-            if (s_devicesListProcess.canReadLine())
-            {
-                *s_tempStream << s_devicesListProcess.readAll();
-
-                QString deviceId;
-                while (!s_tempStream->atEnd())
-                {
-                    const bool lineIsRead = s_tempStream->readLineInto(&deviceId);
-                    if (!lineIsRead)
-                    {
-                        break;
-                    }
-
-                    //qDebug() << "deviceId" << deviceId;
-                    if (s_removedDeviceByTabClose.contains(deviceId))
-                    {
-                        s_removedDeviceByTabClose[deviceId] = true;  // visited
-                    }
-                    else
-                    {
-                        auto it = map.find(deviceId);
-                        if (it == map.end())
-                        {
-                            map[deviceId] = BaseDevice::create(
-                                parent,
-                                deviceFacade,
-                                DeviceType::IOS,
-                                deviceId
-                            );
-                        }
-                        else if ((*it)->getType() != DeviceType::IOS)
-                        {
-                            qDebug() << "id collision";
-                        }
-                        else
-                        {
-                            (*it)->updateInfo(true);
-                        }
-                    }
-                }
-            }
-
-            for (auto& dev : map)
-            {
-                if (dev->getType() == DeviceType::IOS)
-                {
-                    if (!dev->isVisited())
-                    {
-                        if (!s_removedDeviceByTabClose.contains(dev->getId()))
-                        {
-                            dev->updateInfo(false);
-                        }
-                    }
-                }
-            }
-
-            for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
-            {
-                const bool becameOffline = it.value() == false;
-                if (becameOffline)
-                {
-                    it = s_removedDeviceByTabClose.erase(it);
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-        }
-
-        stopDevicesListProcess();
-
-        QStringList args;
-        args.append("-l");
-        s_devicesListProcess.setReadChannel(QProcess::StandardOutput);
-        s_devicesListProcess.start("idevice_id", args);
-    }
-}
-
 void IOSDevice::onLogReady()
 {
     maybeReadErrorsPart();
@@ -429,7 +283,7 @@ void IOSDevice::maybeReadErrorsPart()
     m_tempErrorsStream << m_infoProcess.readAllStandardError();
 
     const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
-    for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
+    for (int i = 0; i < MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
     {
         const QString line = m_tempErrorsStream.readLine();
         m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
@@ -439,7 +293,7 @@ void IOSDevice::maybeReadErrorsPart()
 
 void IOSDevice::maybeReadLogPart()
 {
-    for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
+    for (int i = 0; i < MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
         m_tempStream << m_logProcess.readLine();
         const QString line = m_tempStream.readLine();
@@ -448,29 +302,4 @@ void IOSDevice::maybeReadLogPart()
         addToLogBuffer(line);
         filterAndAddToTextEdit(line);
     }
-}
-
-void IOSDevice::releaseTempBuffer()
-{
-    qDebug() << "IOSDevice::releaseTempBuffer";
-    if (!s_tempStream.isNull())
-    {
-        s_tempStream.clear();
-        s_tempBuffer.clear();
-    }
-}
-
-void IOSDevice::stopDevicesListProcess()
-{
-    if (s_devicesListProcess.state() != QProcess::NotRunning)
-    {
-        s_devicesListProcess.terminate();
-        s_devicesListProcess.kill();
-        s_devicesListProcess.close();
-    }
-}
-
-void IOSDevice::removedDeviceByTabClose(const QString& id)
-{
-    s_removedDeviceByTabClose[id] = false;
 }

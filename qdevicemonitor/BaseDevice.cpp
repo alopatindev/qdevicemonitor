@@ -43,9 +43,7 @@ BaseDevice::BaseDevice(
     , m_tabWidget(parent)
     , m_tabIndex(-1)
     , m_deviceFacade(deviceFacade)
-    , m_dirtyFilter(false)
     , m_filtersValid(true)
-    , m_visited(true)
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
 
@@ -149,11 +147,12 @@ void BaseDevice::addFilterAsCompletion()
 void BaseDevice::updateFilter(const QString& filter)
 {
     qDebug() << "BaseDevice::updateFilter(" << filter << ")";
-    m_dirtyFilter = true;
 
     const QString regexpFilter(".*(" % filter % ").*");
     m_columnTextRegexp.setPattern(regexpFilter);
     m_columnTextRegexp.setPatternOptions(QRegularExpression::DotMatchesEverythingOption);
+
+    onUpdateFilter(filter);
 }
 
 void BaseDevice::addToLogBuffer(const QString& text)
@@ -229,5 +228,4 @@ void BaseDevice::updateInfo(const bool online, const QString& additional)
             .arg(additionalWithNewLine)
     );
     setOnline(online);
-    setVisited(true);
 }

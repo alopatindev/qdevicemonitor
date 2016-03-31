@@ -26,8 +26,6 @@
 
 using namespace DataTypes;
 
-static QStringList s_filesToOpen;
-
 TextFileDevice::TextFileDevice(
     QPointer<QTabWidget> parent,
     const QString& id,
@@ -41,12 +39,14 @@ TextFileDevice::TextFileDevice(
     m_deviceWidget->hideVerbosity();
     m_deviceWidget->onLogFileNameChanged(id);
 
+    connect(&m_tailProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
     startLogger();
 }
 
 TextFileDevice::~TextFileDevice()
 {
     qDebug() << "TextFileDevice::~TextFileDevice";
+    disconnect(&m_tailProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
     stopLogger();
 }
 
@@ -74,34 +74,14 @@ void TextFileDevice::stopLogger()
     }
 }
 
-void TextFileDevice::update()
+void TextFileDevice::onUpdateFilter(const QString& filter)
 {
-    switch (m_tailProcess.state())
+    if (m_tailProcess.state() == QProcess::Running)
     {
-    case QProcess::Running:
-        {
-            if (m_dirtyFilter)
-            {
-                m_dirtyFilter = false;
-                const QString filter = m_deviceWidget->getFilterLineEdit().text();
-                m_filters = filter.split(' ');
-                m_filtersValid = true;
-                reloadTextEdit();
-                maybeAddCompletionAfterDelay(filter);
-            }
-
-            for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
-            {
-                m_tempStream << m_tailProcess.readLine();
-                const QString line = m_tempStream.readLine();
-                addToLogBuffer(line);
-                filterAndAddToTextEdit(line);
-            }
-        }
-    case QProcess::NotRunning:
-    case QProcess::Starting:
-    default:
-        break;
+        m_filters = filter.split(' ');
+        m_filtersValid = true;
+        reloadTextEdit();
+        maybeAddCompletionAfterDelay(filter);
     }
 }
 
@@ -172,39 +152,19 @@ void TextFileDevice::reloadTextEdit()
     filterAndAddFromLogBufferToTextEdit();
 }
 
-void TextFileDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade)
-{
-    for (auto logFileIt = s_filesToOpen.constBegin(); logFileIt != s_filesToOpen.constEnd(); ++logFileIt)
-    {
-        const QString& logFile = *logFileIt;
-        const auto it = map.find(logFile);
-        if (it == map.end())
-        {
-            const QString fileName = QFileInfo(logFile).fileName();
-
-            map[logFile] = BaseDevice::create(
-                parent,
-                deviceFacade,
-                DeviceType::TextFile,
-                logFile
-            );
-
-            const auto it = map.find(logFile);
-            (*it)->setHumanReadableName(fileName);
-            (*it)->setHumanReadableDescription(logFile);
-            (*it)->updateTabWidget();
-        }
-    }
-
-    s_filesToOpen.clear();
-}
-
-void TextFileDevice::openLogFile(const QString& logFile)
-{
-    s_filesToOpen.append(logFile);
-}
-
 void TextFileDevice::onLogReady()
 {
-    // TODO: implement
+    QString line;
+    for (int i = 0; i < MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
+    {
+        m_tempStream << m_tailProcess.readLine();
+        m_tempStream.readLineInto(&line);
+        addToLogBuffer(line);
+        filterAndAddToTextEdit(line);
+    }
+
+    if (m_tailProcess.canReadLine())
+    {
+        emit logReady();
+    }
 }

@@ -41,13 +41,10 @@ public:
     );
     ~TextFileDevice() override;
 
-    void update() override;
+    void onUpdateFilter(const QString& filter) override;
     void filterAndAddToTextEdit(const QString& line) override;
     const char* getPlatformName() const override { return "Text File"; }
     void reloadTextEdit() override;
-
-    static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade);
-    static void openLogFile(const QString& logFile);
 
 private:
     void startLogger();

@@ -39,6 +39,8 @@ class BaseDevice : public QObject
     Q_OBJECT
 
 public:
+    static const int MAX_LINES_UPDATE = 30;
+
     static QSharedPointer<BaseDevice> create(
         QPointer<QTabWidget> parent,
         QPointer<DeviceFacade> deviceFacade,
@@ -58,7 +60,7 @@ public:
     ~BaseDevice() override;
 
     void updateTabWidget();
-    virtual void update() = 0;
+    virtual void onUpdateFilter(const QString& filter) = 0;
     virtual void filterAndAddToTextEdit(const QString& line) = 0;
     virtual const char* getPlatformName() const = 0;
     virtual void reloadTextEdit() = 0;
@@ -74,9 +76,6 @@ public:
     inline bool isOnline() const { return m_online; }
     void setOnline(const bool online);
     virtual void onOnlineChange(const bool online) { (void) online; }
-
-    inline void setVisited(const bool visited) { m_visited = visited; }
-    inline bool isVisited() const { return m_visited; }
 
     inline int getTabIndex() const { return m_tabIndex; }
     inline void setTabIndex(const int tabIndex) { m_tabIndex = tabIndex; }
@@ -121,7 +120,6 @@ protected:
     QTextStream m_tempStream;
 
 private:
-    bool m_visited;
     QString m_completionToAdd;
     QTimer m_completionAddTimer;
 };

@@ -30,9 +30,7 @@ namespace DataTypes
     {
         TextFile,
         Android,
-        IOS,
-
-        DeviceTypeEnd
+        IOS
     };
 
     typedef QHash<QString, QSharedPointer<BaseDevice>> DevicesMap;

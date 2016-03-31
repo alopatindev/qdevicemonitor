@@ -19,6 +19,9 @@
 #define DEVICEFACADE_H
 
 #include "DataTypes.h"
+#include "AndroidDevicesTracker.h"
+#include "IOSDevicesTracker.h"
+#include "TextFileDevicesTracker.h"
 
 #include <QCompleter>
 #include <QObject>
@@ -28,6 +31,7 @@
 #include <QTimer>
 #include <QSettings>
 #include <QStringList>
+#include <QVector>
 
 class DeviceWidget;
 
@@ -36,8 +40,16 @@ class DeviceFacade : public QObject
     Q_OBJECT
 
 private:
+    AndroidDevicesTracker m_androidDevicesTracker;
+    IOSDevicesTracker m_iOSDevicesTracker;
+    TextFileDevicesTracker m_textFileDevicesTracker;
+    const QVector<QPointer<BaseDevicesTracker>> m_trackers = {
+        &m_androidDevicesTracker,
+        &m_iOSDevicesTracker,
+        &m_textFileDevicesTracker
+    };
+
     DataTypes::DevicesMap m_devicesMap;
-    QTimer m_updateTimer;
     QTimer m_filesRemovalTimer;
 
     int m_visibleBlocks;
@@ -53,11 +65,9 @@ private:
     QString m_textEditorPath;
 
 public:
-    static const int UPDATE_FREQUENCY = 20;
     static const int LOG_REMOVAL_FREQUENCY = 30 * 60 * 1000;
     static const int MAX_FILTER_COMPLETIONS = 60;
     static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
-    static const int MAX_LINES_UPDATE = 30;
 
     explicit DeviceFacade(QPointer<QTabWidget> parent = 0);
     ~DeviceFacade();
@@ -68,8 +78,8 @@ public:
     void clearLog();
     void openLogFile();
 
-    void start();
-    void stop();
+    void openTextFileDevice(const QString& fullPath);
+
     void loadSettings(const QSettings& s);
     void saveSettings(QSettings& s);
     void allDevicesReloadText();
@@ -88,12 +98,12 @@ public:
 
 signals:
 
-public slots:
-    void update();
+private slots:
     void removeOldLogFiles();
+    void onDeviceConnected(const DataTypes::DeviceType type, const QString& id);
+    void onDeviceDisconnected(const DataTypes::DeviceType type, const QString& id);
 
 private:
-    void updateDevicesMap();
     void fixTabIndexes(const int removedTabIndex);
     QPointer<DeviceWidget> getCurrentDeviceWidget();
 };

@@ -14,12 +14,14 @@ TEMPLATE = app
 
 RESOURCES = resources.qrc
 
-SOURCES += main.cpp\
-        MainWindow.cpp \
+SOURCES += main.cpp \
+    MainWindow.cpp \
     DeviceFacade.cpp \
     AndroidDevice.cpp \
     IOSDevice.cpp \
     TextFileDevice.cpp \
+    AndroidDevicesTracker.cpp \
+    IOSDevicesTracker.cpp \
     BaseDevice.cpp \
     DeviceWidget.cpp \
     SettingsDialog.cpp \
@@ -31,6 +33,10 @@ HEADERS  += MainWindow.h \
     IOSDevice.h \
     TextFileDevice.h \
     BaseDevice.h \
+    BaseDevicesTracker.h \
+    AndroidDevicesTracker.h \
+    IOSDevicesTracker.h \
+    TextFileDevicesTracker.h \
     DataTypes.h \
     DeviceWidget.h \
     SettingsDialog.h \

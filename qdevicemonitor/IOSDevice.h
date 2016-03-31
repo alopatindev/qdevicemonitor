@@ -49,19 +49,14 @@ public:
     );
     ~IOSDevice() override;
 
-    void update() override;
+    void onUpdateFilter(const QString& filter) override;
     void filterAndAddToTextEdit(const QString& line) override;
     const char* getPlatformName() const override { return "iOS"; }
     void reloadTextEdit() override;
 
-    static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade);
-    static void releaseTempBuffer();
-    static void stopDevicesListProcess();
-    static void removedDeviceByTabClose(const QString& id);
-
 private:
+    void startInfoProcess();
     void stopInfoProcess();
-    void updateModel();
     void startLogger();
     void stopLogger();
     void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
@@ -70,6 +65,7 @@ private:
     void maybeReadLogPart();
 
 private slots:
+    void onUpdateModel();
     void onLogReady() override;
 };
 

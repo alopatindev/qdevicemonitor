@@ -69,6 +69,7 @@ void DeviceWidget::on_verbositySlider_valueChanged(const int value)
     qDebug() << "verbosity" << value;
     const char* const v = Verbosity[value];
     m_ui->verbosityLabel->setText(tr(v));
+    emit verbosityLevelChanged(value);
 }
 
 void DeviceWidget::on_wrapCheckBox_toggled(const bool checked)

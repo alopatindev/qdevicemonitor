@@ -48,24 +48,21 @@ public:
     );
     ~AndroidDevice() override;
 
-    void update() override;
+    void onUpdateFilter(const QString& filter) override;
     void filterAndAddToTextEdit(const QString& line) override;
     const char* getPlatformName() const override { return "Android"; }
     void reloadTextEdit() override;
-
-    static void maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade);
-    static void releaseTempBuffer();
-    static void stopDevicesListProcess();
-    static void removedDeviceByTabClose(const QString& id);
 
     void onOnlineChange(const bool online) override;
 
 private slots:
     void onLogReady() override;
+    void onUpdateModel();
+    void onVerbosityLevelChange(const int level);
 
 private:
+    void startInfoProcess();
     void stopInfoProcess();
-    void updateModel();
     void startLogger();
     void stopLogger();
     void maybeClearAdbLog();

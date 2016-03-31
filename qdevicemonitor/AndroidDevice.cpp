@@ -25,34 +25,36 @@
 
 using namespace DataTypes;
 
-static QSharedPointer<QString> s_tempBuffer;
-static QSharedPointer<QTextStream> s_tempStream;
-
-static QProcess s_devicesListProcess;
-static QHash<QString, bool> s_removedDeviceByTabClose;
-
 AndroidDevice::AndroidDevice(
     QPointer<QTabWidget> parent,
     const QString& id,
     const DeviceType type,
     const QString& humanReadableDescription,
     QPointer<DeviceFacade> deviceFacade
-) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
-    , m_lastVerbosityLevel(m_deviceWidget->getVerbosityLevel())
+)
+    : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
     , m_didReadModel(false)
 {
     qDebug() << "AndroidDevice::AndroidDevice";
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefixes (<b>pid:</b>, <b>tid:</b>, <b>tag:</b> or <b>text:</b>) with Plain Text</li><li>Regular Expressions</li></ul>"));
-    updateModel();
+
+    connect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &AndroidDevice::onUpdateModel);
     connect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
+    connect(m_deviceWidget.data(), &DeviceWidget::verbosityLevelChanged, this, &AndroidDevice::onVerbosityLevelChange);
+
+    startInfoProcess();
 }
 
 AndroidDevice::~AndroidDevice()
 {
     qDebug() << "AndroidDevice::~AndroidDevice";
+
     stopLogger();
-    disconnect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
     stopInfoProcess();
+
+    disconnect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &AndroidDevice::onUpdateModel);
+    disconnect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
+    disconnect(m_deviceWidget.data(), &DeviceWidget::verbosityLevelChanged, this, &AndroidDevice::onVerbosityLevelChange);
 }
 
 void AndroidDevice::stopInfoProcess()
@@ -65,9 +67,9 @@ void AndroidDevice::stopInfoProcess()
     }
 }
 
-void AndroidDevice::updateModel()
+void AndroidDevice::startInfoProcess()
 {
-    qDebug() << "updateModel" << m_id;
+    qDebug() << "AndroidDevice::startInfoProcess" << m_id;
     QStringList args;
     args.append("-s");
     args.append(m_id);
@@ -78,14 +80,43 @@ void AndroidDevice::updateModel()
     m_infoProcess.start("adb", args);
 }
 
-void AndroidDevice::startLogger()
+void AndroidDevice::onUpdateModel()
 {
-    if (!m_didReadModel)
+    qDebug() << "AndroidDevice::onUpdateModel";
+
+    if (m_infoProcess.canReadLine())
     {
-        return;
+        const QString model = m_infoProcess.readLine().trimmed();
+        if (!model.isEmpty())
+        {
+            qDebug() << "AndroidDevice::onUpdateModel" << m_id << "=>" << model;
+            m_humanReadableName = model;
+            updateTabWidget();
+            m_didReadModel = true;
+            startLogger();
+        }
     }
 
-    qDebug() << "AndroidDevice::startLogger";
+    stopInfoProcess();
+
+    if (!m_didReadModel)
+    {
+        qDebug() << "AndroidDevice::onUpdateModel failed; retrying";
+        startInfoProcess();
+    }
+}
+
+void AndroidDevice::startLogger()
+{
+    if (!m_didReadModel || m_logProcess.state() != QProcess::NotRunning)
+    {
+        qDebug() << "AndroidDevice::startLogger skipping; m_didReadModel =" << m_didReadModel << "m_logProcess.state =" << m_logProcess.state();
+        return;
+    }
+    else
+    {
+        qDebug() << "AndroidDevice::startLogger";
+    }
 
     const QString currentLogAbsFileName = Utils::getNewLogFilePath(
         QString("%1-%2-")
@@ -126,71 +157,21 @@ void AndroidDevice::stopLogger()
     m_logFile.close();
 }
 
-void AndroidDevice::update()
+void AndroidDevice::onUpdateFilter(const QString& filter)
 {
-    if (!m_didReadModel && m_infoProcess.state() == QProcess::NotRunning)
+    if (m_logProcess.state() == QProcess::Running)
     {
-        if (m_infoProcess.canReadLine())
-        {
-            const QString model = m_infoProcess.readLine().trimmed();
-            if (!model.isEmpty())
-            {
-                qDebug() << "updateModel" << m_id << "=>" << model;
-                m_humanReadableName = model;
-                updateTabWidget();
-                m_didReadModel = true;
-                //stopLogger();
-                startLogger();
-            }
-        }
-
-        stopInfoProcess();
-
-        if (!m_didReadModel)
-        {
-            updateModel();
-        }
+        m_filters = filter.split(' ');
+        m_filtersValid = true;
+        reloadTextEdit();
+        maybeAddCompletionAfterDelay(filter);
     }
+}
 
-    switch (m_logProcess.state())
-    {
-    case QProcess::Running:
-        {
-            if (!isOnline())
-            {
-                qDebug() << "not updating '" << m_id << "' because it's offline";
-                //stopLogger();
-            }
-            else if (m_deviceWidget->getVerbosityLevel() != m_lastVerbosityLevel)
-            {
-                m_lastVerbosityLevel = m_deviceWidget->getVerbosityLevel();
-                reloadTextEdit();
-            }
-            else if (m_dirtyFilter)
-            {
-                m_dirtyFilter = false;
-                const QString filter = m_deviceWidget->getFilterLineEdit().text();
-                m_filters = filter.split(' ');
-                m_filtersValid = true;
-                reloadTextEdit();
-                maybeAddCompletionAfterDelay(filter);
-            }
-        }
-        break;
-    case QProcess::NotRunning:
-        {
-            if (isOnline())
-            {
-                qDebug() << "m_logProcess not running; are we still online?";
-                //stopLogger();
-                //startLogger();
-            }
-        }
-        break;
-    case QProcess::Starting:
-    default:
-        break;
-    }
+void AndroidDevice::onVerbosityLevelChange(const int level)
+{
+    (void) level;
+    reloadTextEdit();
 }
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)
@@ -336,142 +317,10 @@ void AndroidDevice::maybeClearAdbLog()
     }
 }
 
-void AndroidDevice::maybeAddNewDevicesOfThisType(QPointer<QTabWidget> parent, DevicesMap& map, QPointer<DeviceFacade> deviceFacade)
-{
-    if (s_devicesListProcess.state() == QProcess::NotRunning)
-    {
-        if (s_tempStream.isNull())
-        {
-            s_tempStream = QSharedPointer<QTextStream>::create();
-            s_tempBuffer = QSharedPointer<QString>::create();
-            s_tempStream->setCodec("UTF-8");
-            s_tempStream->setString(&(*s_tempBuffer), QIODevice::ReadWrite | QIODevice::Text);
-        }
-
-        if (s_devicesListProcess.exitCode() != 0 ||
-            s_devicesListProcess.exitStatus() == QProcess::ExitStatus::CrashExit)
-        {
-            qDebug() << "AndroidDevice::s_devicesListProcess exitCode" << s_devicesListProcess.exitCode()
-                     << "; exitStatus" << s_devicesListProcess.exitStatus()
-                     << "; stderr" << s_devicesListProcess.readAllStandardError();
-        }
-        else
-        {
-            for (auto& i : s_removedDeviceByTabClose)
-            {
-                i = false;  // not visited
-            }
-
-            for (auto& dev : map)
-            {
-                if (dev->getType() == DeviceType::Android)
-                {
-                    dev->setVisited(false);
-                }
-            }
-
-            if (s_devicesListProcess.canReadLine())
-            {
-                *s_tempStream << s_devicesListProcess.readAll();
-
-                QString line;
-                while (!s_tempStream->atEnd())
-                {
-                    const bool lineIsRead = s_tempStream->readLineInto(&line);
-                    if (!lineIsRead)
-                    {
-                        break;
-                    }
-                    else if (line.contains("List of devices attached"))
-                    {
-                        continue;
-                    }
-
-                    // TODO: replace split with splitRef
-                    const QStringList lineSplit = line.split('\t');
-                    if (lineSplit.count() >= 2)
-                    {
-                        const QString& deviceId = lineSplit[0];
-                        const QString& deviceStatus = lineSplit[1];
-                        //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
-                        if (s_removedDeviceByTabClose.contains(deviceId))
-                        {
-                            s_removedDeviceByTabClose[deviceId] = true;  // visited
-                        }
-                        else
-                        {
-                            auto it = map.find(deviceId);
-                            if (it == map.end())
-                            {
-                                map[deviceId] = BaseDevice::create(
-                                    parent,
-                                    deviceFacade,
-                                    DeviceType::Android,
-                                    deviceId
-                                );
-                            }
-                            else if ((*it)->getType() != DeviceType::Android)
-                            {
-                                qDebug() << "id collision";
-                            }
-                            else
-                            {
-                                const bool online = deviceStatus == "device";
-                                if (online)
-                                {
-                                    (*it)->updateInfo(online);
-                                }
-                                else
-                                {
-                                    (*it)->updateInfo(online, deviceStatus);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (auto& dev : map)
-            {
-                if (dev->getType() == DeviceType::Android)
-                {
-                    if (!dev->isVisited())
-                    {
-                        if (!s_removedDeviceByTabClose.contains(dev->getId()))
-                        {
-                            dev->updateInfo(false);
-                        }
-                    }
-                }
-            }
-
-            for (auto it = s_removedDeviceByTabClose.begin(); it != s_removedDeviceByTabClose.end(); )
-            {
-                const bool becameOffline = it.value() == false;
-                if (becameOffline)
-                {
-                    it = s_removedDeviceByTabClose.erase(it);
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-        }
-
-        stopDevicesListProcess();
-
-        QStringList args;
-        args.append("devices");
-        s_devicesListProcess.setReadChannel(QProcess::StandardOutput);
-        s_devicesListProcess.start("adb", args);
-    }
-}
-
 void AndroidDevice::onLogReady()
 {
     QString line;
-    for (int i = 0; i < DeviceFacade::MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
+    for (int i = 0; i < MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
         m_tempStream << m_logProcess.readLine();
         if (m_tempStream.readLineInto(&line))
@@ -487,29 +336,4 @@ void AndroidDevice::onLogReady()
     {
         emit logReady();
     }
-}
-
-void AndroidDevice::releaseTempBuffer()
-{
-    qDebug() << "AndroidDevice::releaseTempBuffer";
-    if (!s_tempStream.isNull())
-    {
-        s_tempStream.clear();
-        s_tempBuffer.clear();
-    }
-}
-
-void AndroidDevice::stopDevicesListProcess()
-{
-    if (s_devicesListProcess.state() != QProcess::NotRunning)
-    {
-        s_devicesListProcess.terminate();
-        s_devicesListProcess.kill();
-        s_devicesListProcess.close();
-    }
-}
-
-void AndroidDevice::removedDeviceByTabClose(const QString& id)
-{
-    s_removedDeviceByTabClose[id] = false;
 }
