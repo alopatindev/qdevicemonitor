@@ -88,19 +88,27 @@ install:
 
 script:
   - source ci-scripts/set_env.sh
-  - cd "${PROGRAMNAME}"
+  - cd "${PROGRAMNAME}/tests"
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
+            qmake -spec linux-g++;
+            cd ..;
             qmake -spec linux-g++ 'CONFIG += release';
         fi;
         if [ $CXX = "clang++" ]; then
+            qmake -spec linux-clang;
+            cd ..;
             qmake -spec linux-clang 'CONFIG += release';
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         if [ $CXX = "g++" ]; then
+            qmake -spec macx-g++;
+            cd ..;
             qmake -spec macx-g++ 'CONFIG += release';
         fi;
         if [ $CXX = "clang++" ]; then
+            qmake -spec macx-clang;
+            cd ..;
             qmake -spec macx-clang 'CONFIG += release';
         fi;
     fi

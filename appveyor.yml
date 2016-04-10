@@ -44,7 +44,11 @@ build_script:
   - copy "%QTDIR%\plugins\platforms\qwindows.dll" platforms\
   - move "%CYG_HOMEDIR%\3rdparty" .
   - cd ..
-  - cd %PROGRAMNAME%
+  - cd "%PROGRAMNAME%\tests"
+  - qmake
+  - mingw32-make -j4
+  - tests
+  - cd ..
   - qmake "CONFIG += release"
   - mingw32-make -j4
   - dir release
