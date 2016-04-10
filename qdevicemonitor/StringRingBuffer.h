@@ -13,11 +13,17 @@ class StringRingBuffer : public QObject
     size_t m_begin;
     size_t m_size;
 
-    StringRingBuffer() {}
-    void operator=(StringRingBuffer&) {}
+    StringRingBuffer()
+    {
+    }
+
+    StringRingBuffer& operator=(StringRingBuffer&)
+    {
+        return *this;
+    }
 
 public:
-    StringRingBuffer(const size_t capacity)
+    explicit StringRingBuffer(const size_t capacity)
         : m_data(capacity)
         , m_begin(0)
         , m_size(0)

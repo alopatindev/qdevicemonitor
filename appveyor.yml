@@ -47,7 +47,8 @@ build_script:
   - cd "%PROGRAMNAME%\tests"
   - qmake
   - mingw32-make -j4
-  - tests
+  - dir
+  - debug/tests
   - cd ..
   - qmake "CONFIG += release"
   - mingw32-make -j4
