@@ -19,7 +19,7 @@
 #define MAINWINDOW_H
 
 #include "ui_MainWindow.h"
-#include "DeviceFacade.h"
+#include "devices/DeviceFacade.h"
 
 #include <QKeyEvent>
 #include <QMainWindow>

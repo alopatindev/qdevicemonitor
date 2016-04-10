@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 
 QT_VERSION = 5
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -14,38 +14,41 @@ TEMPLATE = app
 
 RESOURCES = resources.qrc
 
-SOURCES += main.cpp \
-    MainWindow.cpp \
-    DeviceFacade.cpp \
-    AndroidDevice.cpp \
-    IOSDevice.cpp \
-    TextFileDevice.cpp \
-    AndroidDevicesTracker.cpp \
-    IOSDevicesTracker.cpp \
-    BaseDevice.cpp \
-    DeviceWidget.cpp \
-    SettingsDialog.cpp \
-    Utils.cpp
+SOURCES += \
+    main.cpp \
+    Utils.cpp \
+    devices/BaseDevice.cpp \
+    devices/DeviceFacade.cpp \
+    devices/AndroidDevice.cpp \
+    devices/IOSDevice.cpp \
+    devices/TextFileDevice.cpp \
+    devices/trackers/AndroidDevicesTracker.cpp \
+    devices/trackers/IOSDevicesTracker.cpp \
+    ui/MainWindow.cpp \
+    ui/DeviceWidget.cpp \
+    ui/SettingsDialog.cpp
 
-HEADERS  += MainWindow.h \
-    DeviceFacade.h \
-    AndroidDevice.h \
-    IOSDevice.h \
-    TextFileDevice.h \
-    BaseDevice.h \
-    BaseDevicesTracker.h \
-    AndroidDevicesTracker.h \
-    IOSDevicesTracker.h \
-    TextFileDevicesTracker.h \
-    DataTypes.h \
-    DeviceWidget.h \
-    SettingsDialog.h \
+HEADERS += \
     Utils.h \
-    ThemeColors.h
+    DataTypes.h \
+    ui/MainWindow.h \
+    devices/DeviceFacade.h \
+    devices/AndroidDevice.h \
+    devices/IOSDevice.h \
+    devices/TextFileDevice.h \
+    devices/BaseDevice.h \
+    devices/trackers/BaseDevicesTracker.h \
+    devices/trackers/AndroidDevicesTracker.h \
+    devices/trackers/IOSDevicesTracker.h \
+    devices/trackers/TextFileDevicesTracker.h \
+    ui/DeviceWidget.h \
+    ui/SettingsDialog.h \
+    ui/ThemeColors.h
 
-FORMS    += MainWindow.ui \
-    DeviceWidget.ui \
-    SettingsDialog.ui
+FORMS += \
+    ui/MainWindow.ui \
+    ui/DeviceWidget.ui \
+    ui/SettingsDialog.ui
 
 CONFIG += c++11
 

@@ -16,7 +16,7 @@
 */
 
 #include "DeviceFacade.h"
-#include "SettingsDialog.h"
+#include "ui/SettingsDialog.h"
 #include "Utils.h"
 
 #include "BaseDevice.h"

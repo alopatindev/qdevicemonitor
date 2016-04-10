@@ -19,7 +19,7 @@
 #define DEVICEWIDGET_H
 
 #include "ui_DeviceWidget.h"
-#include "DeviceFacade.h"
+#include "devices/DeviceFacade.h"
 
 #include <QPalette>
 #include <QPointer>

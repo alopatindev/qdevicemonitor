@@ -18,7 +18,7 @@
 #ifndef BASEDEVICE_H
 #define BASEDEVICE_H
 
-#include "DeviceWidget.h"
+#include "ui/DeviceWidget.h"
 #include "DeviceFacade.h"
 #include "DataTypes.h"
 

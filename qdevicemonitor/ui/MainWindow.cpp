@@ -17,7 +17,7 @@
 
 #include "MainWindow.h"
 #include "SettingsDialog.h"
-#include "TextFileDevice.h"
+#include "devices/TextFileDevice.h"
 #include "Utils.h"
 
 #include <cstdlib>

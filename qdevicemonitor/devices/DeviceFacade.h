@@ -19,9 +19,9 @@
 #define DEVICEFACADE_H
 
 #include "DataTypes.h"
-#include "AndroidDevicesTracker.h"
-#include "IOSDevicesTracker.h"
-#include "TextFileDevicesTracker.h"
+#include "trackers/AndroidDevicesTracker.h"
+#include "trackers/IOSDevicesTracker.h"
+#include "trackers/TextFileDevicesTracker.h"
 
 #include <QCompleter>
 #include <QObject>

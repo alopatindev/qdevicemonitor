@@ -15,7 +15,7 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "MainWindow.h"
+#include "ui/MainWindow.h"
 #include <QApplication>
 
 int main(int argc, char* argv[])

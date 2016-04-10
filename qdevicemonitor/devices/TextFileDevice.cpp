@@ -17,7 +17,7 @@
 
 #include "TextFileDevice.h"
 #include "Utils.h"
-#include "ThemeColors.h"
+#include "ui/ThemeColors.h"
 
 #include <QDebug>
 #include <QFileInfo>
