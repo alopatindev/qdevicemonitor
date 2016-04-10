@@ -21,6 +21,7 @@
 #include "ui/DeviceWidget.h"
 #include "DeviceFacade.h"
 #include "DataTypes.h"
+#include "StringRingBuffer.h"
 
 #include <QPointer>
 #include <QProcess>
@@ -114,7 +115,7 @@ protected:
     bool m_dirtyFilter;
     bool m_filtersValid;
     QStringList m_filters;
-    QStringList m_logBuffer;
+    QSharedPointer<StringRingBuffer> m_logBuffer;
     QRegularExpression m_columnTextRegexp;
     QString m_tempBuffer;
     QTextStream m_tempStream;

@@ -157,30 +157,25 @@ void BaseDevice::updateFilter(const QString& filter)
 
 void BaseDevice::addToLogBuffer(const QString& text)
 {
-    if (m_logBuffer.size() >= m_deviceFacade->getVisibleLines())
-    {
-        m_logBuffer.removeFirst();
-    }
-    m_logBuffer.append(text);
+    m_logBuffer->push(text);
 }
 
 void BaseDevice::updateLogBufferSpace()
 {
-    qDebug() << "updateLogBufferSpace" << m_deviceFacade->getVisibleLines();
-    const int64_t extraLines = static_cast<int64_t>(m_logBuffer.size()) - m_deviceFacade->getVisibleLines();
-    if (extraLines > 0)
+    const size_t lines = static_cast<size_t>(m_deviceFacade->getVisibleLines());
+    qDebug() << "updateLogBufferSpace" << lines;
+    if (m_logBuffer.isNull() || m_logBuffer->getCapacity() != lines)
     {
-        qDebug() << "removing" << extraLines << "extra lines from log buffer";
-        m_logBuffer.erase(m_logBuffer.begin(), m_logBuffer.begin() + extraLines);
+        qDebug() << "recreating buffer";
+        m_logBuffer = QSharedPointer<StringRingBuffer>::create(m_deviceFacade->getVisibleLines());
     }
-    m_logBuffer.reserve(m_deviceFacade->getVisibleLines());
 }
 
 void BaseDevice::filterAndAddFromLogBufferToTextEdit()
 {
-    for (const QString& line : m_logBuffer)
+    for (auto it = m_logBuffer->constBegin(); it.isValid(); it++)
     {
-        filterAndAddToTextEdit(line);
+        filterAndAddToTextEdit(*it);
     }
 }
 

@@ -29,8 +29,9 @@ SOURCES += \
     ui/SettingsDialog.cpp
 
 HEADERS += \
-    Utils.h \
     DataTypes.h \
+    StringRingBuffer.h \
+    Utils.h \
     ui/MainWindow.h \
     devices/DeviceFacade.h \
     devices/AndroidDevice.h \
