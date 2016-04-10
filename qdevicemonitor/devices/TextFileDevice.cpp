@@ -158,7 +158,12 @@ void TextFileDevice::onLogReady()
     for (int i = 0; i < MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
     {
         m_tempStream << m_tailProcess.readLine();
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        line = m_tempStream.readLine();
+#else
         m_tempStream.readLineInto(&line);
+#endif
         addToLogBuffer(line);
         filterAndAddToTextEdit(line);
     }

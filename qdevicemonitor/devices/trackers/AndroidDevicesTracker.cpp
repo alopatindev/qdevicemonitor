@@ -49,33 +49,6 @@ void AndroidDevicesTracker::updateConnectedDevices()
     m_connectedDevices = m_nextConnectedDevices;
 }
 
-/*
-    if (s_devicesListProcess.canReadLine())
-    {
-        *s_tempStream << s_devicesListProcess.readAll();
-
-        QString line;
-        while (!s_tempStream->atEnd())
-        {
-            const bool lineIsRead = s_tempStream->readLineInto(&line);
-            if (!lineIsRead)
-            {
-                break;
-            }
-            else if (line.contains("List of devices attached"))
-            {
-                continue;
-            }
-
-            // TODO: replace split with splitRef
-            const QStringList lineSplit = line.split('\t');
-            if (lineSplit.count() >= 2)
-            {
-                const QString& deviceId = lineSplit[0];
-                const QString& deviceStatus = lineSplit[1];
-                //qDebug() << "deviceId" << deviceId << "; deviceStatus" << deviceStatus;
-*/
-
 void AndroidDevicesTracker::updateNextConnectedDevices()
 {
     m_nextConnectedDevices.clear();
@@ -88,7 +61,13 @@ void AndroidDevicesTracker::updateNextConnectedDevices()
     QString line;
     while (!m_codecStream.atEnd())
     {
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        line = m_codecStream.readLine();
+        const bool lineIsRead = !line.isEmpty();
+#else
         const bool lineIsRead = m_codecStream.readLineInto(&line);
+#endif
         if (!lineIsRead)
         {
             break;

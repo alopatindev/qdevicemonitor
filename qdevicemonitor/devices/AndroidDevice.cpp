@@ -323,7 +323,13 @@ void AndroidDevice::onLogReady()
     for (int i = 0; i < MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
         m_tempStream << m_logProcess.readLine();
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        line = m_tempStream.readLine();
+        if (!line.isEmpty())
+#else
         if (m_tempStream.readLineInto(&line))
+#endif
         {
             *m_logFileStream << line << "\n";
             m_logFileStream->flush();

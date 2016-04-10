@@ -52,7 +52,12 @@ bool IOSDevicesTracker::checkErrors()
         result = true;
 
         m_codecStream << m_listProcess.readAllStandardError();
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        errorText = m_codecStream.readLine();
+#else
         (void) m_codecStream.readLineInto(&errorText);
+#endif
         const bool listProcessFailed =
             m_listProcess.exitCode() != 0xFF ||
             errorText != "ERROR: Unable to retrieve device list!";
@@ -101,7 +106,13 @@ void IOSDevicesTracker::updateNextConnectedDevices()
     QString deviceId;
     while (!m_codecStream.atEnd())
     {
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        deviceId = m_codecStream.readLine();
+        const bool lineIsRead = !deviceId.isEmpty();
+#else
         const bool lineIsRead = m_codecStream.readLineInto(&deviceId);
+#endif
         if (!lineIsRead)
         {
             break;
