@@ -37,3 +37,4 @@ tags
 *.swp
 qdevicemonitor/qdevicemonitor
 qdevicemonitor/qdevicemonitor.app
+qdevicemonitor/tests/tests
