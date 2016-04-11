@@ -52,18 +52,26 @@ DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
         connect(it->data(), &BaseDevicesTracker::deviceConnected, this, &DeviceFacade::onDeviceConnected);
         connect(it->data(), &BaseDevicesTracker::deviceDisconnected, this, &DeviceFacade::onDeviceDisconnected);
     }
+
+    connect(&m_updateTimer, &QTimer::timeout, &m_androidDevicesTracker, &BaseDevicesTracker::update);
+    connect(&m_updateTimer, &QTimer::timeout, &m_iOSDevicesTracker, &BaseDevicesTracker::update);
+    m_updateTimer.start(UPDATE_FREQUENCY);
 }
 
 DeviceFacade::~DeviceFacade()
 {
     qDebug() << "~DeviceFacade";
-    disconnect(&m_filesRemovalTimer, nullptr, this, nullptr);
+
+    disconnect(&m_filesRemovalTimer, &QTimer::timeout, this, &DeviceFacade::removeOldLogFiles);
 
     for (auto it = m_trackers.constBegin(); it != m_trackers.constEnd(); ++it)
     {
         disconnect(it->data(), &BaseDevicesTracker::deviceConnected, this, &DeviceFacade::onDeviceConnected);
         disconnect(it->data(), &BaseDevicesTracker::deviceDisconnected, this, &DeviceFacade::onDeviceDisconnected);
     }
+
+    disconnect(&m_updateTimer, &QTimer::timeout, &m_androidDevicesTracker, &BaseDevicesTracker::update);
+    disconnect(&m_updateTimer, &QTimer::timeout, &m_iOSDevicesTracker, &BaseDevicesTracker::update);
 }
 
 void DeviceFacade::loadSettings(const QSettings& s)

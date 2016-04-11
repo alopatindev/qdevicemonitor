@@ -135,7 +135,7 @@ void BaseDevice::maybeAddCompletionAfterDelay(const QString& filter)
     qDebug() << "BaseDevice::maybeAddCompletionAfterDelay" << filter;
     m_completionToAdd = filter;
     m_completionAddTimer.stop();
-    m_completionAddTimer.start(DeviceFacade::COMPLETION_ADD_TIMEOUT);
+    m_completionAddTimer.start(COMPLETION_ADD_TIMEOUT);
 }
 
 void BaseDevice::addFilterAsCompletion()

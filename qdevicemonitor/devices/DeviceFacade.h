@@ -50,7 +50,9 @@ private:
     };
 
     DataTypes::DevicesMap m_devicesMap;
+
     QTimer m_filesRemovalTimer;
+    QTimer m_updateTimer;
 
     int m_visibleBlocks;
     QString m_font;
@@ -66,8 +68,8 @@ private:
 
 public:
     static const int LOG_REMOVAL_FREQUENCY = 30 * 60 * 1000;
+    static const int UPDATE_FREQUENCY = 1000;
     static const int MAX_FILTER_COMPLETIONS = 60;
-    static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
 
     explicit DeviceFacade(QPointer<QTabWidget> parent = 0);
     ~DeviceFacade();

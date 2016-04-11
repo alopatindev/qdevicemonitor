@@ -9,22 +9,12 @@ class BaseDevicesTracker : public QObject
 {
     Q_OBJECT
 
-    static const int UPDATE_FREQUENCY = 20;
-    QTimer m_updateTimer;
-
-private slots:
+public slots:
     virtual void update() = 0;
 
 public:
-    BaseDevicesTracker()
-    {
-        connect(&m_updateTimer, &QTimer::timeout, this, &BaseDevicesTracker::update);
-        m_updateTimer.start(UPDATE_FREQUENCY);
-    }
-
     virtual ~BaseDevicesTracker()
     {
-        disconnect(&m_updateTimer, &QTimer::timeout, this, &BaseDevicesTracker::update);
     }
 
 signals:

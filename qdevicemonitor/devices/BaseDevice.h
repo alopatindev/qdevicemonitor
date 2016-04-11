@@ -41,6 +41,7 @@ class BaseDevice : public QObject
 
 public:
     static const int MAX_LINES_UPDATE = 30;
+    static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
 
     static QSharedPointer<BaseDevice> create(
         QPointer<QTabWidget> parent,
