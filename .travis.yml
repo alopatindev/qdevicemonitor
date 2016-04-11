@@ -142,6 +142,7 @@ script:
         mkdir "${THIRD_PARTY_DIR}";
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
+        copy_3rdparty libusb "${THIRD_PARTY_DIR}";
 
         sudo dtruss macdeployqt "${APP_DIR}" -dmg -verbose=3;
         ls -la;

@@ -32,16 +32,25 @@
 
 using namespace DataTypes;
 
+static QPointer<DeviceFacade> s_this;
+
 DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
     : QObject(parent)
+    , m_trackersUpdateCount(0)
     , m_visibleBlocks(500)
     , m_fontSize(12)
     , m_fontBold(false)
     , m_darkTheme(false)
     , m_clearAndroidLog(true)
+    , m_libusbInitialized(false)
+    , m_libusbHotplugRegistered(false)
     , m_autoRemoveFilesHours(48)
 {
     qDebug() << "DeviceFacade";
+
+    Q_ASSERT_X(s_this.isNull(), "DeviceFacade", "only one instance is allowed");
+    s_this = this;
+
     m_filterCompleter.setModel(&m_filterCompleterModel);
 
     connect(&m_filesRemovalTimer, &QTimer::timeout, this, &DeviceFacade::removeOldLogFiles);
@@ -53,9 +62,7 @@ DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
         connect(it->data(), &BaseDevicesTracker::deviceDisconnected, this, &DeviceFacade::onDeviceDisconnected);
     }
 
-    connect(&m_updateTimer, &QTimer::timeout, &m_androidDevicesTracker, &BaseDevicesTracker::update);
-    connect(&m_updateTimer, &QTimer::timeout, &m_iOSDevicesTracker, &BaseDevicesTracker::update);
-    m_updateTimer.start(UPDATE_FREQUENCY);
+    initTrackersUpdater();
 }
 
 DeviceFacade::~DeviceFacade()
@@ -70,8 +77,143 @@ DeviceFacade::~DeviceFacade()
         disconnect(it->data(), &BaseDevicesTracker::deviceDisconnected, this, &DeviceFacade::onDeviceDisconnected);
     }
 
-    disconnect(&m_updateTimer, &QTimer::timeout, &m_androidDevicesTracker, &BaseDevicesTracker::update);
-    disconnect(&m_updateTimer, &QTimer::timeout, &m_iOSDevicesTracker, &BaseDevicesTracker::update);
+    releaseTrackersUpdater();
+}
+
+void DeviceFacade::initTrackersUpdater()
+{
+    connect(&m_trackersUpdateTimer, &QTimer::timeout, this, &DeviceFacade::trackersUpdate);
+
+    connect(&m_libusbUpdateTimer, &QTimer::timeout, this, [=] {
+        timeval zeroTimeout;
+        zeroTimeout.tv_sec = 0;
+        zeroTimeout.tv_usec = 5000;
+        const bool success =
+            libusb::libusb_handle_events_timeout_completed(nullptr, &zeroTimeout, nullptr) == 0;
+        if (!success)
+        {
+            qDebug() << "libusb: handing events FAILED";
+        }
+    });
+
+    initLibusb();
+    registerLibusbHotplugCallback();
+
+    if (m_libusbHotplugRegistered)
+    {
+        qDebug() << "libusb hotplug: registered";
+        m_libusbUpdateTimer.start(LIBUSB_UPDATE_FREQUENCY);
+    }
+    else
+    {
+        qDebug() << "libusb hotplug: register failed; using update timer";
+        maybeReleaseLibusb();
+        startTrackersUpdateTimer();
+    }
+}
+
+void DeviceFacade::releaseTrackersUpdater()
+{
+    disconnect(&m_trackersUpdateTimer, &QTimer::timeout, this, &DeviceFacade::trackersUpdate);
+    disconnect(&m_libusbUpdateTimer, &QTimer::timeout, this, nullptr);
+
+    maybeReleaseLibusb();
+}
+
+void DeviceFacade::initLibusb()
+{
+    Q_ASSERT_X(m_libusbInitialized == false, "DeviceFacade::initLibusb", "already initialized");
+    m_libusbInitialized = libusb::libusb_init(nullptr) == 0;
+#ifdef QT_DEBUG
+    libusb::libusb_set_debug(NULL, libusb::LIBUSB_LOG_LEVEL_DEBUG);
+#endif
+}
+
+void DeviceFacade::maybeReleaseLibusb()
+{
+    if (m_libusbInitialized)
+    {
+        qDebug() << "libusb_exit";
+        libusb::libusb_exit(nullptr);
+        m_libusbInitialized = false;
+        m_libusbHotplugRegistered = false;
+    }
+}
+
+void DeviceFacade::registerLibusbHotplugCallback()
+{
+    Q_ASSERT_X(m_libusbHotplugRegistered == false, "DeviceFacade::registerLibusbHotplugCallback", "already registered");
+
+    const bool libusbSupportsHotplug =
+        m_libusbInitialized &&
+        libusb::libusb_has_capability(libusb::LIBUSB_CAP_HAS_HOTPLUG) != 0;
+
+    if (libusbSupportsHotplug)
+    {
+        const auto events = static_cast<libusb::libusb_hotplug_event>(
+            libusb::LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED | libusb::LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT
+        );
+        const auto flags = libusb::LIBUSB_HOTPLUG_ENUMERATE;
+        m_libusbHotplugRegistered = libusb::libusb_hotplug_register_callback(
+            nullptr,
+            events,
+            flags,
+            LIBUSB_HOTPLUG_MATCH_ANY,
+            LIBUSB_HOTPLUG_MATCH_ANY,
+            LIBUSB_HOTPLUG_MATCH_ANY,
+            &DeviceFacade::libusbHotplugCallback,
+            nullptr,
+            nullptr
+        ) == libusb::LIBUSB_SUCCESS;
+    }
+}
+
+void DeviceFacade::startTrackersUpdateTimer()
+{
+    qDebug() << "startTrackersUpdateTimer";
+
+    if (m_libusbHotplugRegistered)
+    {
+        m_trackersUpdateCount = 0;
+    }
+
+    m_trackersUpdateTimer.start(TRACKERS_UPDATE_FREQUENCY);
+}
+
+void DeviceFacade::trackersUpdate()
+{
+    qDebug() << "trackersUpdate";
+    for (auto it = m_trackers.begin(); it != m_trackers.end(); ++it)
+    {
+        it->data()->update();
+    }
+
+    if (m_libusbHotplugRegistered)
+    {
+        ++m_trackersUpdateCount;
+        qDebug() << "m_trackersUpdateCount =" << m_trackersUpdateCount;
+        if (m_trackersUpdateCount >= MAX_TRACKERS_UPDATES_PER_USB_EVENT)
+        {
+            qDebug() << "stopping m_trackersUpdateTimer";
+            m_trackersUpdateCount = 0;
+            m_trackersUpdateTimer.stop();
+        }
+    }
+}
+
+int DeviceFacade::libusbHotplugCallback(libusb::libusb_context* context, libusb::libusb_device* device, libusb::libusb_hotplug_event event, void* userData)
+{
+    (void) context;
+    (void) device;
+    (void) userData;
+
+    qDebug()
+        << "usb event:"
+        << ((event == libusb::LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT) ? "disconnected" : "connected");
+
+    s_this->startTrackersUpdateTimer();
+
+    return 0;
 }
 
 void DeviceFacade::loadSettings(const QSettings& s)

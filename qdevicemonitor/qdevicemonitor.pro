@@ -51,13 +51,17 @@ FORMS += \
     ui/DeviceWidget.ui \
     ui/SettingsDialog.ui
 
-CONFIG += c++11
+CONFIG += c++11 link_pkgconfig
+
+PKGCONFIG += libusb-1.0
 
 QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
 
 QMAKE_LFLAGS_RELEASE -= -O1
+
+# QMAKE_LFLAGS += -lusb-1.0
 
 VERSION = $$(VERSION)
 
