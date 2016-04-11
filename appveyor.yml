@@ -50,6 +50,7 @@ build_script:
   - dir
   - debug\tests
   - cd ..
+  - set PKG_CONFIG_PATH="..\%OUTPUT_DIRECTORY%\3rdparty\lib\pkgconfig"
   - qmake "CONFIG += release"
   - mingw32-make -j4
   - dir release
