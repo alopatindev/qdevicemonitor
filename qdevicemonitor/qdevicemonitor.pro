@@ -53,8 +53,6 @@ FORMS += \
 
 CONFIG += c++11 link_pkgconfig
 
-PKGCONFIG += libusb-1.0
-
 QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
@@ -67,6 +65,7 @@ DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
 
 linux-clang {
     QMAKE_CXXFLAGS += -Wno-deprecated-register -Wno-nested-anon-types  # FIXME: Qt bugs
+    PKGCONFIG += libusb-1.0
 }
 
 win32 {

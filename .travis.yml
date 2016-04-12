@@ -51,7 +51,7 @@ addons:
       - clang-3.6
       - lintian
       - cppcheck
-      - libusb-dev
+      - libusb-1.0-0-dev
 
 before_install:
   - pwd
@@ -90,6 +90,7 @@ install:
 script:
   - source ci-scripts/set_env.sh
   - cd "${PROGRAMNAME}/tests"
+  - echo "1='$(pkg-config --cflags --libs libusb-1.0)'" "2='$(pkg-config --cflags --libs libusb)'"
   - if [ $TRAVIS_OS_NAME = linux ]; then
         if [ $CXX = "g++" ]; then
             qmake -spec linux-g++;
@@ -102,19 +103,26 @@ script:
             qmake -spec linux-clang 'CONFIG += release';
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
-        echo "old PKG_CONFIG_PATH=${PKG_CONFIG_PATH}";
-        export PKG_CONFIG_PATH="$(brew info libusb | grep '/Cellar/' | awk '{print $1}')/lib/pkgconfig";
-        echo "new PKG_CONFIG_PATH=${PKG_CONFIG_PATH}";
-        ls -l "${PKG_CONFIG_PATH}";
+        LIBUSB_CXXFLAGS=$(pkg-config --cflags libusb-1.0);
+        LIBUSB_LFLAGS=$(pkg-config --libs libusb-1.0);
+        if [[ ${LIBUSB_CXXFLAGS} = '' ]]; then
+            PKG_CONFIG_PATH="$(brew info libusb | grep '/Cellar/' | awk '{print $1}')/lib/pkgconfig";
+            echo "new PKG_CONFIG_PATH=${PKG_CONFIG_PATH}";
+            ls -l "${PKG_CONFIG_PATH}";
+            LIBUSB_CXXFLAGS=$(pkg-config --cflags libusb-1.0);
+            LIBUSB_LFLAGS=$(pkg-config --libs libusb-1.0);
+        fi;
+        echo "LIBUSB_CXXFLAGS=${LIBUSB_CXXFLAGS}";
+        echo "LIBUSB_LFLAGS=${LIBUSB_LFLAGS}";
         if [ $CXX = "g++" ]; then
-            qmake -spec macx-g++;
+            qmake -spec macx-g++ "QMAKE_CXXFLAGS += ${LIBUSB_CXXFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
             cd ..;
-            qmake -spec macx-g++ 'CONFIG += release';
+            qmake -spec macx-g++ 'CONFIG += release' "QMAKE_CXXFLAGS += ${LIBUSB_CXXFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec macx-clang;
+            qmake -spec macx-clang "QMAKE_CXXFLAGS += ${LIBUSB_CXXFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
             cd ..;
-            qmake -spec macx-clang 'CONFIG += release';
+            qmake -spec macx-clang 'CONFIG += release' "QMAKE_CXXFLAGS += ${LIBUSB_CXXFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
         fi;
     fi
   - echo "${PATH}"

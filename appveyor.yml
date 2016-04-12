@@ -50,15 +50,14 @@ build_script:
   - dir
   - debug\tests
   - cd ..
-  - set PKG_CONFIG_PATH="..\%OUTPUT_DIRECTORY%\3rdparty\lib\pkgconfig"
-  - qmake "CONFIG += release"
+  - qmake "CONFIG += release" "QMAKE_CXXFLAGS += -I..\%OUTPUT_DIRECTORY%\3rdparty\include\" "QMAKE_LFLAGS += -L..\%OUTPUT_DIRECTORY%\3rdparty\lib\ -lusb-1.0"
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%.exe"
   - move "..\README.md" "..\%OUTPUT_DIRECTORY%\README.md.txt"
   - rmdir /S /Q release
   - mingw32-make clean
-  - qmake "CONFIG += console release"
+  - qmake "CONFIG += console release" "QMAKE_CXXFLAGS += -I..\%OUTPUT_DIRECTORY%\3rdparty\include\" "QMAKE_LFLAGS += -L..\%OUTPUT_DIRECTORY%\3rdparty\lib\ -lusb-1.0"
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"
