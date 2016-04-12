@@ -12,7 +12,9 @@ public:
     }
 
 private slots:
-    void update() override {};
+    void update() override
+    {
+    }
 };
 
 #endif // TEXTFILEDEVICESTRACKER_H

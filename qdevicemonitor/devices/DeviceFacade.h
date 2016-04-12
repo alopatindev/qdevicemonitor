@@ -22,6 +22,7 @@
 #include "trackers/AndroidDevicesTracker.h"
 #include "trackers/IOSDevicesTracker.h"
 #include "trackers/TextFileDevicesTracker.h"
+#include "trackers/usb/BaseUsbTracker.h"
 
 #include <QCompleter>
 #include <QObject>
@@ -32,14 +33,6 @@
 #include <QSettings>
 #include <QStringList>
 #include <QVector>
-
-namespace libusb
-{
-    extern "C"
-    {
-        #include <libusb.h>
-    }
-}
 
 class DeviceWidget;
 
@@ -57,12 +50,13 @@ private:
         &m_textFileDevicesTracker
     };
 
+    QSharedPointer<BaseUsbTracker> m_usbTracker;
+
     DataTypes::DevicesMap m_devicesMap;
 
     QTimer m_filesRemovalTimer;
-    QTimer m_libusbUpdateTimer;
     QTimer m_trackersUpdateTimer;
-    int m_trackersUpdateCount;
+    int m_trackersUpdateTries;
 
     int m_visibleBlocks;
     QString m_font;
@@ -70,8 +64,6 @@ private:
     bool m_fontBold;
     bool m_darkTheme;
     bool m_clearAndroidLog;
-    bool m_libusbInitialized;
-    bool m_libusbHotplugRegistered;
     int m_autoRemoveFilesHours;
     QStandardItemModel m_filterCompleterModel;
     QCompleter m_filterCompleter;
@@ -82,9 +74,8 @@ public:
     static const int LOG_REMOVAL_FREQUENCY = 30 * 60 * 1000;
     static const int MAX_FILTER_COMPLETIONS = 60;
 
-    static const int TRACKERS_UPDATE_FREQUENCY = 400;
-    static const int LIBUSB_UPDATE_FREQUENCY = 1000;
-    static const int MAX_TRACKERS_UPDATES_PER_USB_EVENT = 20;
+    static const int TRACKERS_UPDATE_FREQUENCY = 1000;
+    static const int MAX_TRACKERS_UPDATES_PER_USB_EVENT = 5;
 
     explicit DeviceFacade(QPointer<QTabWidget> parent = 0);
     ~DeviceFacade();
@@ -120,19 +111,14 @@ private slots:
     void onDeviceConnected(const DataTypes::DeviceType type, const QString& id);
     void onDeviceDisconnected(const DataTypes::DeviceType type, const QString& id);
     void trackersUpdate();
+    void startTrackersUpdateTimer();
 
 private:
     void fixTabIndexes(const int removedTabIndex);
     QPointer<DeviceWidget> getCurrentDeviceWidget();
-    void startTrackersUpdateTimer();
 
     void initTrackersUpdater();
     void releaseTrackersUpdater();
-    void initLibusb();
-    void maybeReleaseLibusb();
-    void registerLibusbHotplugCallback();
-
-    static int libusbHotplugCallback(libusb::libusb_context* context, libusb::libusb_device* device, libusb::libusb_hotplug_event event, void* userData);
 };
 
 #endif // DEVICEFACADE_H

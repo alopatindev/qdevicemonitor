@@ -24,6 +24,8 @@ SOURCES += \
     devices/TextFileDevice.cpp \
     devices/trackers/AndroidDevicesTracker.cpp \
     devices/trackers/IOSDevicesTracker.cpp \
+    devices/trackers/usb/BaseUsbTracker.cpp \
+    devices/trackers/usb/TimerUsbTracker.cpp \
     ui/MainWindow.cpp \
     ui/DeviceWidget.cpp \
     ui/SettingsDialog.cpp
@@ -42,6 +44,8 @@ HEADERS += \
     devices/trackers/AndroidDevicesTracker.h \
     devices/trackers/IOSDevicesTracker.h \
     devices/trackers/TextFileDevicesTracker.h \
+    devices/trackers/usb/BaseUsbTracker.h \
+    devices/trackers/usb/TimerUsbTracker.h \
     ui/DeviceWidget.h \
     ui/SettingsDialog.h \
     ui/ThemeColors.h
@@ -65,6 +69,8 @@ DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
 
 linux-clang {
     QMAKE_CXXFLAGS += -Wno-deprecated-register -Wno-nested-anon-types  # FIXME: Qt bugs
+    SOURCES += devices/trackers/usb/LibusbUsbTracker.cpp
+    HEADERS += devices/trackers/usb/LibusbUsbTracker.h
     PKGCONFIG += libusb-1.0
 }
 
