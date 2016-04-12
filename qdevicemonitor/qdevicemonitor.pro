@@ -69,9 +69,9 @@ DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
 
 linux-clang {
     QMAKE_CXXFLAGS += -Wno-deprecated-register -Wno-nested-anon-types  # FIXME: Qt bugs
-    SOURCES += devices/trackers/usb/LibusbUsbTracker.cpp
-    HEADERS += devices/trackers/usb/LibusbUsbTracker.h
-    PKGCONFIG += libusb-1.0
+    SOURCES += devices/trackers/usb/UdevUsbTracker.cpp
+    HEADERS += devices/trackers/usb/UdevUsbTracker.h
+    PKGCONFIG += libudev
 }
 
 win32 {

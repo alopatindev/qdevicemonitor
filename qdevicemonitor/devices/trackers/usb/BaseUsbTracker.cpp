@@ -3,13 +3,13 @@
 #include "TimerUsbTracker.h"
 
 #if defined(Q_OS_LINUX)
-    #include "LibusbUsbTracker.h"
+    #include "UdevUsbTracker.h"
 #endif
 
 QSharedPointer<BaseUsbTracker> BaseUsbTracker::create()
 {
 #if defined(Q_OS_LINUX)
-    auto tracker = QSharedPointer<LibusbUsbTracker>::create();
+    auto tracker = QSharedPointer<UdevUsbTracker>::create();
     if (tracker->isAvailable())
     {
         return tracker;
