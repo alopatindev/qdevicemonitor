@@ -40,6 +40,7 @@ AndroidDevice::AndroidDevice(
 
     connect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &AndroidDevice::onUpdateModel);
     connect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
+    connect(&m_logProcess, &QProcess::stateChanged, this, &AndroidDevice::onLogProcessStatusChange);
     connect(m_deviceWidget.data(), &DeviceWidget::verbosityLevelChanged, this, &AndroidDevice::onVerbosityLevelChange);
 
     startInfoProcess();
@@ -54,6 +55,7 @@ AndroidDevice::~AndroidDevice()
 
     disconnect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &AndroidDevice::onUpdateModel);
     disconnect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
+    disconnect(&m_logProcess, &QProcess::stateChanged, this, &AndroidDevice::onLogProcessStatusChange);
     disconnect(m_deviceWidget.data(), &DeviceWidget::verbosityLevelChanged, this, &AndroidDevice::onVerbosityLevelChange);
 }
 
@@ -172,6 +174,15 @@ void AndroidDevice::onVerbosityLevelChange(const int level)
 {
     (void) level;
     reloadTextEdit();
+}
+
+void AndroidDevice::onLogProcessStatusChange(const QProcess::ProcessState newState)
+{
+    qDebug() << "onLogProcessStatusChange" << newState;
+    if (newState == QProcess::NotRunning)
+    {
+        setOnline(false);
+    }
 }
 
 void AndroidDevice::filterAndAddToTextEdit(const QString& line)

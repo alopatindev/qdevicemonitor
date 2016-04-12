@@ -59,6 +59,7 @@ private slots:
     void onLogReady() override;
     void onUpdateModel();
     void onVerbosityLevelChange(const int level);
+    void onLogProcessStatusChange(const QProcess::ProcessState newState);
 
 private:
     void startInfoProcess();

@@ -304,7 +304,7 @@ void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QSt
         }
         else
         {
-            (*it)->updateInfo(true);
+            (*it)->setOnline(true);
         }
         return;
     }
@@ -340,7 +340,7 @@ void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QSt
             );
 
             const auto it = m_devicesMap.find(id);
-            (*it)->updateInfo(true);
+            (*it)->setOnline(true);
         }
         break;
     case DeviceType::IOS:
@@ -353,7 +353,7 @@ void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QSt
             );
 
             const auto it = m_devicesMap.find(id);
-            (*it)->updateInfo(true);
+            (*it)->setOnline(true);
         }
         break;
     default:
@@ -377,10 +377,10 @@ void DeviceFacade::onDeviceDisconnected(const DataTypes::DeviceType type, const 
     case DeviceType::TextFile:
         break;
     case DeviceType::Android:
-        (*it)->updateInfo(false);
+        (*it)->setOnline(false);
         break;
     case DeviceType::IOS:
-        (*it)->updateInfo(false);
+        (*it)->setOnline(false);
         break;
     default:
         Q_ASSERT_X(false, "DeviceFacade::onDeviceDisconnected", "device is not implemented");

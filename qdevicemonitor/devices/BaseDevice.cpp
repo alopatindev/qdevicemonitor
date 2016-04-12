@@ -118,6 +118,9 @@ void BaseDevice::setOnline(const bool online)
     if (online != m_online)
     {
         qDebug() << m_id << "is now" << (online ? "online" : "offline");
+
+        updateInfo(online);
+
         m_online = online;
         updateTabWidget();
 
@@ -222,5 +225,4 @@ void BaseDevice::updateInfo(const bool online, const QString& additional)
             .arg(m_id)
             .arg(additionalWithNewLine)
     );
-    setOnline(online);
 }
