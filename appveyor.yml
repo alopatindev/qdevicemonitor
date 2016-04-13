@@ -27,23 +27,12 @@ install:
   - ps: Start-FileDownload 'http://www.cygwin.com/setup-x86.exe' -FileName 'C:\cygwin\setup-x86.exe'
   - '%CYG_ROOT%\%CYG_INSTALLER% -qnNdO -R "%CYG_ROOT%" -s "%CYG_MIRROR%" -l "%CYG_CACHE%" -P autoconf -P automake -P bison -P libtool -P make -P python -P gettext-devel -P gettext -P intltool -P libiconv -P pkg-config -P git -P wget -P curl -P libusb1.0 -P libusb1.0-devel -P libxml2 -P libxml2-devel -P openssl-devel -P dos2unix'
   - perl -V
+
+build_script:
   - copy ci-scripts\download_and_build_libimobiledevice.sh "%CYG_HOMEDIR%"
   - copy ci-scripts\*.patch "%CYG_HOMEDIR%"
   - '%CYG_ROOT%/bin/bash -lc "set -v -x ; cygcheck -dc cygwin ; cd /tmp && ./download_and_build_libimobiledevice.sh"'
-
-build_script:
   - mkdir "%OUTPUT_DIRECTORY%"
-  - cd "%OUTPUT_DIRECTORY%"
-  - mkdir "platforms"
-  - copy "%QTDIR%\bin\libgcc_s_dw2-1.dll" .
-  - copy "%QTDIR%\bin\libstdc++-6.dll" .
-  - copy "%QTDIR%\bin\libwinpthread-1.dll" .
-  - copy "%QTDIR%\bin\Qt5Core.dll" .
-  - copy "%QTDIR%\bin\Qt5Gui.dll" .
-  - copy "%QTDIR%\bin\Qt5Widgets.dll" .
-  - copy "%QTDIR%\plugins\platforms\qwindows.dll" platforms\
-  - move "%CYG_HOMEDIR%\3rdparty" .
-  - cd ..
   - cd "%PROGRAMNAME%\tests"
   - qmake
   - mingw32-make -j4
@@ -61,6 +50,17 @@ build_script:
   - mingw32-make -j4
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"
+  - cd ..
+  - cd "%OUTPUT_DIRECTORY%"
+  - mkdir "platforms"
+  - copy "%QTDIR%\bin\libgcc_s_dw2-1.dll" .
+  - copy "%QTDIR%\bin\libstdc++-6.dll" .
+  - copy "%QTDIR%\bin\libwinpthread-1.dll" .
+  - copy "%QTDIR%\bin\Qt5Core.dll" .
+  - copy "%QTDIR%\bin\Qt5Gui.dll" .
+  - copy "%QTDIR%\bin\Qt5Widgets.dll" .
+  - copy "%QTDIR%\plugins\platforms\qwindows.dll" platforms\
+  - move "%CYG_HOMEDIR%\3rdparty" .
   - cd ..
   - 7z a -mx=9 "%OUTPUT_FILENAME%" "%OUTPUT_DIRECTORY%"
   - '%CYG_ROOT_WIN%\bin\md5sum "%OUTPUT_FILENAME%"'
