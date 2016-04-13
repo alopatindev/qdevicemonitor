@@ -29,9 +29,6 @@ install:
   - perl -V
 
 build_script:
-  - copy ci-scripts\download_and_build_libimobiledevice.sh "%CYG_HOMEDIR%"
-  - copy ci-scripts\*.patch "%CYG_HOMEDIR%"
-  - '%CYG_ROOT%/bin/bash -lc "set -v -x ; cygcheck -dc cygwin ; cd /tmp && ./download_and_build_libimobiledevice.sh"'
   - mkdir "%OUTPUT_DIRECTORY%"
   - cd "%PROGRAMNAME%\tests"
   - qmake
@@ -51,6 +48,9 @@ build_script:
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%_console.exe"
   - cd ..
+  - copy ci-scripts\download_and_build_libimobiledevice.sh "%CYG_HOMEDIR%"
+  - copy ci-scripts\*.patch "%CYG_HOMEDIR%"
+  - '%CYG_ROOT%/bin/bash -lc "set -v -x ; cygcheck -dc cygwin ; cd /tmp && ./download_and_build_libimobiledevice.sh"'
   - cd "%OUTPUT_DIRECTORY%"
   - mkdir "platforms"
   - copy "%QTDIR%\bin\libgcc_s_dw2-1.dll" .
