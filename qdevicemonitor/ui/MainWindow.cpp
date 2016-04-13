@@ -34,6 +34,7 @@
 
 #if defined(Q_OS_WIN32)
     #include <windows.h>
+    #include <dbt.h>
 #endif
 
 MainWindow::MainWindow(QPointer<QWidget> parent)
@@ -312,9 +313,8 @@ bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, long* r
     if (param == DBT_DEVICEARRIVAL || param == DBT_DEVICEREMOVECOMPLETE)
     {
         qDebug() << "usb event happen!";
-        return false;
     }
 
-    return true;
+    return false;
 }
 #endif
