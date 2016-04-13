@@ -316,7 +316,7 @@ bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, long* r
     auto windowsMessage = static_cast<winapi::MSG*>(message);
     auto param = windowsMessage->wParam;
 
-    if (param == winapi::DBT_DEVICEARRIVAL || param == winapi::DBT_DEVICEREMOVECOMPLETE)
+    if (param == DBT_DEVICEARRIVAL || param == DBT_DEVICEREMOVECOMPLETE)
     {
         qDebug() << "usb event happen!";
     }
