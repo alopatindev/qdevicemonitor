@@ -52,6 +52,7 @@ addons:
       - lintian
       - cppcheck
       - libusb-1.0-0-dev
+      - libudev-dev
 
 before_install:
   - pwd
