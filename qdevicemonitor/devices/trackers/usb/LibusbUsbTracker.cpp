@@ -36,7 +36,7 @@ LibusbUsbTracker::LibusbUsbTracker()
     if (m_hotplugRegistered)
     {
         qDebug() << "LibusbUsbTracker: registered";
-        m_updateTimer.start(UPDATE_FREQUENCY);
+        m_updateTimer.start(UPDATE_INTERVAL);
     }
     else
     {

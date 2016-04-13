@@ -71,10 +71,10 @@ private:
     QString m_textEditorPath;
 
 public:
-    static const int LOG_REMOVAL_FREQUENCY = 30 * 60 * 1000;
+    static const int LOG_REMOVAL_INTERVAL = 30 * 60 * 1000;
     static const int MAX_FILTER_COMPLETIONS = 60;
 
-    static const int TRACKERS_UPDATE_FREQUENCY = 1000;
+    static const int TRACKERS_UPDATE_INTERVAL = 1000;
     static const int MAX_TRACKERS_UPDATES_PER_USB_EVENT = 5;
 
     explicit DeviceFacade(QPointer<QTabWidget> parent = 0);

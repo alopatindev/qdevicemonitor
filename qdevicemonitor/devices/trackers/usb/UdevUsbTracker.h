@@ -33,7 +33,7 @@ class UdevUsbTracker : public BaseUsbTracker
 {
     QTimer m_updateTimer;
 
-    static const int UPDATE_FREQUENCY = 1000;
+    static const int UPDATE_INTERVAL = 1000;
 
     udev::udev* m_udev;
     udev::udev_monitor* m_mon;

@@ -42,7 +42,7 @@ UdevUsbTracker::UdevUsbTracker()
 
     if (isAvailable())
     {
-        m_updateTimer.start(UPDATE_FREQUENCY);
+        m_updateTimer.start(UPDATE_INTERVAL);
     }
     else
     {

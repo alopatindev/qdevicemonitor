@@ -20,7 +20,7 @@
 TimerUsbTracker::TimerUsbTracker()
 {
     connect(&m_updateTimer, &QTimer::timeout, this, &BaseUsbTracker::usbConnectionChanged);
-    m_updateTimer.start(UPDATE_FREQUENCY);
+    m_updateTimer.start(UPDATE_INTERVAL);
 }
 
 TimerUsbTracker::~TimerUsbTracker()

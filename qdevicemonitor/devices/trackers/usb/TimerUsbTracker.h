@@ -25,7 +25,7 @@ class TimerUsbTracker : public BaseUsbTracker
 {
     QTimer m_updateTimer;
 
-    static const int UPDATE_FREQUENCY = 10 * 1000;
+    static const int UPDATE_INTERVAL = 10 * 1000;
 
 public:
     TimerUsbTracker();

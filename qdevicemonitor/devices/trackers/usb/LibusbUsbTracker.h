@@ -35,7 +35,7 @@ class LibusbUsbTracker : public BaseUsbTracker
     bool m_hotplugRegistered;
     QTimer m_updateTimer;
 
-    static const int UPDATE_FREQUENCY = 1000;
+    static const int UPDATE_INTERVAL = 1000;
 
 public:
     LibusbUsbTracker();

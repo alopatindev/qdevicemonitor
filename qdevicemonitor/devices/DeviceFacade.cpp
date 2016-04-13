@@ -47,7 +47,7 @@ DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
     m_filterCompleter.setModel(&m_filterCompleterModel);
 
     connect(&m_filesRemovalTimer, &QTimer::timeout, this, &DeviceFacade::removeOldLogFiles);
-    m_filesRemovalTimer.start(LOG_REMOVAL_FREQUENCY);
+    m_filesRemovalTimer.start(LOG_REMOVAL_INTERVAL);
 
     for (auto it = m_trackers.constBegin(); it != m_trackers.constEnd(); ++it)
     {
@@ -89,7 +89,7 @@ void DeviceFacade::startTrackersUpdateTimer()
     qDebug() << "startTrackersUpdateTimer";
 
     m_trackersUpdateTries = 0;
-    m_trackersUpdateTimer.start(TRACKERS_UPDATE_FREQUENCY);
+    m_trackersUpdateTimer.start(TRACKERS_UPDATE_INTERVAL);
 }
 
 void DeviceFacade::trackersUpdate()
