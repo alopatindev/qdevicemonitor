@@ -33,8 +33,11 @@
 #include <QtCore/QStringBuilder>
 
 #if defined(Q_OS_WIN32)
-    #include <windows.h>
-    #include <dbt.h>
+    namespace winapi
+    {
+        #include <windows.h>
+        #include <dbt.h>
+    }
 #endif
 
 MainWindow::MainWindow(QPointer<QWidget> parent)
@@ -307,10 +310,13 @@ void MainWindow::checkExternalPrograms()
 #if defined(Q_OS_WIN32)
 bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, long* result)
 {
-    auto windowsMessage = static_cast<MSG*>(message);
+    (void) eventType;
+    (void) result;
+
+    auto windowsMessage = static_cast<winapi::MSG*>(message);
     auto param = windowsMessage->wParam;
 
-    if (param == DBT_DEVICEARRIVAL || param == DBT_DEVICEREMOVECOMPLETE)
+    if (param == winapi::DBT_DEVICEARRIVAL || param == winapi::DBT_DEVICEREMOVECOMPLETE)
     {
         qDebug() << "usb event happen!";
     }

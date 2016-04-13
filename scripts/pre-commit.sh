@@ -31,7 +31,7 @@ set -e
 
 echo "rebuilding..."
 cd "${PROGRAMNAME}/tests" && qmake && make -j8 && cd ..
-qmake && make -j8 && cd ..
+make -j8 && cd ..
 
 echo "checking travis config..."
 travis lint | grep "syntax error" && exit 1
