@@ -104,7 +104,13 @@ public:
     inline QCompleter& getFilterCompleter() { return m_filterCompleter; }
     void addFilterAsCompletion(const QString& completionToAdd);
 
-signals:
+    void emitUsbConnectionChange()
+    {
+        if (!m_usbTracker.isNull())
+        {
+            m_usbTracker->emitUsbConnectionChange();
+        }
+    }
 
 private slots:
     void removeOldLogFiles();

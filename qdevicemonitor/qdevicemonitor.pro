@@ -45,6 +45,7 @@ HEADERS += \
     devices/trackers/IOSDevicesTracker.h \
     devices/trackers/TextFileDevicesTracker.h \
     devices/trackers/usb/BaseUsbTracker.h \
+    devices/trackers/usb/NullUsbTracker.h \
     devices/trackers/usb/TimerUsbTracker.h \
     ui/DeviceWidget.h \
     ui/SettingsDialog.h \

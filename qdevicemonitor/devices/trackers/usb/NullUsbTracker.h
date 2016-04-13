@@ -15,30 +15,21 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef NULLUSBTRACKER_H
+#define NULLUSBTRACKER_H
+
 #include "BaseUsbTracker.h"
 
-#include "NullUsbTracker.h"
-#include "TimerUsbTracker.h"
-
-#if defined(Q_OS_LINUX)
-    #include "UdevUsbTracker.h"
-#endif
-
-QSharedPointer<BaseUsbTracker> BaseUsbTracker::create()
+class NullUsbTracker : public BaseUsbTracker
 {
-#if defined(Q_OS_LINUX)
-    auto tracker = QSharedPointer<UdevUsbTracker>::create();
-    if (tracker->isAvailable())
+public:
+    NullUsbTracker()
     {
-        return tracker;
     }
-    else
+
+    ~NullUsbTracker() override
     {
-        return QSharedPointer<TimerUsbTracker>::create();
     }
-#elif defined(Q_OS_WIN32)
-    return QSharedPointer<NullUsbTracker>::create();
-#else
-    return QSharedPointer<TimerUsbTracker>::create();
+};
+
 #endif
-}

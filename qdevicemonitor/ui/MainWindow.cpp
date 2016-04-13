@@ -319,6 +319,7 @@ bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, long* r
     if (param == DBT_DEVICEARRIVAL || param == DBT_DEVICEREMOVECOMPLETE)
     {
         qDebug() << "usb event happen!";
+        m_deviceFacade.emitUsbConnectionChange();
     }
 
     return false;

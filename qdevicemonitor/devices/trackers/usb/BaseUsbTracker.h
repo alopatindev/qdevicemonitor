@@ -25,6 +25,9 @@ class BaseUsbTracker : public QObject
 {
     Q_OBJECT
 
+signals:
+    void usbConnectionChanged();
+
 public:
     virtual ~BaseUsbTracker()
     {
@@ -32,8 +35,10 @@ public:
 
     static QSharedPointer<BaseUsbTracker> create();
 
-signals:
-    void usbConnectionChanged();
+    void emitUsbConnectionChange()
+    {
+        emit usbConnectionChanged();
+    }
 };
 
 #endif
