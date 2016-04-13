@@ -55,6 +55,9 @@ public slots:
 protected:
     void keyReleaseEvent(QKeyEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+#if defined(Q_OS_WIN32)
+    bool nativeEvent(const QByteArray& eventType, void* message, long* result) override;
+#endif
 
 private:
     QSharedPointer<Ui::MainWindow> m_ui;
