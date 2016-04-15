@@ -72,6 +72,11 @@ void MainWindow::on_actionOpen_triggered()
     }
 }
 
+void MainWindow::on_actionDetectDevices_triggered()
+{
+    m_deviceFacade.emitUsbConnectionChange();
+}
+
 void MainWindow::on_actionQuit_triggered()
 {
     qDebug() << "on_actionQuit_triggered";

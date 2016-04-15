@@ -109,6 +109,9 @@ If it didn't help—try to Google it, specifying the device you use. I'm pretty 
 ### Mac OS X: App can’t be opened because it is from an unidentified developer
 Try [this guide](http://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/)
 
+### Android Emulator is not detected
+Automatic detection of Emulator is not supported (on GNU/Linux and Windows). Please use File — Detect Devices after booting an Emulator
+
 License
 -------
 

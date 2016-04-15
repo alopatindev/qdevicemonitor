@@ -59,6 +59,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionDetectDevices"/>
     <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
@@ -88,6 +89,11 @@
   <action name="actionQuit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionDetectDevices">
+   <property name="text">
+    <string>Detect Devices</string>
    </property>
   </action>
  </widget>
