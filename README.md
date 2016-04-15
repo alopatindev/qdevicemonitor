@@ -95,6 +95,8 @@ and checked that it runs and detects your device
 7. Restart the udev service: `sudo service udev restart`
 8. `adb kill-server && adb devices`
 
+Please note that automatic detection of Emulator is not supported. Please use File — **Detect Devices** after booting an Emulator
+
 #### on Windows
 1. If your device is not detectable with ddms/monitor
     1. Check Control Panel — System — Hardware — **Device Manager**: is your device detected correctly? If it's not—try reinstalling the driver specifying the path to `extras\google\usb-driver` (from Android SDK)
@@ -108,9 +110,6 @@ If it didn't help—try to Google it, specifying the device you use. I'm pretty 
 
 ### Mac OS X: App can’t be opened because it is from an unidentified developer
 Try [this guide](http://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/)
-
-### Android Emulator is not detected
-Automatic detection of Emulator is not supported (on GNU/Linux and Windows). Please use File — Detect Devices after booting an Emulator
 
 License
 -------

@@ -318,17 +318,16 @@ bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, long* r
     (void) eventType;
     (void) result;
 
-    auto windowsMessage = static_cast<winapi::MSG*>(message);
-    auto param = windowsMessage->wParam;
+    const auto windowsMessage = static_cast<winapi::MSG*>(message);
+    const auto param = windowsMessage->wParam;
 
-    if (param == DBT_DEVICEARRIVAL || param == DBT_DEVICEREMOVECOMPLETE)
+    const bool usbDeviceChanged = param == DBT_DEVICEARRIVAL || param == DBT_DEVICEREMOVECOMPLETE;
+    const bool anyDeviceChanged = param == DBT_DEVICEARRIVAL;
+
+    if (usbDeviceChanged || anyDeviceChanged)
     {
-        qDebug() << "usb event has happen!";
+        qDebug() << "device connect/disconnect event has happen!";
         m_deviceFacade.emitUsbConnectionChange();
-    }
-    else
-    {
-        qDebug() << "other event has happen; param =" << param;
     }
 
     return false;
