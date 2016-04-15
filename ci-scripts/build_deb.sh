@@ -15,6 +15,7 @@ chmod 644 "${DESKTOPFILESDIR}/${PROGRAMNAME}.desktop"
 DOCSDIR="debian/usr/share/doc/${PROGRAMNAME}"
 mkdir -v -p "${DOCSDIR}"
 mv -v README.md "${DOCSDIR}/"
+mv -v TROUBLESHOOTING.md "${DOCSDIR}/"
 
 ICONDIR="debian/usr/share/icons/hicolor/scalable/apps"
 ICONPATH="${ICONDIR}/${PROGRAMNAME}.svg"

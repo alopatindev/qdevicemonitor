@@ -322,9 +322,7 @@ bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, long* r
     const auto param = windowsMessage->wParam;
 
     const bool usbDeviceChanged = param == DBT_DEVICEARRIVAL || param == DBT_DEVICEREMOVECOMPLETE;
-    const bool anyDeviceChanged = param == DBT_DEVNODES_CHANGED;
-
-    if (usbDeviceChanged || anyDeviceChanged)
+    if (usbDeviceChanged)
     {
         qDebug() << "device connect/disconnect event has happen!";
         m_deviceFacade.emitUsbConnectionChange();

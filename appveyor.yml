@@ -41,6 +41,7 @@ build_script:
   - dir release
   - move "release\%PROGRAMNAME%.exe" "..\%OUTPUT_DIRECTORY%\%PROGRAMNAME%.exe"
   - move "..\README.md" "..\%OUTPUT_DIRECTORY%\README.md.txt"
+  - move "..\TROUBLESHOOTING.md" "..\%OUTPUT_DIRECTORY%\TROUBLESHOOTING.md.txt"
   - rmdir /S /Q release
   - mingw32-make clean
   - qmake "CONFIG += console release"
