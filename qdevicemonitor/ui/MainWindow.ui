@@ -14,7 +14,7 @@
    <string>QDeviceMonitor</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../resources.qrc">
     <normaloff>:/icons/app_icon.png</normaloff>:/icons/app_icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -93,7 +93,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
