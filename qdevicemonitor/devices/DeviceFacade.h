@@ -41,6 +41,8 @@ class DeviceFacade : public QObject
     Q_OBJECT
 
 private:
+    QPointer<QTabWidget> m_parent;
+
     AndroidDevicesTracker m_androidDevicesTracker;
     IOSDevicesTracker m_iOSDevicesTracker;
     TextFileDevicesTracker m_textFileDevicesTracker;

@@ -110,14 +110,27 @@ void AndroidDevice::onUpdateModel()
 
 void AndroidDevice::startLogger()
 {
-    if (!m_didReadModel || m_logProcess.state() != QProcess::NotRunning)
+    qDebug() << "AndroidDevice::startLogger";
+
+    if (!m_didReadModel)
     {
-        qDebug() << "AndroidDevice::startLogger skipping; m_didReadModel =" << m_didReadModel << "m_logProcess.state =" << m_logProcess.state();
-        return;
-    }
-    else
-    {
-        qDebug() << "AndroidDevice::startLogger";
+        qDebug() << "skipping; m_didReadModel =" << m_didReadModel;
+
+        if (m_infoProcess.state() == QProcess::NotRunning)
+        {
+            startInfoProcess();
+            qDebug() << "m_infoProcess was not running";
+            return;
+        }
+        else if (m_logProcess.state() != QProcess::NotRunning)
+        {
+            qDebug() << "m_logProcess.state =" << m_logProcess.state();
+            return;
+        }
+        else
+        {
+            qDebug() << "AndroidDevice::startLogger";
+        }
     }
 
     const QString currentLogAbsFileName = Utils::getNewLogFilePath(
@@ -133,6 +146,20 @@ void AndroidDevice::startLogger()
     m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
     m_logFileStream->setCodec("UTF-8");
 
+    startLogProcess();
+}
+
+void AndroidDevice::stopLogger()
+{
+    qDebug() << "AndroidDevice::stopLogger";
+
+    stopLogProcess();
+    m_logFileStream.clear();
+    m_logFile.close();
+}
+
+void AndroidDevice::startLogProcess()
+{
     QStringList args;
     args.append("-s");
     args.append(m_id);
@@ -144,19 +171,14 @@ void AndroidDevice::startLogger()
     m_logProcess.start("adb", args);
 }
 
-void AndroidDevice::stopLogger()
+void AndroidDevice::stopLogProcess()
 {
-    qDebug() << "AndroidDevice::stopLogger";
-
     if (m_logProcess.state() != QProcess::NotRunning)
     {
         m_logProcess.terminate();
         m_logProcess.kill();
         m_logProcess.close();
     }
-
-    m_logFileStream.clear();
-    m_logFile.close();
 }
 
 void AndroidDevice::onUpdateFilter(const QString& filter)

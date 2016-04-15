@@ -46,8 +46,7 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
     m_ui = QSharedPointer<Ui::MainWindow>::create();
     m_ui->setupUi(this);
 
-    m_deviceFacade.setParent(m_ui->tabWidget);
-    //m_deviceFacade.start();
+    m_deviceFacade = QSharedPointer<DeviceFacade>::create(QPointer<QTabWidget>(m_ui->tabWidget));
 
     setupEnvironment();
     loadSettings();
@@ -57,7 +56,6 @@ MainWindow::MainWindow(QPointer<QWidget> parent)
 MainWindow::~MainWindow()
 {
     saveSettings();
-    //m_deviceFacade.stop();
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -67,14 +65,13 @@ void MainWindow::on_actionOpen_triggered()
     {
         const QFileInfo fi(fileName);
         m_lastLogDirectory = fi.absolutePath();
-        m_deviceFacade.openTextFileDevice(fi.absoluteFilePath());
-        //TextFileDevice::openLogFile(fi.absoluteFilePath());
+        m_deviceFacade->openTextFileDevice(fi.absoluteFilePath());
     }
 }
 
 void MainWindow::on_actionDetectDevices_triggered()
 {
-    m_deviceFacade.emitUsbConnectionChange();
+    m_deviceFacade->emitUsbConnectionChange();
 }
 
 void MainWindow::on_actionQuit_triggered()
@@ -93,7 +90,7 @@ void MainWindow::on_actionSettings_triggered()
     {
         dialog.saveSettings(s);
         loadSettings();
-        m_deviceFacade.allDevicesReloadText();
+        m_deviceFacade->allDevicesReloadText();
     }
 }
 
@@ -124,7 +121,7 @@ void MainWindow::on_tabWidget_tabCloseRequested(const int index)
     qDebug() << "MainWindow::on_tabWidget_tabCloseRequested" << index;
     if (index != -1)
     {
-        m_deviceFacade.removeDeviceByTabIndex(index);
+        m_deviceFacade->removeDeviceByTabIndex(index);
     }
 }
 
@@ -135,13 +132,13 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
         switch (event->key())
         {
         case Qt::Key_F:
-            m_deviceFacade.focusFilterInput();
+            m_deviceFacade->focusFilterInput();
             break;
         case Qt::Key_E:
-            m_deviceFacade.openLogFile();
+            m_deviceFacade->openLogFile();
             break;
         case Qt::Key_M:
-            m_deviceFacade.markLog();
+            m_deviceFacade->markLog();
             break;
         default:
             break;
@@ -152,7 +149,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
         switch (event->key())
         {
         case Qt::Key_C:
-            m_deviceFacade.clearLog();
+            m_deviceFacade->clearLog();
             break;
         default:
             break;
@@ -208,7 +205,7 @@ void MainWindow::loadSettings()
 #endif
     }
 
-    m_deviceFacade.loadSettings(s);
+    m_deviceFacade->loadSettings(s);
 }
 
 void MainWindow::saveSettings()
@@ -218,7 +215,7 @@ void MainWindow::saveSettings()
 
     s.setValue("geometry", geometry());
     s.setValue("lastLogDirectory", m_lastLogDirectory);
-    m_deviceFacade.saveSettings(s);
+    m_deviceFacade->saveSettings(s);
 
     s.sync();
 }
@@ -325,7 +322,7 @@ bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, long* r
     if (usbDeviceChanged)
     {
         qDebug() << "device connect/disconnect event has happen!";
-        m_deviceFacade.emitUsbConnectionChange();
+        m_deviceFacade->emitUsbConnectionChange();
     }
 
     return false;

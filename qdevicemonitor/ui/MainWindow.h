@@ -34,7 +34,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    DeviceFacade m_deviceFacade;
+    QSharedPointer<DeviceFacade> m_deviceFacade;
     QString m_lastLogDirectory;
 
 public:

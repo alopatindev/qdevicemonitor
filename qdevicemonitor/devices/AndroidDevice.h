@@ -64,6 +64,9 @@ private slots:
 private:
     void startInfoProcess();
     void stopInfoProcess();
+    void startLogProcess();
+    void stopLogProcess();
+
     void startLogger();
     void stopLogger();
     void maybeClearAdbLog();

@@ -34,6 +34,7 @@ using namespace DataTypes;
 
 DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
     : QObject(parent)
+    , m_parent(parent)
     , m_trackersUpdateTries(0)
     , m_visibleBlocks(500)
     , m_fontSize(12)
@@ -309,8 +310,6 @@ void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QSt
         return;
     }
 
-    const QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent()); // TODO: refactor
-
     switch (type)
     {
     case DeviceType::TextFile:
@@ -318,7 +317,7 @@ void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QSt
             const QString fileName = QFileInfo(id).fileName();
 
             m_devicesMap[id] = BaseDevice::create(
-                tabWidget,
+                m_parent,
                 QPointer<DeviceFacade>(this),
                 DeviceType::TextFile,
                 id
@@ -333,7 +332,7 @@ void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QSt
     case DeviceType::Android:
         {
             m_devicesMap[id] = BaseDevice::create(
-                tabWidget,
+                m_parent,
                 QPointer<DeviceFacade>(this),
                 DeviceType::Android,
                 id
@@ -346,7 +345,7 @@ void DeviceFacade::onDeviceConnected(const DataTypes::DeviceType type, const QSt
     case DeviceType::IOS:
         {
             m_devicesMap[id] = BaseDevice::create(
-                tabWidget,
+                m_parent,
                 QPointer<DeviceFacade>(this),
                 DeviceType::IOS,
                 id
@@ -460,7 +459,6 @@ void DeviceFacade::openTextFileDevice(const QString& fullPath)
 
 QPointer<DeviceWidget> DeviceFacade::getCurrentDeviceWidget()
 {
-    QPointer<QTabWidget> tabWidget = dynamic_cast<QTabWidget*>(parent());
-    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(tabWidget->currentWidget());
+    QPointer<DeviceWidget> deviceWidget = dynamic_cast<DeviceWidget*>(m_parent->currentWidget());
     return deviceWidget;
 }

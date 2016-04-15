@@ -50,7 +50,6 @@ public:
         const QString& id
     );
 
-    // FIXME: constructor should be private?
     explicit BaseDevice(
         QPointer<QTabWidget> parent,
         const QString& id,

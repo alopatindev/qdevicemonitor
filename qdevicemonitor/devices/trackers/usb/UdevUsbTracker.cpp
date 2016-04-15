@@ -30,6 +30,8 @@ UdevUsbTracker::UdevUsbTracker()
     , m_mon(nullptr)
     , m_fd(0)
 {
+    qDebug() << "UdevUsbTracker::UdevUsbTracker";
+
     m_udev = udev::udev_new();
 
     if (m_udev != nullptr)
@@ -54,6 +56,8 @@ UdevUsbTracker::UdevUsbTracker()
 
 UdevUsbTracker::~UdevUsbTracker()
 {
+    qDebug() << "UdevUsbTracker::~UdevUsbTracker";
+
     disconnect(&m_updateTimer, &QTimer::timeout, this, &UdevUsbTracker::update);
     m_updateTimer.stop();
 
