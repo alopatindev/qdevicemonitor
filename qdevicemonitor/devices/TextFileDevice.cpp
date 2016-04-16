@@ -17,7 +17,7 @@
 
 #include "TextFileDevice.h"
 #include "Utils.h"
-#include "ui/ThemeColors.h"
+#include "ui/colors/ColorTheme.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -111,7 +111,6 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
-    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
@@ -123,9 +122,9 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], prefix);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityWarn], hostname);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], text);
+            m_deviceWidget->addText(ColorTheme::DateTime, prefix);
+            m_deviceWidget->addText(ColorTheme::VerbosityWarn, hostname);
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, text);
             m_deviceWidget->flushText();
         }
     }
@@ -134,7 +133,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, m_filtersValid, QStringRef(&line));
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringRef(&line));
             m_deviceWidget->flushText();
         }
     }

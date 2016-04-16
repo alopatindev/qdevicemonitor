@@ -17,7 +17,7 @@
 
 #include "AndroidDevice.h"
 #include "Utils.h"
-#include "ui/ThemeColors.h"
+#include "ui/colors/ColorTheme.h"
 
 #include <QDebug>
 #include <QHash>
@@ -215,8 +215,6 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     );
 
     bool filtersMatch = true;
-    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
-
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
@@ -228,21 +226,20 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         const QStringRef tag = match.capturedRef("tag").trimmed();
         const QStringRef text = line.midRef(match.capturedEnd("tag") + 1);
 
-        const VerbosityEnum verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.at(0).toLatin1()));
+        const auto verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.at(0).toLatin1()));
 
         checkFilters(filtersMatch, m_filtersValid, verbosityLevel, pid, tid, tag, text);
 
         if (filtersMatch)
         {
-            const QColor verbosityColor = ThemeColors::Colors[themeIndex][verbosityLevel];
-
-            m_deviceWidget->addText(verbosityColor, verbosity);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], date);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], time);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Pid], pid);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tid], tid);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::Tag], tag);
-            m_deviceWidget->addText(verbosityColor, text);
+            const auto verbosityColorType = static_cast<ColorTheme::ColorType>(verbosityLevel);
+            m_deviceWidget->addText(verbosityColorType, verbosity);
+            m_deviceWidget->addText(ColorTheme::DateTime, date);
+            m_deviceWidget->addText(ColorTheme::DateTime, time);
+            m_deviceWidget->addText(ColorTheme::Pid, pid);
+            m_deviceWidget->addText(ColorTheme::Tid, tid);
+            m_deviceWidget->addText(ColorTheme::Tag, tag);
+            m_deviceWidget->addText(verbosityColorType, text);
             m_deviceWidget->flushText();
         }
     }
@@ -252,7 +249,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, m_filtersValid);
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringRef(&line));
             m_deviceWidget->flushText();
         }
     }

@@ -17,6 +17,10 @@ RESOURCES = resources.qrc
 SOURCES += \
     main.cpp \
     Utils.cpp \
+    ui/MainWindow.cpp \
+    ui/DeviceWidget.cpp \
+    ui/SettingsDialog.cpp \
+    ui/colors/ColorTheme.cpp \
     devices/BaseDevice.cpp \
     devices/DeviceFacade.cpp \
     devices/AndroidDevice.cpp \
@@ -25,16 +29,18 @@ SOURCES += \
     devices/trackers/AndroidDevicesTracker.cpp \
     devices/trackers/IOSDevicesTracker.cpp \
     devices/trackers/usb/BaseUsbTracker.cpp \
-    devices/trackers/usb/TimerUsbTracker.cpp \
-    ui/MainWindow.cpp \
-    ui/DeviceWidget.cpp \
-    ui/SettingsDialog.cpp
+    devices/trackers/usb/TimerUsbTracker.cpp
 
 HEADERS += \
     DataTypes.h \
     StringRingBuffer.h \
     Utils.h \
     ui/MainWindow.h \
+    ui/DeviceWidget.h \
+    ui/SettingsDialog.h \
+    ui/colors/ColorTheme.h \
+    ui/colors/DarkColorTheme.h \
+    ui/colors/LightColorTheme.h \
     devices/DeviceFacade.h \
     devices/AndroidDevice.h \
     devices/IOSDevice.h \
@@ -46,10 +52,7 @@ HEADERS += \
     devices/trackers/TextFileDevicesTracker.h \
     devices/trackers/usb/BaseUsbTracker.h \
     devices/trackers/usb/NullUsbTracker.h \
-    devices/trackers/usb/TimerUsbTracker.h \
-    ui/DeviceWidget.h \
-    ui/SettingsDialog.h \
-    ui/ThemeColors.h
+    devices/trackers/usb/TimerUsbTracker.h
 
 FORMS += \
     ui/MainWindow.ui \

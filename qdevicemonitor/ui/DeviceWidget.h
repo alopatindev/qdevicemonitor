@@ -20,6 +20,7 @@
 
 #include "ui_DeviceWidget.h"
 #include "devices/DeviceFacade.h"
+#include "ui/colors/ColorTheme.h"
 
 #include <QPalette>
 #include <QPointer>
@@ -53,6 +54,7 @@ public:
     inline int getVerbosityLevel() const { return m_ui->verbositySlider->value(); }
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
+    void addText(const ColorTheme::ColorType color, const QStringRef& text);
     void addText(const QColor& color, const QStringRef& text);
     void flushText();
     void clearTextEdit();

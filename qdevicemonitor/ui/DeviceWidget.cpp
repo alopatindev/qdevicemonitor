@@ -17,7 +17,7 @@
 
 #include "DeviceWidget.h"
 #include "DataTypes.h"
-#include "ThemeColors.h"
+#include "ui/colors/ColorTheme.h"
 
 #include <QDebug>
 #include <QProcess>
@@ -94,6 +94,11 @@ void DeviceWidget::maybeScrollTextEditToEnd()
     {
         scrollTextEditToEnd();
     }
+}
+
+void DeviceWidget::addText(const ColorTheme::ColorType color, const QStringRef& text)
+{
+    addText(m_deviceFacade->getThemeColor(color), text);
 }
 
 void DeviceWidget::addText(const QColor& color, const QStringRef& text)
@@ -177,8 +182,7 @@ void DeviceWidget::focusFilterInput()
 
 void DeviceWidget::on_markLogButton_clicked()
 {
-    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
-    addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], QStringRef(&MARK_LINE));
+    addText(ColorTheme::VerbosityVerbose, QStringRef(&MARK_LINE));
     //addToLogBuffer(MARK_LINE);
     flushText();
 }

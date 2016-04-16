@@ -17,7 +17,7 @@
 
 #include "IOSDevice.h"
 #include "Utils.h"
-#include "ui/ThemeColors.h"
+#include "ui/colors/ColorTheme.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -213,7 +213,6 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
-    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
@@ -226,9 +225,9 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::DateTime], prefix);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityWarn], deviceName);
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityVerbose], text);
+            m_deviceWidget->addText(ColorTheme::DateTime, prefix);
+            m_deviceWidget->addText(ColorTheme::VerbosityWarn, deviceName);
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, text);
             m_deviceWidget->flushText();
         }
     }
@@ -239,7 +238,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityInfo], QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityInfo, QStringRef(&line));
             m_deviceWidget->flushText();
         }
     }
@@ -282,11 +281,10 @@ void IOSDevice::maybeReadErrorsPart()
 {
     m_tempErrorsStream << m_infoProcess.readAllStandardError();
 
-    const int themeIndex = m_deviceFacade->isDarkTheme() ? 1 : 0;
     for (int i = 0; i < MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
     {
         const QString line = m_tempErrorsStream.readLine();
-        m_deviceWidget->addText(ThemeColors::Colors[themeIndex][ThemeColors::VerbosityAssert], QStringRef(&line));
+        m_deviceWidget->addText(ColorTheme::VerbosityAssert, QStringRef(&line));
         m_deviceWidget->flushText();
     }
 }

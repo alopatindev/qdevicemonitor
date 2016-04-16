@@ -23,7 +23,9 @@
 #include "trackers/IOSDevicesTracker.h"
 #include "trackers/TextFileDevicesTracker.h"
 #include "trackers/usb/BaseUsbTracker.h"
+#include "ui/colors/ColorTheme.h"
 
+#include <QColor>
 #include <QCompleter>
 #include <QObject>
 #include <QPointer>
@@ -65,6 +67,7 @@ private:
     int m_fontSize;
     bool m_fontBold;
     bool m_darkTheme;
+    QSharedPointer<ColorTheme> m_colorTheme;
     bool m_clearAndroidLog;
     int m_autoRemoveFilesHours;
     QStandardItemModel m_filterCompleterModel;
@@ -95,6 +98,7 @@ public:
     void allDevicesReloadText();
 
     inline bool isDarkTheme() const { return m_darkTheme; }
+    inline QColor getThemeColor(const ColorTheme::ColorType type) const { return m_colorTheme->getColor(type); }
     inline bool getClearAndroidLog() const { return m_clearAndroidLog; }
     inline const QString& getFont() const { return m_font; }
     inline int getFontSize() const { return m_fontSize; }

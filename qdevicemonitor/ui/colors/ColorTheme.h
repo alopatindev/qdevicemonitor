@@ -15,20 +15,16 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef THEMECOLORS_H
-#define THEMECOLORS_H
+#ifndef COLORTHEME_H
+#define COLORTHEME_H
 
 #include <QtGlobal>
+#include <QSharedPointer>
 
-namespace ThemeColors
+class ColorTheme
 {
-    enum Themes
-    {
-        NormalTheme,
-        DarkTheme
-    };
-
-    enum ColorTypes
+public:
+    enum ColorType
     {
         VerbosityAssert,
         VerbosityError,
@@ -43,34 +39,13 @@ namespace ThemeColors
         Tag
     };
 
-    static const Qt::GlobalColor Colors[][10] = {
-        {
-            Qt::red,
-            Qt::red,
-            Qt::darkYellow,
-            Qt::darkGreen,
-            Qt::blue,
-            Qt::black,
+    static QSharedPointer<ColorTheme> create(const bool darkTheme);
 
-            Qt::black,
-            Qt::darkBlue,
-            Qt::blue,
-            Qt::darkGreen
-        },
-        {
-            Qt::red,
-            Qt::red,
-            Qt::yellow,
-            Qt::green,
-            Qt::lightGray,
-            Qt::white,
+    virtual Qt::GlobalColor getColor(const ColorType type) const = 0;
 
-            Qt::lightGray,
-            Qt::green,
-            Qt::blue,
-            Qt::yellow
-        },
-    };
-}
+    virtual ~ColorTheme()
+    {
+    }
+};
 
-#endif // THEMECOLORS_H
+#endif

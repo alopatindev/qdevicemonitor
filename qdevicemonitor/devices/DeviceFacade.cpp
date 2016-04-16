@@ -151,6 +151,7 @@ void DeviceFacade::loadSettings(const QSettings& s)
     if (darkTheme.isValid())
     {
         m_darkTheme = darkTheme.toBool();
+        m_colorTheme = ColorTheme::create(m_darkTheme);
     }
 
     const QVariant clearAndroidLog = s.value("clearAndroidLog");
