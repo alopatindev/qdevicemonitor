@@ -107,7 +107,7 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
     bool filtersMatch = true;
 
     static const QRegularExpression re(
-        "(?<prefix>[A-Za-z]* +[\\d]+ [\\d:]+) (?<hostname>.+) ",
+        "(?<prefix>[A-Za-z]{3} +[\\d]{1,2} [\\d:]{8}) (?<hostname>.+) ",
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
