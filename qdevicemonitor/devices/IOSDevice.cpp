@@ -285,23 +285,41 @@ void IOSDevice::onErrorsReady()
 
 void IOSDevice::maybeReadErrorsPart()
 {
+    QString line;
     for (int i = 0; i < MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
     {
-        const QString line = m_tempErrorsStream.readLine();
-        m_deviceWidget->addText(ColorTheme::VerbosityAssert, QStringRef(&line));
-        m_deviceWidget->flushText();
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        line = m_tempErrorsStream.readLine();
+        if (!line.isEmpty())
+#else
+        if (m_tempErrorsStream.readLineInto(&line))
+#endif
+        {
+            m_deviceWidget->addText(ColorTheme::VerbosityAssert, QStringRef(&line));
+            m_deviceWidget->flushText();
+        }
     }
 }
 
 void IOSDevice::maybeReadLogPart()
 {
+    QString line;
     for (int i = 0; i < MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
         m_tempStream << m_logProcess.readLine();
-        const QString line = m_tempStream.readLine();
-        *m_logFileStream << line << "\n";
-        m_logFileStream->flush();
-        addToLogBuffer(line);
-        filterAndAddToTextEdit(line);
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+        // FIXME: remove this hack
+        line = m_tempStream.readLine();
+        if (!line.isEmpty())
+#else
+        if (m_tempStream.readLineInto(&line))
+#endif
+        {
+            *m_logFileStream << line << "\n";
+            m_logFileStream->flush();
+            addToLogBuffer(line);
+            filterAndAddToTextEdit(line);
+        }
     }
 }
