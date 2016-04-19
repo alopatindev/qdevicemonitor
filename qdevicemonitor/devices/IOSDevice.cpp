@@ -44,7 +44,7 @@ IOSDevice::IOSDevice(
     m_deviceWidget->hideVerbosity();
 
     connect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
-    connect(&m_infoProcess, &QProcess::readyReadStandardError, this, &BaseDevice::logReady);
+    connect(&m_infoProcess, &QProcess::readyReadStandardError, this, &IOSDevice::onErrorsReady);
     connect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &IOSDevice::onUpdateModel);
 
     startInfoProcess();
@@ -58,7 +58,7 @@ IOSDevice::~IOSDevice()
     stopInfoProcess();
 
     disconnect(&m_logProcess, &QProcess::readyReadStandardOutput, this, &BaseDevice::logReady);
-    disconnect(&m_infoProcess, &QProcess::readyReadStandardError, this, &BaseDevice::logReady);
+    disconnect(&m_infoProcess, &QProcess::readyReadStandardError, this, &IOSDevice::onErrorsReady);
     disconnect(&m_infoProcess, &QProcess::readyReadStandardOutput, this, &IOSDevice::onUpdateModel);
 }
 
@@ -205,6 +205,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 {
     if (line == QString("[connected]") || line == QString("[disconnected]"))
     {
+        m_deviceFacade->emitUsbConnectionChange();
         return;
     }
 
@@ -218,7 +219,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
     {
         const QStringRef prefix = match.capturedRef("prefix");
         const QStringRef deviceName = match.capturedRef("deviceName");
-        const QStringRef text = line.midRef(match.capturedEnd("hostname") + 1);
+        const QStringRef text = line.midRef(match.capturedEnd("deviceName") + 1);
 
         bool filtersMatch = true;
         checkFilters(filtersMatch, m_filtersValid, text);
@@ -277,10 +278,13 @@ void IOSDevice::onLogReady()
     }
 }
 
-void IOSDevice::maybeReadErrorsPart()
+void IOSDevice::onErrorsReady()
 {
     m_tempErrorsStream << m_infoProcess.readAllStandardError();
+}
 
+void IOSDevice::maybeReadErrorsPart()
+{
     for (int i = 0; i < MAX_LINES_UPDATE && !m_tempErrorsStream.atEnd(); ++i)
     {
         const QString line = m_tempErrorsStream.readLine();

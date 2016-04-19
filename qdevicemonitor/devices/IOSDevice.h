@@ -67,6 +67,7 @@ private:
 private slots:
     void onUpdateModel();
     void onLogReady() override;
+    void onErrorsReady();
 };
 
 #endif // ANDROIDDEVICE_H
