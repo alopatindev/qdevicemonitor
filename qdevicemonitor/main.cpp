@@ -17,9 +17,31 @@
 
 #include "ui/MainWindow.h"
 #include <QApplication>
+#include <QTime>
+#include <cstdio>
+
+void logOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    (void) type;
+
+    const QByteArray localMsg = msg.toLocal8Bit();
+    std::fprintf(
+        stdout,
+        "%s %s (%s:%u, %s)\n",
+        QTime::currentTime().toString().toStdString().c_str(),
+        localMsg.constData(),
+        context.file,
+        context.line,
+        context.function
+    );
+}
 
 int main(int argc, char* argv[])
 {
+#ifdef QT_DEBUG
+    qInstallMessageHandler(logOutput);
+#endif
+
     Q_INIT_RESOURCE(resources);
 
     QApplication a(argc, argv);
