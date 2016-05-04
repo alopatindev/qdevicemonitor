@@ -42,6 +42,7 @@ class BaseDevice : public QObject
 public:
     static const int MAX_LINES_UPDATE = 30;
     static const int COMPLETION_ADD_TIMEOUT = 10 * 1000;
+    static const int LOG_READY_TIMEOUT = 1;
 
     static QSharedPointer<BaseDevice> create(
         QPointer<QTabWidget> parent,
@@ -93,6 +94,9 @@ public:
     bool columnMatches(const QString& column, const QStringRef& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound);
     bool columnTextMatches(const QStringRef& filter, const QString& text);
 
+    void scheduleLogReady();
+    void stopLogReadyTimer();
+
 signals:
     void logReady();
 
@@ -123,6 +127,7 @@ protected:
 private:
     QString m_completionToAdd;
     QTimer m_completionAddTimer;
+    QTimer m_logReadyTimer;
 };
 
 #endif // BASEDEVICE_H

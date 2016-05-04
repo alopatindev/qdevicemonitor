@@ -34,6 +34,7 @@ IOSDevice::IOSDevice(
 )
     : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
     , m_didReadModel(false)
+    , m_loggerStarted(false)
 {
     qDebug() << "IOSDevice::IOSDevice";
 
@@ -66,23 +67,24 @@ void IOSDevice::stopInfoProcess()
 {
     if (m_infoProcess.state() != QProcess::NotRunning)
     {
-        m_infoProcess.terminate();
         m_infoProcess.kill();
-        m_infoProcess.close();
     }
 }
 
 void IOSDevice::startInfoProcess()
 {
     qDebug() << "IOSDevice::startInfoProcess" << m_id;
-    QStringList args;
-    args.append("-u");
-    args.append(m_id);
-    args.append("-s");
-    args.append("-k");
-    args.append("DeviceName");
-    m_infoProcess.setReadChannel(QProcess::StandardOutput);
-    m_infoProcess.start("ideviceinfo", args);
+    if (m_infoProcess.state() == QProcess::NotRunning)
+    {
+        QStringList args;
+        args.append("-u");
+        args.append(m_id);
+        args.append("-s");
+        args.append("-k");
+        args.append("DeviceName");
+        m_infoProcess.setReadChannel(QProcess::StandardOutput);
+        m_infoProcess.start("ideviceinfo", args);
+    }
 }
 
 void IOSDevice::onUpdateModel()
@@ -111,6 +113,28 @@ void IOSDevice::onUpdateModel()
     }
 }
 
+void IOSDevice::startLogProcess()
+{
+    if (m_logProcess.state() == QProcess::NotRunning)
+    {
+        qDebug() << "IOSDevice::startLogProcess";
+        QStringList args;
+        args.append("-u");
+        args.append(m_id);
+        m_logProcess.setReadChannel(QProcess::StandardOutput);
+        m_logProcess.start("idevicesyslog", args);
+    }
+}
+
+void IOSDevice::stopLogProcess()
+{
+    if (m_logProcess.state() != QProcess::NotRunning)
+    {
+        qDebug() << "IOSDevice::stopLogProcess";
+        m_logProcess.kill();
+    }
+}
+
 void IOSDevice::startLogger()
 {
     if (!m_didReadModel || m_logProcess.state() != QProcess::NotRunning)
@@ -123,37 +147,40 @@ void IOSDevice::startLogger()
         qDebug() << "IOSDevice::startLogger";
     }
 
-    const QString currentLogAbsFileName = Utils::getNewLogFilePath(
-        QString("%1-%2-")
-            .arg(getPlatformName())
-            .arg(Utils::removeSpecialCharacters(m_humanReadableName))
-    );
-    m_currentLogFileName = currentLogAbsFileName;
-    m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
+    if (!m_loggerStarted)
+    {
+        const QString currentLogAbsFileName = Utils::getNewLogFilePath(
+            QString("%1-%2-")
+                .arg(getPlatformName())
+                .arg(Utils::removeSpecialCharacters(m_humanReadableName))
+        );
+        m_currentLogFileName = currentLogAbsFileName;
+        m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
-    m_logFile.setFileName(currentLogAbsFileName);
-    m_logFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
-    m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
-    m_logFileStream->setCodec("UTF-8");
+        m_logFile.setFileName(currentLogAbsFileName);
+        m_logFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
+        m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
+        m_logFileStream->setCodec("UTF-8");
 
-    QStringList args;
-    args.append("-u");
-    args.append(m_id);
-    m_logProcess.setReadChannel(QProcess::StandardOutput);
-    m_logProcess.start("idevicesyslog", args);
+        startLogProcess();
+
+        m_loggerStarted = true;
+    }
 }
 
 void IOSDevice::stopLogger()
 {
-    if (m_logProcess.state() != QProcess::NotRunning)
+    qDebug() << "IOSDevice::stopLogger";
+
+    m_loggerStarted = false;
+
+    stopLogReadyTimer();
+    stopLogProcess();
+
+    m_logFileStream.clear();
+
+    if (m_logFile.isOpen())
     {
-        qDebug() << "IOSDevice::stopLogger";
-
-        m_logProcess.terminate();
-        m_logProcess.kill();
-        m_logProcess.close();
-
-        m_logFileStream.clear();
         m_logFile.close();
     }
 }
@@ -264,6 +291,11 @@ void IOSDevice::reloadTextEdit()
 
 void IOSDevice::onLogReady()
 {
+    if (!m_loggerStarted)
+    {
+        return;
+    }
+
     maybeReadErrorsPart();
     const bool allErrorsAreRead = m_tempErrorsStream.atEnd();
 
@@ -274,7 +306,7 @@ void IOSDevice::onLogReady()
 
     if (m_logProcess.canReadLine() || !allErrorsAreRead)
     {
-        emit logReady();
+        scheduleLogReady();
     }
 }
 

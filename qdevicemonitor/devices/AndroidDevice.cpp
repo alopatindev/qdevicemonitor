@@ -34,6 +34,7 @@ AndroidDevice::AndroidDevice(
 )
     : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
     , m_didReadModel(false)
+    , m_loggerStarted(false)
 {
     qDebug() << "AndroidDevice::AndroidDevice";
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefixes (<b>pid:</b>, <b>tid:</b>, <b>tag:</b> or <b>text:</b>) with Plain Text</li><li>Regular Expressions</li></ul>"));
@@ -63,23 +64,25 @@ void AndroidDevice::stopInfoProcess()
 {
     if (m_infoProcess.state() != QProcess::NotRunning)
     {
-        m_infoProcess.terminate();
+        qDebug() << "AndroidDevice::stopInfoProcess";
         m_infoProcess.kill();
-        m_infoProcess.close();
     }
 }
 
 void AndroidDevice::startInfoProcess()
 {
     qDebug() << "AndroidDevice::startInfoProcess" << m_id;
-    QStringList args;
-    args.append("-s");
-    args.append(m_id);
-    args.append("shell");
-    args.append("getprop");
-    args.append("ro.product.model");
-    m_infoProcess.setReadChannel(QProcess::StandardOutput);
-    m_infoProcess.start("adb", args);
+    if (m_infoProcess.state() == QProcess::NotRunning)
+    {
+        QStringList args;
+        args.append("-s");
+        args.append(m_id);
+        args.append("shell");
+        args.append("getprop");
+        args.append("ro.product.model");
+        m_infoProcess.setReadChannel(QProcess::StandardOutput);
+        m_infoProcess.start("adb", args);
+    }
 }
 
 void AndroidDevice::onUpdateModel()
@@ -133,51 +136,66 @@ void AndroidDevice::startLogger()
         }
     }
 
-    const QString currentLogAbsFileName = Utils::getNewLogFilePath(
-        QString("%1-%2-")
-            .arg(getPlatformName())
-            .arg(Utils::removeSpecialCharacters(m_humanReadableName))
-    );
-    m_currentLogFileName = currentLogAbsFileName;
-    m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
+    if (!m_loggerStarted)
+    {
+        const QString currentLogAbsFileName = Utils::getNewLogFilePath(
+            QString("%1-%2-")
+                .arg(getPlatformName())
+                .arg(Utils::removeSpecialCharacters(m_humanReadableName))
+        );
+        m_currentLogFileName = currentLogAbsFileName;
+        m_deviceWidget->onLogFileNameChanged(m_currentLogFileName);
 
-    m_logFile.setFileName(currentLogAbsFileName);
-    m_logFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
-    m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
-    m_logFileStream->setCodec("UTF-8");
+        m_logFile.setFileName(currentLogAbsFileName);
+        m_logFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
+        m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
+        m_logFileStream->setCodec("UTF-8");
 
-    startLogProcess();
+        startLogProcess();
+
+        m_loggerStarted = true;
+    }
 }
 
 void AndroidDevice::stopLogger()
 {
     qDebug() << "AndroidDevice::stopLogger";
 
+    m_loggerStarted = false;
+
+    stopLogReadyTimer();
     stopLogProcess();
     m_logFileStream.clear();
-    m_logFile.close();
+
+    if (m_logFile.isOpen())
+    {
+        m_logFile.close();
+    }
 }
 
 void AndroidDevice::startLogProcess()
 {
-    QStringList args;
-    args.append("-s");
-    args.append(m_id);
-    args.append("logcat");
-    args.append("-v");
-    args.append("threadtime");
-    args.append("*:v");
-    m_logProcess.setReadChannel(QProcess::StandardOutput);
-    m_logProcess.start("adb", args);
+    if (m_logProcess.state() == QProcess::NotRunning)
+    {
+        qDebug() << "AndroidDevice::startLogProcess";
+        QStringList args;
+        args.append("-s");
+        args.append(m_id);
+        args.append("logcat");
+        args.append("-v");
+        args.append("threadtime");
+        args.append("*:v");
+        m_logProcess.setReadChannel(QProcess::StandardOutput);
+        m_logProcess.start("adb", args);
+    }
 }
 
 void AndroidDevice::stopLogProcess()
 {
     if (m_logProcess.state() != QProcess::NotRunning)
     {
-        m_logProcess.terminate();
+        qDebug() << "AndroiDevice::stopLogProcess";
         m_logProcess.kill();
-        m_logProcess.close();
     }
 }
 
@@ -333,22 +351,28 @@ void AndroidDevice::maybeClearAdbLog()
     {
         qDebug() << "clearing adb log";
 
-        QStringList args;
-        args.append("-s");
-        args.append(m_id);
-        args.append("logcat");
-        args.append("-c");
-        m_clearLogProcess.setReadChannel(QProcess::StandardOutput);
-        m_clearLogProcess.start("adb", args);
-        m_clearLogProcess.waitForFinished(1000);
-        m_clearLogProcess.terminate();
-        m_clearLogProcess.kill();
-        m_clearLogProcess.close();
+        if (m_clearLogProcess.state() == QProcess::NotRunning)
+        {
+            QStringList args;
+            args.append("-s");
+            args.append(m_id);
+            args.append("logcat");
+            args.append("-c");
+            m_clearLogProcess.setReadChannel(QProcess::StandardOutput);
+            m_clearLogProcess.start("adb", args);
+            m_clearLogProcess.waitForFinished(1000);
+            m_clearLogProcess.kill();
+        }
     }
 }
 
 void AndroidDevice::onLogReady()
 {
+    if (!m_loggerStarted)
+    {
+        return;
+    }
+
     QString line;
     for (int i = 0; i < MAX_LINES_UPDATE && m_logProcess.canReadLine(); ++i)
     {
@@ -370,6 +394,6 @@ void AndroidDevice::onLogReady()
 
     if (m_logProcess.canReadLine())
     {
-        emit logReady();
+        scheduleLogReady();
     }
 }

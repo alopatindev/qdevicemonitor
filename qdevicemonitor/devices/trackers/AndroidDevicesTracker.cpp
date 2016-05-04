@@ -42,19 +42,20 @@ void AndroidDevicesTracker::update()
 
 void AndroidDevicesTracker::startListProcess()
 {
-    QStringList args;
-    args.append("devices");
-    m_listProcess.setReadChannel(QProcess::StandardOutput);
-    m_listProcess.start("adb", args);
+    if (m_listProcess.state() == QProcess::NotRunning)
+    {
+        QStringList args;
+        args.append("devices");
+        m_listProcess.setReadChannel(QProcess::StandardOutput);
+        m_listProcess.start("adb", args);
+    }
 }
 
 void AndroidDevicesTracker::stopListProcess()
 {
     if (m_listProcess.state() != QProcess::NotRunning)
     {
-        m_listProcess.terminate();
         m_listProcess.kill();
-        m_listProcess.close();
     }
 }
 

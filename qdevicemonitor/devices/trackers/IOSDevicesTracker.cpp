@@ -42,19 +42,20 @@ void IOSDevicesTracker::update()
 
 void IOSDevicesTracker::startListProcess()
 {
-    QStringList args;
-    args.append("-l");
-    m_listProcess.setReadChannel(QProcess::StandardOutput);
-    m_listProcess.start("idevice_id", args);
+    if (m_listProcess.state() == QProcess::NotRunning)
+    {
+        QStringList args;
+        args.append("-l");
+        m_listProcess.setReadChannel(QProcess::StandardOutput);
+        m_listProcess.start("idevice_id", args);
+    }
 }
 
 void IOSDevicesTracker::stopListProcess()
 {
     if (m_listProcess.state() != QProcess::NotRunning)
     {
-        m_listProcess.terminate();
         m_listProcess.kill();
-        m_listProcess.close();
     }
 }
 

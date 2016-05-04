@@ -30,6 +30,7 @@ class TextFileDevice : public BaseDevice
     Q_OBJECT
 
     QProcess m_tailProcess;
+    bool m_loggerStarted;
 
 public:
     explicit TextFileDevice(

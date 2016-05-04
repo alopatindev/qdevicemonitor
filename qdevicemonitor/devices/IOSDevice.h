@@ -35,6 +35,7 @@ class IOSDevice : public BaseDevice
     QFile m_logFile;
     QSharedPointer<QTextStream> m_logFileStream;
     bool m_didReadModel;
+    bool m_loggerStarted;
 
     QString m_tempErrorsBuffer;
     QTextStream m_tempErrorsStream;
@@ -68,6 +69,10 @@ private slots:
     void onUpdateModel();
     void onLogReady() override;
     void onErrorsReady();
+
+private:
+    void startLogProcess();
+    void stopLogProcess();
 };
 
 #endif // ANDROIDDEVICE_H

@@ -32,7 +32,9 @@ TextFileDevice::TextFileDevice(
     const DeviceType type,
     const QString& humanReadableDescription,
     QPointer<DeviceFacade> deviceFacade
-) : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
+)
+    : BaseDevice(parent, id, type, getPlatformName(), humanReadableDescription, deviceFacade)
+    , m_loggerStarted(false)
 {
     qDebug() << "TextFileDevice::TextFileDevice";
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefix <b>text:</b> with Plain Text</li><li>Regular Expressions</li></ul>"));
@@ -54,23 +56,29 @@ void TextFileDevice::startLogger()
 {
     qDebug() << "TextFileDevice::startLogger";
 
-    QStringList args;
-    args.append("-F");
-    args.append("-n");
-    args.append(QString("%1").arg(m_deviceFacade->getVisibleLines()));
-    args.append(m_id);
-    m_tailProcess.start("tail", args);
+    if (m_tailProcess.state() == QProcess::NotRunning)
+    {
+        QStringList args;
+        args.append("-F");
+        args.append("-n");
+        args.append(QString("%1").arg(m_deviceFacade->getVisibleLines()));
+        args.append(m_id);
+        m_tailProcess.start("tail", args);
+    }
+
+    m_loggerStarted = true;
 }
 
 void TextFileDevice::stopLogger()
 {
     qDebug() << "TextFileDevice::stopLogger";
 
+    m_loggerStarted = false;
+    stopLogReadyTimer();
+
     if (m_tailProcess.state() != QProcess::NotRunning)
     {
-        m_tailProcess.terminate();
         m_tailProcess.kill();
-        m_tailProcess.close();
     }
 }
 
@@ -153,6 +161,11 @@ void TextFileDevice::reloadTextEdit()
 
 void TextFileDevice::onLogReady()
 {
+    if (!m_loggerStarted)
+    {
+        return;
+    }
+
     QString line;
     for (int i = 0; i < MAX_LINES_UPDATE && m_tailProcess.canReadLine(); ++i)
     {
@@ -169,6 +182,6 @@ void TextFileDevice::onLogReady()
 
     if (m_tailProcess.canReadLine())
     {
-        emit logReady();
+        scheduleLogReady();
     }
 }

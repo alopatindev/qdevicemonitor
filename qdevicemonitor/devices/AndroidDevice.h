@@ -37,6 +37,7 @@ class AndroidDevice : public BaseDevice
     QSharedPointer<QTextStream> m_logFileStream;
     int m_lastVerbosityLevel;
     bool m_didReadModel;
+    bool m_loggerStarted;
 
 public:
     explicit AndroidDevice(

@@ -57,7 +57,9 @@ BaseDevice::BaseDevice(
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget.data(), humanReadableName);
 
     m_completionAddTimer.setSingleShot(true);
+    m_logReadyTimer.setSingleShot(true);
 
+    connect(&m_logReadyTimer, &QTimer::timeout, this, &BaseDevice::onLogReady);
     connect(&m_completionAddTimer, &QTimer::timeout, this, &BaseDevice::addFilterAsCompletion);
     connect(&(m_deviceWidget->getFilterLineEdit()), &QLineEdit::textChanged, this, &BaseDevice::updateFilter);
     connect(this, &BaseDevice::logReady, this, &BaseDevice::onLogReady);
@@ -67,6 +69,7 @@ BaseDevice::~BaseDevice()
 {
     qDebug() << "~BaseDevice" << m_id;
 
+    disconnect(&m_logReadyTimer, nullptr, this, nullptr);
     disconnect(&m_completionAddTimer, nullptr, this, nullptr);
     disconnect(&m_deviceWidget->getFilterLineEdit(), nullptr, this, nullptr);
     disconnect(this, &BaseDevice::logReady, this, &BaseDevice::onLogReady);
@@ -147,6 +150,17 @@ void BaseDevice::addFilterAsCompletion()
     m_deviceFacade->addFilterAsCompletion(m_completionToAdd);
 }
 
+void BaseDevice::scheduleLogReady()
+{
+    m_logReadyTimer.start(LOG_READY_TIMEOUT);
+}
+
+void BaseDevice::stopLogReadyTimer()
+{
+    qDebug() << "BaseDevice::stopLogReadyTimer";
+    m_logReadyTimer.stop();
+}
+
 void BaseDevice::updateFilter(const QString& filter)
 {
     qDebug() << "BaseDevice::updateFilter(" << filter << ")";
@@ -166,10 +180,9 @@ void BaseDevice::addToLogBuffer(const QString& text)
 void BaseDevice::updateLogBufferSpace()
 {
     const size_t lines = static_cast<size_t>(m_deviceFacade->getVisibleLines());
-    qDebug() << "updateLogBufferSpace" << lines;
     if (m_logBuffer.isNull() || m_logBuffer->getCapacity() != lines)
     {
-        qDebug() << "recreating buffer";
+        qDebug() << "updateLogBufferSpace" << lines;
         m_logBuffer = QSharedPointer<StringRingBuffer>::create(m_deviceFacade->getVisibleLines());
     }
 }
