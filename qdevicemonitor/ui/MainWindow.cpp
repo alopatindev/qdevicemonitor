@@ -24,6 +24,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -199,7 +200,7 @@ void MainWindow::loadSettings()
     else
     {
 #ifdef Q_OS_WIN32
-        m_lastLogDirectory = "C:/";
+        m_lastLogDirectory = QDir::rootPath();
 #else
         m_lastLogDirectory = "/var/log";
 #endif
