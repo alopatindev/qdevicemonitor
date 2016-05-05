@@ -20,7 +20,7 @@
 #include <QTime>
 #include <cstdio>
 
-void logOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void logOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     (void) type;
 
@@ -38,9 +38,7 @@ void logOutput(QtMsgType type, const QMessageLogContext &context, const QString 
 
 int main(int argc, char* argv[])
 {
-#ifdef QT_DEBUG
     qInstallMessageHandler(logOutput);
-#endif
 
     Q_INIT_RESOURCE(resources);
 
