@@ -89,17 +89,14 @@ void AndroidDevice::onUpdateModel()
 {
     qDebug() << "AndroidDevice::onUpdateModel";
 
-    if (m_infoProcess.canReadLine())
+    const QString model = m_infoProcess.readLine().trimmed();
+    if (!model.isEmpty())
     {
-        const QString model = m_infoProcess.readLine().trimmed();
-        if (!model.isEmpty())
-        {
-            qDebug() << "AndroidDevice::onUpdateModel" << m_id << "=>" << model;
-            m_humanReadableName = model;
-            updateTabWidget();
-            m_didReadModel = true;
-            startLogger();
-        }
+        qDebug() << "AndroidDevice::onUpdateModel" << m_id << "=>" << model;
+        m_humanReadableName = model;
+        updateTabWidget();
+        m_didReadModel = true;
+        startLogger();
     }
 
     stopInfoProcess();
