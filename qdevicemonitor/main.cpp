@@ -18,22 +18,32 @@
 #include "ui/MainWindow.h"
 #include <QApplication>
 #include <QTime>
-#include <cstdio>
+#include <QTextStream>
 
 void logOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     (void) type;
 
     const QByteArray localMsg = msg.toLocal8Bit();
-    std::fprintf(
-        stdout,
-        "%s %s (%s:%u, %s)\n",
-        QTime::currentTime().toString().toStdString().c_str(),
-        localMsg.constData(),
-        context.file,
-        context.line,
-        context.function
-    );
+    const bool textLocationAvailable = context.line > 0;
+
+    QTextStream out(stdout, QIODevice::WriteOnly);
+    out << QTime::currentTime().toString()
+        << " "
+        << localMsg.constData();
+
+    if (textLocationAvailable)
+    {
+        out << " ("
+            << context.file
+            << ":"
+            << context.line
+            << ","
+            << context.function
+            << ")";
+    }
+
+    out << endl;
 }
 
 int main(int argc, char* argv[])
