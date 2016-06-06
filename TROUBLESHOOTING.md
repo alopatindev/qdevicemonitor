@@ -44,5 +44,10 @@ If it didn't help—try to Google it, specifying the device you use. I'm pretty 
 ### Mac OS X: App can’t be opened because it is from an unidentified developer
 Try [this guide](http://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/)
 
+### Windows protected your PC
+"Windows SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk"
+
+Press "More info" - "Run anyway"
+
 ### Android Emulator was not detected
 Automatic detection of Android Emulator is not supported. Please use File — **Detect Devices** after Emulator finishes booting
