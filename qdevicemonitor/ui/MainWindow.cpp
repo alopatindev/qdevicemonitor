@@ -182,7 +182,7 @@ void MainWindow::loadSettings()
     }
     else
     {
-        QRect geom = QApplication::desktop()->screenGeometry();
+        QRect geom = qApp->desktop()->screenGeometry();
         const int screenWidth = geom.width();
         const int screenHeight = geom.height();
         geom.setWidth(int(screenWidth * 0.7f));
@@ -228,7 +228,9 @@ void MainWindow::setupEnvironment()
     (void) Utils::getLogsPath();
 
 #if defined(Q_OS_MAC)
-    const QString thirdPartyDir(QCoreApplication::applicationDirPath() % "/3rdparty");
+    const QString thirdPartyDir(qApp->applicationDirPath() % "/3rdparty");
+    qDebug() << "thirdPartyDir" << thirdPartyDir;
+
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const QStringList thirdPartyProgramDirs = QDir(thirdPartyDir).entryList(QStringList(), QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -254,7 +256,7 @@ void MainWindow::setupEnvironment()
         (void) ::setenv("DYLD_FALLBACK_LIBRARY_PATH", dyldFallbackLibraryPath.toStdString().c_str(), 1);
     }
 #elif defined(Q_OS_WIN32)
-    const QString thirdPartyDir(QCoreApplication::applicationDirPath() % "\\3rdparty\\bin");
+    const QString thirdPartyDir(qApp->applicationDirPath() % "\\3rdparty\\bin");
     if (QFileInfo(thirdPartyDir).isDir())
     {
         const char* pPath = std::getenv("Path");
