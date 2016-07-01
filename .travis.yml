@@ -76,10 +76,10 @@ install:
         ls -al /Applications;
         cat ~/.ssh_host_rsa_key.pub;
 
-        brew install -v android-platform-tools libimobiledevice libusb p7zip qt5 cppcheck;
+        brew install -v android-platform-tools libimobiledevice libusb p7zip homebrew/versions/qt55 cppcheck;
 
         echo "${PATH}";
-        QTDIR=$(brew info qt5 | grep '/Cellar/' | awk '{print $1}');
+        QTDIR=$(brew info qt55 | grep '/Cellar/' | awk '{print $1}');
         PATH="${QTDIR}/bin:${PATH}";
         echo "${PATH}";
         ls -l "${QTDIR}";

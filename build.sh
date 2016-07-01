@@ -20,7 +20,7 @@ if [ $OSX = 1 ]; then
     LIBUSB_CFLAGS=$(pkg-config --cflags 'libusb-1.0')
     LIBUSB_LFLAGS=$(pkg-config --libs 'libusb-1.0')
 
-    QTDIR=$(brew info qt5 | grep '/Cellar/' | awk '{print $1}')
+    QTDIR=$(brew info qt55 | grep '/Cellar/' | awk '{print $1}')
     PATH="${QTDIR}/bin:${PATH}"
 
     qmake 'CONFIG += debug' "QMAKE_CFLAGS += ${LIBUSB_CFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}"
