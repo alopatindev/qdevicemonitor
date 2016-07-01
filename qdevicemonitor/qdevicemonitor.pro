@@ -79,8 +79,12 @@ VERSION = $$(VERSION)
 DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
 
 linux {
-    SOURCES += devices/trackers/usb/UdevUsbTracker.cpp
-    HEADERS += devices/trackers/usb/UdevUsbTracker.h
+    SOURCES += \
+        devices/trackers/usb/UdevUsbTracker.cpp \
+        devices/trackers/usb/UdevImpl.c
+    HEADERS += \
+        devices/trackers/usb/UdevUsbTracker.h
+        devices/trackers/usb/UdevImpl.h
     PKGCONFIG += libudev
 }
 

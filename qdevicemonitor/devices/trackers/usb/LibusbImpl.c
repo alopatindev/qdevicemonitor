@@ -16,6 +16,7 @@
 */
 
 #include "LibusbImpl.h"
+
 #include <libusb.h>
 #include <stdio.h>
 #include <sys/time.h>

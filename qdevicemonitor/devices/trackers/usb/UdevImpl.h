@@ -15,25 +15,12 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef UDEVUSBTRACKER_H
-#define UDEVUSBTRACKER_H
+#include <stdbool.h>
 
-#include "BaseUsbTracker.h"
-#include <QTimer>
+void init();
+void release();
 
-class UdevUsbTracker : public BaseUsbTracker
-{
-    QTimer m_updateTimer;
+bool isAvailable();
 
-    static const int UPDATE_INTERVAL = 1000;
-
-public:
-    UdevUsbTracker();
-    ~UdevUsbTracker() override;
-    bool isAvailable() const;
-
-private:
-    void update();
-};
-
-#endif
+void update();
+bool hasNewDevice();
