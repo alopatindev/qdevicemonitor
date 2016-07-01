@@ -31,7 +31,7 @@ LibusbUsbTracker::LibusbUsbTracker()
     connect(&m_updateTimer, &QTimer::timeout, this, &LibusbUsbTracker::update);
 
     initLibusb();
-    registerHotplugCallback();
+    maybeRegisterHotplugCallback();
 
     if (m_hotplugRegistered)
     {
@@ -54,11 +54,7 @@ LibusbUsbTracker::~LibusbUsbTracker()
 
 void LibusbUsbTracker::update()
 {
-    timeval zeroTimeout;
-    zeroTimeout.tv_sec = 0;
-    zeroTimeout.tv_usec = 5000;
-    const bool success =
-        libusb::libusb_handle_events_timeout_completed(nullptr, &zeroTimeout, nullptr) == 0;
+    const bool success = libusb::update();
     if (!success)
     {
         qDebug() << "libusb: handing events FAILED";
@@ -68,10 +64,7 @@ void LibusbUsbTracker::update()
 void LibusbUsbTracker::initLibusb()
 {
     Q_ASSERT_X(m_initialized == false, "LibusbUsbTracker::initLibusb", "already initialized");
-    m_initialized = libusb::libusb_init(nullptr) == 0;
-#ifdef QT_DEBUG
-    //libusb::libusb_set_debug(NULL, libusb::LIBUSB_LOG_LEVEL_DEBUG);
-#endif
+    m_initialized = libusb::init();
 }
 
 void LibusbUsbTracker::maybeReleaseLibusb()
@@ -79,37 +72,20 @@ void LibusbUsbTracker::maybeReleaseLibusb()
     if (m_initialized)
     {
         qDebug() << "libusb_exit";
-        libusb::libusb_exit(nullptr);
+        libusb::release();
         m_initialized = false;
         m_hotplugRegistered = false;
     }
 }
 
-void LibusbUsbTracker::registerHotplugCallback()
+void LibusbUsbTracker::maybeRegisterHotplugCallback()
 {
-    Q_ASSERT_X(m_hotplugRegistered == false, "LibusbUsbTracker::registerHotplugCallback", "already registered");
+    Q_ASSERT_X(m_hotplugRegistered == false, "LibusbUsbTracker::maybeRegisterHotplugCallback", "already registered");
 
-    const bool supportsHotplug =
-        m_initialized &&
-        libusb::libusb_has_capability(libusb::LIBUSB_CAP_HAS_HOTPLUG) != 0;
-
+    const bool supportsHotplug = m_initialized && libusb::supportsHotplug();
     if (supportsHotplug)
     {
-        const auto events = static_cast<libusb::libusb_hotplug_event>(
-            libusb::LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED | libusb::LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT
-        );
-        const auto flags = libusb::LIBUSB_HOTPLUG_ENUMERATE;
-        m_hotplugRegistered = libusb::libusb_hotplug_register_callback(
-            nullptr,
-            events,
-            flags,
-            LIBUSB_HOTPLUG_MATCH_ANY,
-            LIBUSB_HOTPLUG_MATCH_ANY,
-            LIBUSB_HOTPLUG_MATCH_ANY,
-            &LibusbUsbTracker::hotplugCallback,
-            nullptr,
-            nullptr
-        ) == libusb::LIBUSB_SUCCESS;
+        m_hotplugRegistered = libusb::registerHotplugCallback(&hotplugCallbackStatic);
     }
 }
 
@@ -119,17 +95,7 @@ void LibusbUsbTracker::hotplugCallback()
     emit usbConnectionChanged();
 }
 
-int LibusbUsbTracker::hotplugCallback(libusb::libusb_context* context, libusb::libusb_device* device, libusb::libusb_hotplug_event event, void* userData)
+void LibusbUsbTracker::hotplugCallbackStatic()
 {
-    (void) context;
-    (void) device;
-    (void) userData;
-
-    qDebug()
-        << "usb event:"
-        << ((event == libusb::LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT) ? "disconnected" : "connected");
-
     s_this->hotplugCallback();
-
-    return 0;
 }

@@ -22,6 +22,8 @@
 
 #if defined(Q_OS_LINUX)
     #include "UdevUsbTracker.h"
+#elif defined(Q_OS_MAC)
+    #include "LibusbUsbTracker.h"
 #endif
 
 QSharedPointer<BaseUsbTracker> BaseUsbTracker::create()
@@ -38,6 +40,8 @@ QSharedPointer<BaseUsbTracker> BaseUsbTracker::create()
     }
 #elif defined(Q_OS_WIN32)
     return QSharedPointer<NullUsbTracker>::create();
+#elif defined(Q_OS_MAC)
+    return QSharedPointer<LibusbUsbTracker>::create();
 #else
     return QSharedPointer<TimerUsbTracker>::create();
 #endif

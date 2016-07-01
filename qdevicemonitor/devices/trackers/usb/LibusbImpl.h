@@ -15,46 +15,17 @@
     along with QDeviceMonitor. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBUSBUSBTRACKER_H
-#define LIBUSBUSBTRACKER_H
+#ifndef LIBUSBIMPL_H
+#define LIBUSBIMPL_H
 
-#include "BaseUsbTracker.h"
-#include <QTimer>
+#include <stdbool.h>
 
-namespace libusb
-{
-    extern "C"
-    {
-        #include "LibusbImpl.h"
-    }
-}
+bool init();
+void release();
 
-class LibusbUsbTracker : public BaseUsbTracker
-{
-    bool m_initialized;
-    bool m_hotplugRegistered;
-    QTimer m_updateTimer;
+bool update();
 
-    static const int UPDATE_INTERVAL = 1000;
-
-public:
-    LibusbUsbTracker();
-    ~LibusbUsbTracker() override;
-    bool isAvailable() const
-    {
-        return m_hotplugRegistered;
-    }
-
-private slots:
-    void update();
-
-private:
-    void initLibusb();
-    void maybeReleaseLibusb();
-    void maybeRegisterHotplugCallback();
-
-    void hotplugCallback();
-    static void hotplugCallbackStatic();
-};
+bool supportsHotplug();
+bool registerHotplugCallback(void (*callback)());
 
 #endif

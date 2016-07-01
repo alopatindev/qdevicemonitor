@@ -65,10 +65,17 @@ QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wal
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
 
+QMAKE_CFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall -std=c11
+QMAKE_CFLAGS_RELEASE -= -O2
+QMAKE_CFLAGS_RELEASE += -O3
+
+debug {
+    DEFINES += QT_DEBUG  # FIXME: C files hack
+}
+
 QMAKE_LFLAGS_RELEASE -= -O1
 
 VERSION = $$(VERSION)
-
 DEFINES += VERSION=\\\"$$(VERSION_WITH_BUILD_NUMBER)\\\"
 
 linux {
@@ -88,5 +95,16 @@ win32 {
 macx {
     QMAKE_CXXFLAGS += -stdlib=libc++
     QMAKE_LFLAGS += -stdlib=libc++
+
+    SOURCES += \
+        devices/trackers/usb/LibusbUsbTracker.cpp \
+        devices/trackers/usb/LibusbImpl.c
+
+    HEADERS += \
+        devices/trackers/usb/LibusbUsbTracker.h \
+        devices/trackers/usb/LibusbImpl.h
+
+    # PKGCONFIG += libusb-1.0
+
     ICON = icons/app_icon.icns
 }

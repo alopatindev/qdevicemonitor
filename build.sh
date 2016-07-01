@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+unalias -a
 
 ln -sf ../../scripts/pre-commit.sh .git/hooks/pre-commit
 
@@ -15,7 +16,14 @@ ctags -R .
 cd qdevicemonitor
 
 if [ $OSX = 1 ]; then
-    qmake 'CONFIG += debug'
+    PKG_CONFIG_PATH="$(brew info libusb | grep '/Cellar/' | awk '{print $1}')/lib/pkgconfig"
+    LIBUSB_CFLAGS=$(pkg-config --cflags 'libusb-1.0')
+    LIBUSB_LFLAGS=$(pkg-config --libs 'libusb-1.0')
+
+    QTDIR=$(brew info qt5 | grep '/Cellar/' | awk '{print $1}')
+    PATH="${QTDIR}/bin:${PATH}"
+
+    qmake 'CONFIG += debug' "QMAKE_CFLAGS += ${LIBUSB_CFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}"
     time make -j8
     lldb qdevicemonitor.app/Contents/MacOS/qdevicemonitor
 else

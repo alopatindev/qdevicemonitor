@@ -84,6 +84,11 @@ install:
         echo "${PATH}";
         ls -l "${QTDIR}";
         ls -l "${QTDIR}/bin";
+        PKG_CONFIG_PATH="$(brew info libusb | grep '/Cellar/' | awk '{print $1}')/lib/pkgconfig";
+        LIBUSB_CFLAGS="$(pkg-config --cflags 'libusb-1.0')";
+        LIBUSB_LFLAGS="$(pkg-config --libs 'libusb-1.0')";
+        echo "${LIBUSB_CFLAGS}";
+        echo "${LIBUSB_LFLAGS}";
     fi
 
 script:
@@ -102,14 +107,14 @@ script:
         fi;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         if [ $CXX = "g++" ]; then
-            qmake -spec macx-g++;
+            qmake -spec macx-g++ "QMAKE_CFLAGS += ${LIBUSB_CFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
             cd ..;
-            qmake -spec macx-g++ 'CONFIG += release';
+            qmake -spec macx-g++ 'CONFIG += release' "QMAKE_CFLAGS += ${LIBUSB_CFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
         fi;
         if [ $CXX = "clang++" ]; then
-            qmake -spec macx-clang;
+            qmake -spec macx-clang "QMAKE_CFLAGS += ${LIBUSB_CFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
             cd ..;
-            qmake -spec macx-clang 'CONFIG += release';
+            qmake -spec macx-clang 'CONFIG += release' "QMAKE_CFLAGS += ${LIBUSB_CFLAGS}" "QMAKE_LFLAGS += ${LIBUSB_LFLAGS}";
         fi;
     fi
   - echo "${PATH}"
@@ -142,6 +147,7 @@ script:
         mkdir "${THIRD_PARTY_DIR}";
         copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";
+        copy_3rdparty libusb "${THIRD_PARTY_DIR}";
 
         macdeployqt "${APP_DIR}" -dmg -verbose=3;
         ls -la;
