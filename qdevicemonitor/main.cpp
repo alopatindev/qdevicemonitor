@@ -20,6 +20,8 @@
 #include <QTime>
 #include <QTextStream>
 
+#include "Utils.h"
+
 void logOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     (void) type;
@@ -48,6 +50,8 @@ void logOutput(QtMsgType type, const QMessageLogContext& context, const QString&
 
 int main(int argc, char* argv[])
 {
+    PRINT_THREAD_ID;
+
     qInstallMessageHandler(logOutput);
 
     Q_INIT_RESOURCE(resources);

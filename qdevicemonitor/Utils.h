@@ -21,6 +21,14 @@
 #include <QFile>
 #include <QString>
 
+#if defined(Q_OS_MAC)
+    #include <QThread>
+    #include <QDebug>
+    #define PRINT_THREAD_ID do { qDebug() <<  __func__ << "thread" << QThread::currentThreadId(); } while(0);
+#else
+    #define PRINT_THREAD_ID
+#endif
+
 namespace Utils
 {
     static const char* const LOGS_DIR = "logs";

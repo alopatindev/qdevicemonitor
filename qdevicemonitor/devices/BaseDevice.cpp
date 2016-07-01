@@ -25,6 +25,8 @@
 #include <QIcon>
 #include <QtCore/QStringBuilder>
 
+#include "Utils.h"
+
 using namespace DataTypes;
 
 BaseDevice::BaseDevice(
@@ -164,6 +166,8 @@ void BaseDevice::stopLogReadyTimer()
 void BaseDevice::updateFilter(const QString& filter)
 {
     qDebug() << "BaseDevice::updateFilter(" << filter << ")";
+
+    PRINT_THREAD_ID;
 
     const QString regexpFilter(".*(" % filter % ").*");
     m_columnTextRegexp.setPattern(regexpFilter);
