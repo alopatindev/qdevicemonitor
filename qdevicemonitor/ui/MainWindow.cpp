@@ -242,7 +242,7 @@ void MainWindow::setupEnvironment()
         {
             const QString prefix(path.isEmpty() ? "" : ":");
             const QString dir = QString("%1/%2").arg(thirdPartyDir).arg(i);
-            path = QString("%1%2%3/bin").arg(path).arg(prefix).arg(dir);
+            path = QString("%1/bin%2%3").arg(dir).arg(prefix).arg(path);
             if (QFileInfo(QString("%1/lib").arg(dir)).isDir())
             {
                 const QString prefix(dyldFallbackLibraryPath.isEmpty() ? "" : ":");
