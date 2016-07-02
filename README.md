@@ -52,9 +52,9 @@ Open the .dmg and move the app to /Applications
 2. Unpack the .zip and run `qdevicemonitor.exe`
 
 ## Latest Builds
-For Ubuntu GNU/Linux and Mac OS X [see this](https://sourceforge.net/projects/qdevicemonitor/files/ci/)
+For **Ubuntu** GNU/Linux and Mac **OS X** [see this](https://sourceforge.net/projects/qdevicemonitor/files/ci/)
 
-For Windows: [latest build](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts) or [full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on **Artifacts**)
+For **Windows**: [latest build](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts) or [full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on **Artifacts**)
 
 ### Build from the Source Code
 Make sure that you have installed [Qt >= 5.6](http://www.qt.io/download-open-source)
