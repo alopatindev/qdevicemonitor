@@ -7,6 +7,10 @@ QDeviceMonitor
 [![Language](https://img.shields.io/badge/language-C++11-blue.svg)](https://isocpp.org)
 [![Language](https://img.shields.io/badge/language-C11-blue.svg)](https://en.wikipedia.org/wiki/C11_(C_standard_revision))
 
+[![Ubuntu Unstable](https://img.shields.io/badge/ubuntu-unstable-orange.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/)
+[![OS X Unstable](https://img.shields.io/badge/os%20x-unstable-blue.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/)
+[![Windows Unstable](https://img.shields.io/badge/windows-unstable-blue.svg)](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts)
+
 Crossplatform log viewer for Android, iOS and text files.
 
 Key Features
@@ -52,7 +56,7 @@ Open the .dmg and move the app to /Applications
 2. Unpack the .zip and run `qdevicemonitor.exe`
 
 ## Latest Builds
-For **Ubuntu** GNU/Linux and Mac **OS X** [see this](https://sourceforge.net/projects/qdevicemonitor/files/ci/)
+For **Ubuntu GNU/Linux** and **Mac OS X** [see this](https://sourceforge.net/projects/qdevicemonitor/files/ci/)
 
 For **Windows**: [latest build](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts) or [full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on **Artifacts**)
 
