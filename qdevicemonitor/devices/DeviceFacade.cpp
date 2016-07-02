@@ -453,6 +453,15 @@ void DeviceFacade::openLogFile()
     getCurrentDeviceWidget()->openLogFile();
 }
 
+void DeviceFacade::writeToLogFile(const QString& id, const QString& line)
+{
+    const auto it = m_devicesMap.find(id);
+    if (it != m_devicesMap.end())
+    {
+        (*it)->writeToLogFile(line);
+    }
+}
+
 void DeviceFacade::openTextFileDevice(const QString& fullPath)
 {
     m_textFileDevicesTracker.openFile(fullPath);

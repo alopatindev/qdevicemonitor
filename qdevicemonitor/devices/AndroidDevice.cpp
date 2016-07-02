@@ -386,9 +386,7 @@ void AndroidDevice::onLogReady()
         if (m_tempStream.readLineInto(&line))
 #endif
         {
-            *m_logFileStream << line << "\n";
-            m_logFileStream->flush();
-            addToLogBuffer(line);
+            writeToLogFile(line);
             filterAndAddToTextEdit(line);
         }
     }
@@ -397,4 +395,11 @@ void AndroidDevice::onLogReady()
     {
         scheduleLogReady();
     }
+}
+
+void AndroidDevice::writeToLogFile(const QString& line)
+{
+    *m_logFileStream << line << "\n";
+    m_logFileStream->flush();
+    BaseDevice::writeToLogFile(line);
 }

@@ -89,6 +89,8 @@ public:
     inline const QString& getCurrentLogFileName() const { return m_currentLogFileName; }
 
     void addToLogBuffer(const QString& text);
+    virtual void writeToLogFile(const QString& line) { addToLogBuffer(line); }
+
     void updateLogBufferSpace();
     void filterAndAddFromLogBufferToTextEdit();
     bool columnMatches(const QString& column, const QStringRef& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound);

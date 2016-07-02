@@ -52,7 +52,7 @@ BaseDevice::BaseDevice(
 
     updateLogBufferSpace();
 
-    m_deviceWidget = QSharedPointer<DeviceWidget>::create(static_cast<QTabWidget*>(m_tabWidget), m_deviceFacade);
+    m_deviceWidget = QSharedPointer<DeviceWidget>::create(static_cast<QTabWidget*>(m_tabWidget), m_deviceFacade, id);
     m_deviceWidget->getFilterLineEdit().setCompleter(&m_deviceFacade->getFilterCompleter());
     m_tabIndex = m_tabWidget->addTab(m_deviceWidget.data(), humanReadableName);
 

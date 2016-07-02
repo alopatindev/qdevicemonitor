@@ -40,12 +40,13 @@ class DeviceWidget : public QWidget
     QPalette m_defaultTextEditPalette;
     QPalette m_redPalette;
     QPointer<DeviceFacade> m_deviceFacade;
+    QString m_id;
     QTextStream m_textStream;
     QString m_stringStream;
     QString m_currentLogFileName;
 
 public:
-    explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceFacade> deviceFacade);
+    explicit DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceFacade> deviceFacade, const QString& id);
     ~DeviceWidget() override;
     void hideVerbosity();
 

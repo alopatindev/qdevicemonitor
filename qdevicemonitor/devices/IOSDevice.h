@@ -50,6 +50,8 @@ public:
     );
     ~IOSDevice() override;
 
+    void writeToLogFile(const QString& line) override;
+
     void onUpdateFilter(const QString& filter) override;
     void filterAndAddToTextEdit(const QString& line) override;
     const char* getPlatformName() const override { return "iOS"; }

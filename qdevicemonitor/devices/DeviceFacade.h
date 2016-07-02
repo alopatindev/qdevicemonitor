@@ -90,6 +90,7 @@ public:
     void markLog();
     void clearLog();
     void openLogFile();
+    void writeToLogFile(const QString& id, const QString& line);
 
     void openTextFileDevice(const QString& fullPath);
 

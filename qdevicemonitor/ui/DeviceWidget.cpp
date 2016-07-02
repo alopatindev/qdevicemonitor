@@ -25,11 +25,12 @@
 
 using namespace DataTypes;
 
-const QString MARK_LINE("========================== MARK ==========================");
+static const QString MARK_LINE("========================== MARK ==========================");
 
-DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceFacade> deviceFacade)
+DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceFacade> deviceFacade, const QString& id)
     : QWidget(parent)
     , m_deviceFacade(deviceFacade)
+    , m_id(id)
 {
     m_ui = QSharedPointer<Ui::DeviceWidget>::create();
     m_ui->setupUi(this);
@@ -183,7 +184,7 @@ void DeviceWidget::focusFilterInput()
 void DeviceWidget::on_markLogButton_clicked()
 {
     addText(ColorTheme::VerbosityVerbose, QStringRef(&MARK_LINE));
-    //addToLogBuffer(MARK_LINE);
+    m_deviceFacade->writeToLogFile(m_id, MARK_LINE);
     flushText();
 }
 
