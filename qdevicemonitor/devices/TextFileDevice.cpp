@@ -161,8 +161,6 @@ void TextFileDevice::reloadTextEdit()
 
 void TextFileDevice::onLogReady()
 {
-    PRINT_THREAD_ID;
-
     if (!m_loggerStarted)
     {
         return;

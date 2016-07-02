@@ -44,7 +44,6 @@ DeviceFacade::DeviceFacade(QPointer<QTabWidget> parent)
     , m_autoRemoveFilesHours(48)
 {
     qDebug() << "DeviceFacade";
-    PRINT_THREAD_ID;
 
     m_filterCompleter.setModel(&m_filterCompleterModel);
 
@@ -97,7 +96,6 @@ void DeviceFacade::startTrackersUpdateTimer()
 void DeviceFacade::trackersUpdate()
 {
     qDebug() << "trackersUpdate";
-    PRINT_THREAD_ID;
     for (auto it = m_trackers.begin(); it != m_trackers.end(); ++it)
     {
         it->data()->update();

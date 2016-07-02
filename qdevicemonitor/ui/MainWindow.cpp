@@ -44,8 +44,6 @@
 MainWindow::MainWindow(QPointer<QWidget> parent)
     : QMainWindow(parent)
 {
-    PRINT_THREAD_ID;
-
     m_ui = QSharedPointer<Ui::MainWindow>::create();
     m_ui->setupUi(this);
 
@@ -228,8 +226,6 @@ void MainWindow::setupEnvironment()
     qDebug() << "MainWindow::setupEnvironment";
 
     (void) Utils::getLogsPath();
-
-    PRINT_THREAD_ID;
 
 #if defined(Q_OS_MAC)
     const QString thirdPartyDir(qApp->applicationDirPath() % "/3rdparty");
