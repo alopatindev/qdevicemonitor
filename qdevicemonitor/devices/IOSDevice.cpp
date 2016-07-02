@@ -241,6 +241,7 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
+    bool filtersMatch = true;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
@@ -248,7 +249,6 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         const QStringRef deviceName = match.capturedRef("deviceName");
         const QStringRef text = line.midRef(match.capturedEnd("deviceName") + 1);
 
-        bool filtersMatch = true;
         checkFilters(filtersMatch, m_filtersValid, text);
 
         if (filtersMatch)
@@ -261,7 +261,6 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
     }
     else
     {
-        bool filtersMatch = true;
         checkFilters(filtersMatch, m_filtersValid, QStringRef(&line));
 
         if (filtersMatch)
@@ -271,7 +270,11 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
         }
     }
 
-    m_deviceWidget->maybeScrollTextEditToEnd();
+    if (filtersMatch)
+    {
+        m_deviceWidget->maybeScrollTextEditToEnd();
+    }
+
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 

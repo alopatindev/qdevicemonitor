@@ -112,13 +112,12 @@ void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const 
 
 void TextFileDevice::filterAndAddToTextEdit(const QString& line)
 {
-    bool filtersMatch = true;
-
     static const QRegularExpression re(
         "(?<prefix>[A-Za-z]{3} +[\\d]{1,2} [\\d:]{8}) (?<hostname>.+) ",
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
 
+    bool filtersMatch = true;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
@@ -146,7 +145,11 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         }
     }
 
-    m_deviceWidget->maybeScrollTextEditToEnd();
+    if (filtersMatch)
+    {
+        m_deviceWidget->maybeScrollTextEditToEnd();
+    }
+
     //m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 

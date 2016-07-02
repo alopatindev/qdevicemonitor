@@ -269,7 +269,11 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         }
     }
 
-    m_deviceWidget->maybeScrollTextEditToEnd();
+    if (filtersMatch)
+    {
+        m_deviceWidget->maybeScrollTextEditToEnd();
+    }
+
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
