@@ -7,10 +7,6 @@ QDeviceMonitor
 [![Language](https://img.shields.io/badge/language-C++11-blue.svg)](https://isocpp.org)
 [![Language](https://img.shields.io/badge/language-C11-blue.svg)](https://en.wikipedia.org/wiki/C11_(C_standard_revision))
 
-[![Ubuntu Unstable](https://img.shields.io/badge/ubuntu-unstable-orange.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/)
-[![OS X Unstable](https://img.shields.io/badge/os%20x-unstable-blue.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/)
-[![Windows Unstable](https://img.shields.io/badge/windows-unstable-blue.svg)](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts)
-
 Crossplatform log viewer for Android, iOS and text files.
 
 Key Features
@@ -32,9 +28,6 @@ Key Features
 Installation
 ------------
 
-## Stable Builds
-[Download the build](https://github.com/alopatindev/qdevicemonitor/releases) for your platform
-
 ### GNU/Linux
 #### Ubuntu
 1. Add **universe** repository (Software Center — Edit — Software Sources...)
@@ -55,10 +48,11 @@ Open the .dmg and move the app to /Applications
     3. Add the path to `platform-tools` directory (from Android SDK) to **Path** environment variable (with Control Panel — System — Advanced — Environment Variables)
 2. Unpack the .zip and run `qdevicemonitor.exe`
 
-## Latest Builds
-For **Ubuntu GNU/Linux** and **Mac OS X** [see this](https://sourceforge.net/projects/qdevicemonitor/files/ci/)
+## Latest (Unstable) Builds
 
-For **Windows**: [latest build](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts) or [full build list](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/history) (use any green builds and then click on **Artifacts**)
+[![Download Ubuntu](https://img.shields.io/badge/ubuntu-download-orange.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/)
+[![Download OS X](https://img.shields.io/badge/os%20x-download-yellowgreen.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/)
+[![Download Windows](https://img.shields.io/badge/windows-download-blue.svg)](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts)
 
 ### Build from the Source Code
 Make sure that you have installed [Qt >= 5.6](http://www.qt.io/download-open-source)
