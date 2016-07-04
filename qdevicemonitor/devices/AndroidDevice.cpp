@@ -399,7 +399,10 @@ void AndroidDevice::onLogReady()
 
 void AndroidDevice::writeToLogFile(const QString& line)
 {
-    *m_logFileStream << line << "\n";
-    m_logFileStream->flush();
+    if (!m_logFileStream.isNull())
+    {
+        *m_logFileStream << line << "\n";
+        m_logFileStream->flush();
+    }
     BaseDevice::writeToLogFile(line);
 }
