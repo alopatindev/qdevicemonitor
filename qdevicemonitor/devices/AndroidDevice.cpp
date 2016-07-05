@@ -198,13 +198,10 @@ void AndroidDevice::stopLogProcess()
 
 void AndroidDevice::onUpdateFilter(const QString& filter)
 {
-    if (m_logProcess.state() == QProcess::Running)
-    {
-        m_filters = filter.split(' ');
-        m_filtersValid = true;
-        reloadTextEdit();
-        maybeAddCompletionAfterDelay(filter);
-    }
+    m_filters = filter.split(' ');
+    m_filtersValid = true;
+    reloadTextEdit();
+    maybeAddCompletionAfterDelay(filter);
 }
 
 void AndroidDevice::onVerbosityLevelChange(const int level)
