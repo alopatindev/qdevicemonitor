@@ -109,11 +109,12 @@ void DeviceWidget::addText(const QColor& color, const QStringRef& text)
         << "; font-size: " << m_deviceFacade->getFontSize()
         << "pt; font-weight: " << (m_deviceFacade->isFontBold() ? "bold" : "none")
         << ";\" color=\"" << color.name()
+        << "\">"
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
         // FIXME: remove this hack
-        << "\">" << text.toString()
+        << text.toString()
 #else
-        << "\">" << text
+        << text
 #endif
         << " </font>";
 }
