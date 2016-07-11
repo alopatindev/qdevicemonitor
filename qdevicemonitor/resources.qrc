@@ -5,5 +5,8 @@
   <file alias="icons/Android_offline.png">icons/Android_offline.png</file>
   <file alias="icons/iOS_online.png">icons/iOS_online.png</file>
   <file alias="icons/iOS_offline.png">icons/iOS_offline.png</file>
+  <file alias="icons/folder.png">icons/folder.png</file>
+  <file alias="icons/refresh.png">icons/refresh.png</file>
+  <file alias="icons/settings.png">icons/settings.png</file>
 </qresource>
 </RCC>
