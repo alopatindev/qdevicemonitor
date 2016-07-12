@@ -262,14 +262,9 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ColorTheme::VerbosityInfo, QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringRef(&line));
             m_deviceWidget->flushText();
         }
-    }
-
-    if (filtersMatch)
-    {
-        m_deviceWidget->maybeScrollTextEditToEnd();
     }
 
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);

@@ -142,11 +142,6 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         }
     }
 
-    if (filtersMatch)
-    {
-        m_deviceWidget->maybeScrollTextEditToEnd();
-    }
-
     //m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 

@@ -123,7 +123,10 @@ void DeviceWidget::flushText()
 {
     m_textStream.flush();
     m_ui->textEdit->setUpdatesEnabled(false);
+
     m_ui->textEdit->append(m_textStream.readAll());
+    maybeScrollTextEditToEnd();
+
     m_ui->textEdit->setUpdatesEnabled(true);
 }
 
