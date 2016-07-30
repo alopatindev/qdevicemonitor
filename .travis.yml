@@ -10,7 +10,7 @@ dist: trusty
 env:
   global:
     - STORAGE_HOSTNAME=frs.sourceforge.net
-    - VERSION=1.0.1
+    - VERSION=1.0.2
     - UPLOAD_BUILD=0
 
 matrix:
