@@ -36,7 +36,11 @@ Installation
 4. Install the .deb
 
 #### Gentoo
-[Use .ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo's Bugzilla
+```
+layman -f -o https://raw.github.com/alopatindev/gentoo-overlay-alopatindev/master/repository.xml -a alopatindev-overlay
+emerge dev-util/qdevicemonitor
+```
+or [download ebuild](https://bugs.gentoo.org/show_bug.cgi?id=532898) from Gentoo Bugzilla
 
 ### Mac OS X
 Open the .dmg and move the app to /Applications
