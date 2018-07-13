@@ -1,3 +1,5 @@
+sudo: required
+
 language: cpp
 compiler: clang
 
@@ -29,28 +31,6 @@ matrix:
 addons:
   ssh_known_hosts:
     - ${STORAGE_HOSTNAME}
-  apt:
-    sources:
-      - wily
-      - ubuntu-sdk-team
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.6
-    packages:
-      - qtbase5-dev
-      - qtdeclarative5-dev
-      - libqt5webkit5-dev
-      - libsqlite3-dev
-      - qt5-default
-      - qttools5-dev-tools
-      - fakeroot
-      - libimobiledevice-dev
-      - libimobiledevice-utils
-      - g++-5
-      - clang-3.6
-      - lintian
-      - cppcheck
-      - libusb-1.0-0-dev
-      - libudev-dev
 
 before_install:
   - pwd
@@ -61,7 +41,11 @@ before_install:
         cat /etc/*release;
         cat /proc/cpuinfo;
         tar xvf secrets.tar -C /home/travis/.ssh/;
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0C49F3730359A14518585931BC711F9BA15703C6;
     elif [ $TRAVIS_OS_NAME = osx ]; then
+        gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 || curl -sSL https://rvm.io/mpapis.asc | gpg --import -;
+        rvm get stable;
+
         brew update;
         ci-scripts/fix_brew.sh;
         tar xvf secrets.tar -C /Users/travis/.ssh/;
@@ -72,14 +56,22 @@ before_install:
 install:
   - ls -al ~
   - ls -al ~/.ssh
-  - if [ $TRAVIS_OS_NAME = osx ]; then
-        ls -al /Applications;
-        cat ~/.ssh_host_rsa_key.pub;
+  - if [ $TRAVIS_OS_NAME = linux ]; then
+        sudo apt-get update;
 
-        brew install -v openssl android-platform-tools libxml2 libplist usbmuxd libimobiledevice libusb p7zip homebrew/versions/qt55 cppcheck;
+        sudo apt-get install -y --allow-unauthenticated qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev qt5-default qttools5-dev-tools fakeroot libimobiledevice-dev libimobiledevice-utils g++ clang lintian cppcheck libusb-1.0-0-dev libudev-dev;
+
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+        ls -al /Applications;
+
+        brew tap -v homebrew/cask;
+        brew cask install -v android-sdk;
+        brew cask install -v android-platform-tools;
+
+        brew install -v openssl libxml2 libplist usbmuxd libimobiledevice libusb p7zip qt5 cppcheck;
 
         echo "${PATH}";
-        QTDIR=$(brew info qt55 | grep '/Cellar/' | awk '{print $1}');
+        QTDIR=$(brew info qt5 | grep '/Cellar/' | awk '{print $1}');
         PATH="${QTDIR}/bin:${PATH}";
         echo "${PATH}";
         ls -l "${QTDIR}";
@@ -128,7 +120,7 @@ script:
         ldd "${PROGRAMNAME}/${PROGRAMNAME}";
 
         export OUTPUT_FILENAME="${OUTPUT_DIRECTORY}.deb";
-        ./ci-scripts/build_deb.sh;
+        ./ci-scripts/build_deb.sh && echo ok || echo failed;
         lintian -i -I --show-overrides "${OUTPUT_FILENAME}" && echo ok || echo failed;
     elif [ $TRAVIS_OS_NAME = osx ]; then
         function copy_3rdparty() {
@@ -138,6 +130,7 @@ script:
             cp -av "${PROGRAM_DIR}" "${THIRD_PARTY_DIR}/${THIRD_PARTY_NAME}";
             ls -l "${THIRD_PARTY_DIR}/${THIRD_PARTY_NAME}";
         };
+
         APP_DIR="${PROGRAMNAME}/${PROGRAMNAME}.app";
         EXECFILE="${APP_DIR}/Contents/MacOS/${PROGRAMNAME}";
         file "${EXECFILE}";
@@ -145,7 +138,14 @@ script:
 
         THIRD_PARTY_DIR="${APP_DIR}/Contents/MacOS/3rdparty";
         mkdir "${THIRD_PARTY_DIR}";
-        copy_3rdparty android-platform-tools "${THIRD_PARTY_DIR}";
+
+        mkdir -p "${THIRD_PARTY_DIR}/android-platform-tools/bin";
+        cp -pvL /usr/local/bin/adb "${THIRD_PARTY_DIR}/android-platform-tools/bin/";
+        file /usr/local/bin/adb;
+        otool -L /usr/local/bin/adb;
+
+        find /usr/local/Caskroom/android-platform-tools/ -type f;
+
         copy_3rdparty usbmuxd "${THIRD_PARTY_DIR}";
         copy_3rdparty libplist "${THIRD_PARTY_DIR}";
         copy_3rdparty libimobiledevice "${THIRD_PARTY_DIR}";

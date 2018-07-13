@@ -13,8 +13,8 @@ function download_and_unpack {
     echo "${VERSION}"
     TARBALL="${PACKNAME}-${VERSION}.tar.gz"
     echo "${TARBALL}"
-    #wget -c -nv --tries=10 --timeout=30 "https://github.com/libimobiledevice/${PACKNAME}/archive/${VERSION}.tar.gz" -O "${TARBALL}"
-    curl -sL "https://github.com/libimobiledevice/${PACKNAME}/archive/${VERSION}.tar.gz" -o "${TARBALL}"
+    wget -c --verbose --tries=10 --timeout=30 "https://github.com/libimobiledevice/${PACKNAME}/archive/${VERSION}.tar.gz" -O "${TARBALL}"
+    #curl -sL "https://github.com/libimobiledevice/${PACKNAME}/archive/${VERSION}.tar.gz" -o "${TARBALL}"
     tar xzvf "${TARBALL}"
 
     if [ ${PACKNAME} = 'libimobiledevice' ]; then
