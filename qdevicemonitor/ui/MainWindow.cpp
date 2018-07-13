@@ -31,6 +31,7 @@
 #include <QProcess>
 #include <QSettings>
 #include <QStringList>
+#include <QTabBar>
 #include <QtCore/QStringBuilder>
 
 #if defined(Q_OS_WIN32)
