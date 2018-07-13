@@ -40,6 +40,9 @@ Installation
 emerge dev-util/qdevicemonitor
 ```
 
+#### OpenSUSE
+I didn't check it but it turns out it's in [official repository](https://software.opensuse.org/package/qdevicemonitor)
+
 ### Mac OS X
 Open the .dmg and move the app to /Applications
 
@@ -82,4 +85,4 @@ This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions; read LICENSE for details.
 
-Copyright (C) 2014—2016  Alexander Lopatin <alopatindev ät gmail dot com>
+Copyright (C) 2014—2018  Alexander Lopatin <alopatindev ät gmail dot com>
