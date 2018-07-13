@@ -103,7 +103,7 @@ void MainWindow::on_actionAbout_triggered()
                               qApp->applicationVersion()),
         tr("<b>%1 %2</b><br><br>"
            "Crossplatform Android, iOS and text file log viewer written in C++/Qt.<br>\n"
-           "Copyright (c) 2014—2015 Alexander Lopatin<br>\n"
+           "Copyright (c) 2014—2018 Alexander Lopatin<br>\n"
            "<a href=\"https://github.com/alopatindev/qdevicemonitor\">https://github.com/alopatindev/qdevicemonitor</a><br>\n\n"
            "<center>This program is released under<br>\n"
            "the terms of the<br>\n"

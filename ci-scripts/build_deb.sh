@@ -37,7 +37,7 @@ This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions; read LICENSE for details.
 
-Copyright (C) 2014—2015  Alexander Lopatin <alopatindev ät gmail dot com>
+Copyright (C) 2014—2018  Alexander Lopatin <alopatindev ät gmail dot com>
 
 
 On Debian systems, the complete text of the GNU General Public License
