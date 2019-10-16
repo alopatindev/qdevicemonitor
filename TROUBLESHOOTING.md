@@ -16,6 +16,7 @@ and checked that it runs and detects your device
 ### Android devices are not recognized?
 1. Make sure you've enabled Developer mode on your device (basically with Settings — Developer Options — USB Debugging)
 2. Make sure you've confirmed (from the device) you trust your computer
+    1. If confirmation dialog doesn't appear—try to downgrade Android SDK Tools (for instance downgrading `dev-util/android-tools` from `9.0.0_p3` to `6.0.1_p79` helped me with Xiaomi Mi 8) and then run `adb kill-server` and `adb devices`
 3. Make sure your device is detectable with ddms/monitor
     1. On some devices debugging works only if you select the particular "Connect as" option (Built-in CD-ROM, Camera, MTP, etc.)
     2. Try `adb kill-server` and `adb devices` terminal commands
@@ -26,15 +27,15 @@ and checked that it runs and detects your device
 3. Create or modify the file `/etc/udev/rules.d/51-android.rules`
 4. Modify the file permission: `sudo chmod a+rx /etc/udev/rules.d/51-android.rules`
 5. Add a line (with the following content) to the file: `SUBSYSTEM=="usb", ATTR{idVendor}=="1234", MODE="0666", GROUP="plugdev"` where `1234` should be replaced with your **Vendor ID**
-6. Ensure that you are in the user group **plugdev**: `sudo gpasswd -a ${USER} plugdev`
+6. Ensure that you are in the user group **plugdev** or else add yourself into the group: `sudo gpasswd -a ${USER} plugdev` (this change will work after next login)
 7. Restart the udev service: `sudo service udev restart`
-8. `adb kill-server && adb devices`
+8. `adb kill-server ; adb devices`
 
 #### on Windows
 1. If your device is not detectable with ddms/monitor
-    1. Check Control Panel — System — Hardware — **Device Manager**: is your device detected correctly? If it's not—try reinstalling the driver specifying the path to `extras\google\usb-driver` (from Android SDK)
+    1. Check Control Panel — System — Hardware — **Device Manager**: is your device detected correctly? If it's not—try reinstalling the driver specifying the path to `<Android SDK>\extras\google\usb-driver`
     2. If it didn't work—try reinstalling the driver by choosing `Don't search. I will choose the driver to install` and select `Android Composite ADB Interface`
-2. Make sure you've added a path to `platform-tools` directory (from Android SDK) to **Path** environment variable
+2. Make sure you've added a path to `platform-tools` directory (it's located in Android SDK) to **Path** environment variable
 3. Try to **restart** the OS
 
 If you're still experiencing issues—try all troubleshooting steps from the beginning (probably you've configured everything right and reapplying one of the previous steps will work)
