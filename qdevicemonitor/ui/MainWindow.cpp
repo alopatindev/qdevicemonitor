@@ -29,6 +29,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QProcess>
+#include <QScreen>
 #include <QSettings>
 #include <QStringList>
 #include <QTabBar>
@@ -181,9 +182,9 @@ void MainWindow::loadSettings()
     {
         setGeometry(geom.toRect());
     }
-    else
+    else if (!qApp->screens().isEmpty())
     {
-        QRect geom = qApp->desktop()->screenGeometry();
+        QRect geom = qApp->screens()[0]->availableVirtualGeometry();
         const int screenWidth = geom.width();
         const int screenHeight = geom.height();
         geom.setWidth(int(screenWidth * 0.7f));
