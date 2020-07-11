@@ -43,7 +43,7 @@ void logOutput(QtMsgType type, const QMessageLogContext& context, const QString&
             << ")";
     }
 
-    out << endl;
+    out << Qt::endl;
 }
 
 int main(int argc, char* argv[])
