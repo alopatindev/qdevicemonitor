@@ -61,11 +61,11 @@ FORMS += \
 
 CONFIG += c++11 link_pkgconfig
 
-QMAKE_CXXFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall
+QMAKE_CXXFLAGS += -pedantic-errors -pedantic -Wextra -Wall
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
 
-QMAKE_CFLAGS += -Werror -Wfatal-errors -pedantic-errors -pedantic -Wextra -Wall -std=c11
+QMAKE_CFLAGS += -pedantic-errors -pedantic -Wextra -Wall -std=c11
 QMAKE_CFLAGS_RELEASE -= -O2
 QMAKE_CFLAGS_RELEASE += -O3
 
