@@ -58,6 +58,7 @@ Open the .dmg and move the app to /Applications
 [![Download Ubuntu](https://img.shields.io/badge/ubuntu-download-orange.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/ubuntu/)
 [![Download OS X](https://img.shields.io/badge/os%20x-download-yellowgreen.svg)](https://sourceforge.net/projects/qdevicemonitor/files/ci/osx/)
 [![Download Windows](https://img.shields.io/badge/windows-download-blue.svg)](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Falopatindev%2Fqdevicemonitor.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Falopatindev%2Fqdevicemonitor?ref=badge_shield)
 
 ### Build from the Source Code
 Make sure that you have installed [Qt >= 5.6](http://www.qt.io/download-open-source)
@@ -86,3 +87,7 @@ This is free software, and you are welcome to redistribute it
 under certain conditions; read LICENSE for details.
 
 Copyright (C) 2014—2018  Alexander Lopatin <alopatindev ät gmail dot com>
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Falopatindev%2Fqdevicemonitor.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Falopatindev%2Fqdevicemonitor?ref=badge_large)
