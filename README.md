@@ -2,8 +2,6 @@ QDeviceMonitor
 ==============
 
 [![Release](https://img.shields.io/github/release/alopatindev/qdevicemonitor.svg)](https://github.com/alopatindev/qdevicemonitor/releases/latest)
-[![Build Status](https://api.travis-ci.org/alopatindev/qdevicemonitor.svg?branch=master)](https://travis-ci.org/alopatindev/qdevicemonitor)
-[![Build Status](https://ci.appveyor.com/api/projects/status/0uex640qxdalur5n?svg=true)](https://ci.appveyor.com/project/alopatindev/qdevicemonitor/build/artifacts)
 [![Language](https://img.shields.io/badge/language-C++11-blue.svg)](https://isocpp.org)
 [![Language](https://img.shields.io/badge/language-C11-blue.svg)](https://en.wikipedia.org/wiki/C11_(C_standard_revision))
 
@@ -85,4 +83,4 @@ This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions; read LICENSE for details.
 
-Copyright (C) 2014—2018  Alexander Lopatin <alopatindev ät gmail dot com>
+Copyright (C) 2014—2023  Alexander Lopatin <alopatindev ät gmail dot com>

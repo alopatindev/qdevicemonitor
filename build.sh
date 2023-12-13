@@ -3,8 +3,6 @@
 set -e
 unalias -a
 
-ln -sf ../../scripts/pre-commit.sh .git/hooks/pre-commit
-
 OSX=0
 if [ "$(uname)" = Darwin ]; then
     OSX=1
