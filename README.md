@@ -71,6 +71,16 @@ Troubleshooting
 ---------------
 Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
+Support
+-------
+I'm currently investing [all my time](https://codonaft.com/why) in FOSS projects.
+
+If you found this repo useful and you want to support me, please
+- ⭐ it
+- check ⚡ [here](https://codonaft.com/sponsor)
+
+Your support keeps me going ❤️ (◕‿◕)
+
 License
 -------
 
@@ -83,4 +93,4 @@ This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions; read LICENSE for details.
 
-Copyright (C) 2014—2023  Alexander Lopatin <alopatindev ät gmail dot com>
+Copyright (C) 2014—∞  Alexander Lopatin <alopatindev ät codonaft dot com>
