@@ -1,3 +1,12 @@
+<div align="center">
+I've gained wisdom from commercial proprietary challenges since 2012<br>
+and switched entirely to my <a href="https://codonaft.com/sponsor" rel="noopener noreferrer" target="_blank">personal projects</a>.<br>
+Free and Open Source Software is my passion.<br>
+I believe it's the shortest way to <del>enlightenment</del> <strong>healthier</strong> products for society ♡
+</div>
+
+---
+
 QDeviceMonitor
 ==============
 
@@ -71,6 +80,16 @@ Troubleshooting
 ---------------
 Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
+Support
+-------
+I'm currently investing [all my time](https://codonaft.com/why) in personal projects and no longer making any income from proprietary commercial projects owned by third-party businesses.
+
+If you found this repo useful and you want to support me, please
+- ⭐ it
+- check [here](https://codonaft.com/sponsor)
+
+Thank you for your support! ❤️ (◕‿◕)
+
 License
 -------
 
@@ -83,4 +102,4 @@ This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions; read LICENSE for details.
 
-Copyright (C) 2014—2023  Alexander Lopatin <alopatindev ät gmail dot com>
+Copyright (C) 2014—∞  Alexander Lopatin <alopatindev ät codonaft dot com>
