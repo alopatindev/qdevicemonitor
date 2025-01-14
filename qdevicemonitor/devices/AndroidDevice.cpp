@@ -146,7 +146,11 @@ void AndroidDevice::startLogger()
         m_logFile.setFileName(currentLogAbsFileName);
         m_logFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
         m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_logFileStream->setCodec("UTF-8");
+#else
+        m_logFileStream->setEncoding(QStringConverter::Utf8);
+#endif
 
         startLogProcess();
 
@@ -230,13 +234,13 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
-        const QStringRef date = match.capturedRef("date");
-        const QStringRef time = match.capturedRef("time");
-        const QStringRef pid = match.capturedRef("pid");
-        const QStringRef tid = match.capturedRef("tid");
-        const QStringRef verbosity = match.capturedRef("verbosity");
-        const QStringRef tag = match.capturedRef("tag").trimmed();
-        const QStringRef text = line.midRef(match.capturedEnd("tag") + 1);
+        const QStringView date = match.captured("date");
+        const QStringView time = match.captured("time");
+        const QStringView pid = match.captured("pid");
+        const QStringView tid = match.captured("tid");
+        const QStringView verbosity = match.captured("verbosity");
+        const QStringView tag = match.captured("tag").trimmed();
+        const QStringView text = line.mid(match.capturedEnd("tag") + 1);
 
         const auto verbosityLevel = static_cast<VerbosityEnum>(Utils::verbosityCharacterToInt(verbosity.at(0).toLatin1()));
 
@@ -261,7 +265,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
         checkFilters(filtersMatch, m_filtersValid);
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringView(line));
             m_deviceWidget->flushText();
         }
     }
@@ -269,7 +273,7 @@ void AndroidDevice::filterAndAddToTextEdit(const QString& line)
     m_deviceWidget->highlightFilterLineEdit(!m_filtersValid);
 }
 
-void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const VerbosityEnum verbosityLevel, const QStringRef& pid, const QStringRef& tid, const QStringRef& tag, const QStringRef& text)
+void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const VerbosityEnum verbosityLevel, const QStringView pid, const QStringView tid, const QStringView tag, const QStringView text)
 {
     filtersMatch = verbosityLevel <= m_deviceWidget->getVerbosityLevel();
 
@@ -283,7 +287,7 @@ void AndroidDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const V
 
     for (auto it = m_filters.constBegin(); it != m_filters.constEnd(); ++it)
     {
-        const QStringRef filter(&(*it));
+        const QStringView filter(*it);
         bool columnFound = false;
         if (!columnMatches("pid:", filter, pid, filtersValid, columnFound) ||
             !columnMatches("tid:", filter, tid, filtersValid, columnFound) ||

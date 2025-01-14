@@ -38,7 +38,11 @@ IOSDevice::IOSDevice(
 {
     qDebug() << "IOSDevice::IOSDevice";
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_tempErrorsStream.setCodec("UTF-8");
+#else
+    m_tempErrorsStream.setEncoding(QStringConverter::Utf8);
+#endif
     m_tempErrorsStream.setString(&m_tempErrorsBuffer, QIODevice::ReadWrite | QIODevice::Text);
 
     m_deviceWidget->getFilterLineEdit().setToolTip(tr("Search for messages. Accepts<ul><li>Plain Text</li><li>Prefix <b>text:</b> with Plain Text</li><li>Regular Expressions</li></ul>"));
@@ -160,7 +164,11 @@ void IOSDevice::startLogger()
         m_logFile.setFileName(currentLogAbsFileName);
         m_logFile.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
         m_logFileStream = QSharedPointer<QTextStream>::create(&m_logFile);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_logFileStream->setCodec("UTF-8");
+#else
+        m_logFileStream->setEncoding(QStringConverter::Utf8);
+#endif
 
         startLogProcess();
 
@@ -193,14 +201,14 @@ void IOSDevice::onUpdateFilter(const QString& filter)
     maybeAddCompletionAfterDelay(filter);
 }
 
-void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text)
+void IOSDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringView text)
 {
     QString textString;
     bool textStringInitialized = false;
 
     for (auto it = m_filters.constBegin(); it != m_filters.constEnd(); ++it)
     {
-        const QStringRef filter(&(*it));
+        const QStringView filter(*it);
         bool columnFound = false;
         if (!columnMatches("text:", filter, text, filtersValid, columnFound))
         {
@@ -242,9 +250,9 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
-        const QStringRef prefix = match.capturedRef("prefix");
-        const QStringRef deviceName = match.capturedRef("deviceName");
-        const QStringRef text = line.midRef(match.capturedEnd("deviceName") + 1);
+        const QStringView prefix = match.captured("prefix");
+        const QStringView deviceName = match.captured("deviceName");
+        const QStringView text = QStringView(line).mid(match.capturedEnd("deviceName") + 1);
 
         checkFilters(filtersMatch, m_filtersValid, text);
 
@@ -258,11 +266,11 @@ void IOSDevice::filterAndAddToTextEdit(const QString& line)
     }
     else
     {
-        checkFilters(filtersMatch, m_filtersValid, QStringRef(&line));
+        checkFilters(filtersMatch, m_filtersValid, QStringView(line));
 
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringView(line));
             m_deviceWidget->flushText();
         }
     }
@@ -323,7 +331,7 @@ void IOSDevice::maybeReadErrorsPart()
         if (m_tempErrorsStream.readLineInto(&line))
 #endif
         {
-            m_deviceWidget->addText(ColorTheme::VerbosityAssert, QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityAssert, QStringView(line));
             m_deviceWidget->flushText();
         }
     }

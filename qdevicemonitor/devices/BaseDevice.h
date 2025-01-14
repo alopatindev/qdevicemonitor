@@ -28,7 +28,6 @@
 #include <QRegularExpression>
 #include <QSharedPointer>
 #include <QString>
-#include <QStringRef>
 #include <QTabWidget>
 #include <QTextStream>
 #include <QTimer>
@@ -93,8 +92,8 @@ public:
 
     void updateLogBufferSpace();
     void filterAndAddFromLogBufferToTextEdit();
-    bool columnMatches(const QString& column, const QStringRef& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound);
-    bool columnTextMatches(const QStringRef& filter, const QString& text);
+    bool columnMatches(const QString& column, const QStringView filter, const QStringView originalValue, bool& filtersValid, bool& columnFound);
+    bool columnTextMatches(const QStringView filter, const QString& text);
 
     void scheduleLogReady();
     void stopLogReadyTimer();

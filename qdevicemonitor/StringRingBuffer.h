@@ -18,6 +18,7 @@
 #ifndef RINGBUFFER_H
 #define RINGBUFFER_H
 
+#include <QObject>
 #include <QPointer>
 #include <QString>
 #include <QVector>

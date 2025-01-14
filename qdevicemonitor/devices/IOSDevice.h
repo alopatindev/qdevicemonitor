@@ -62,7 +62,7 @@ private:
     void stopInfoProcess();
     void startLogger();
     void stopLogger();
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
+    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringView text);
 
     void maybeReadErrorsPart();
     void maybeReadLogPart();

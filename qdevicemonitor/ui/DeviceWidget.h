@@ -55,8 +55,8 @@ public:
     inline int getVerbosityLevel() const { return m_ui->verbositySlider->value(); }
     void highlightFilterLineEdit(bool red);
     void maybeScrollTextEditToEnd();
-    void addText(const ColorTheme::ColorType color, const QStringRef& text);
-    void addText(const QColor& color, const QStringRef& text);
+    void addText(const ColorTheme::ColorType color, const QStringView text);
+    void addText(const QColor& color, const QStringView text);
     void flushText();
     void clearTextEdit();
     void onLogFileNameChanged(const QString& logFileName);

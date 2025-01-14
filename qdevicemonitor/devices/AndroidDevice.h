@@ -77,10 +77,10 @@ private:
     void checkFilters(bool& filtersMatch,
                       bool& filtersValid,
                       const VerbosityEnum verbosityLevel = Verbose,
-                      const QStringRef& pid = QStringRef(),
-                      const QStringRef& tid = QStringRef(),
-                      const QStringRef& tag = QStringRef(),
-                      const QStringRef& text = QStringRef());
+                      const QStringView pid = QStringView(),
+                      const QStringView tid = QStringView(),
+                      const QStringView tag = QStringView(),
+                      const QStringView text = QStringView());
 };
 
 #endif // ANDROIDDEVICE_H

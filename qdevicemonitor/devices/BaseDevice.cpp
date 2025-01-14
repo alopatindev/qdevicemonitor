@@ -47,7 +47,11 @@ BaseDevice::BaseDevice(
 {
     qDebug() << "new BaseDevice; type" << type << "; id" << id;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_tempStream.setCodec("UTF-8");
+#else
+    m_tempStream.setEncoding(QStringConverter::Utf8);
+#endif
     m_tempStream.setString(&m_tempBuffer, QIODevice::ReadWrite | QIODevice::Text);
 
     updateLogBufferSpace();
@@ -195,12 +199,12 @@ void BaseDevice::filterAndAddFromLogBufferToTextEdit()
     }
 }
 
-bool BaseDevice::columnMatches(const QString& column, const QStringRef& filter, const QStringRef& originalValue, bool& filtersValid, bool& columnFound)
+bool BaseDevice::columnMatches(const QString& column, const QStringView filter, const QStringView originalValue, bool& filtersValid, bool& columnFound)
 {
     if (filter.startsWith(column))
     {
         columnFound = true;
-        const QStringRef value = filter.mid(column.length());
+        const QStringView value = filter.mid(column.length());
         if (value.isEmpty())
         {
             filtersValid = false;
@@ -213,7 +217,7 @@ bool BaseDevice::columnMatches(const QString& column, const QStringRef& filter, 
     return true;
 }
 
-bool BaseDevice::columnTextMatches(const QStringRef& filter, const QString& text)
+bool BaseDevice::columnTextMatches(const QStringView filter, const QString& text)
 {
     if (filter.isEmpty() || text.contains(filter))
     {

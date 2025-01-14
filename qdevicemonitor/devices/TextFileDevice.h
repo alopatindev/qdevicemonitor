@@ -51,7 +51,7 @@ private:
     void startLogger();
     void stopLogger();
 
-    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text);
+    void checkFilters(bool& filtersMatch, bool& filtersValid, const QStringView text);
 
 private slots:
     void onLogReady() override;

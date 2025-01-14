@@ -23,7 +23,6 @@
 #include <cstdlib>
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -162,7 +161,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::MidButton)
+    if (event->button() == Qt::MiddleButton)
     {
         const QTabBar& tabBar = *(m_ui->tabWidget->tabBar());
         const QPoint mousePos = tabBar.mapFrom(this, event->pos());

@@ -39,7 +39,11 @@ DeviceWidget::DeviceWidget(QPointer<QWidget> parent, QPointer<DeviceFacade> devi
     m_redPalette = QPalette(Qt::red);
     m_redPalette.setColor(QPalette::Highlight, Qt::red);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_textStream.setCodec("UTF-8");
+#else
+    m_textStream.setEncoding(QStringConverter::Utf8);
+#endif
     m_textStream.setString(&m_stringStream, QIODevice::ReadWrite | QIODevice::Text);
 
     //ui->textEdit->setFontFamily(m_deviceFacade->getFont());
@@ -97,12 +101,12 @@ void DeviceWidget::maybeScrollTextEditToEnd()
     }
 }
 
-void DeviceWidget::addText(const ColorTheme::ColorType color, const QStringRef& text)
+void DeviceWidget::addText(const ColorTheme::ColorType color, const QStringView text)
 {
     addText(m_deviceFacade->getThemeColor(color), text);
 }
 
-void DeviceWidget::addText(const QColor& color, const QStringRef& text)
+void DeviceWidget::addText(const QColor& color, const QStringView text)
 {
     m_textStream
         << "<font style=\"font-family: " << m_deviceFacade->getFont()
@@ -187,7 +191,7 @@ void DeviceWidget::focusFilterInput()
 
 void DeviceWidget::on_markLogButton_clicked()
 {
-    addText(ColorTheme::VerbosityVerbose, QStringRef(&MARK_LINE));
+    addText(ColorTheme::VerbosityVerbose, QStringView(MARK_LINE));
     m_deviceFacade->writeToLogFile(m_id, MARK_LINE);
     flushText();
 }

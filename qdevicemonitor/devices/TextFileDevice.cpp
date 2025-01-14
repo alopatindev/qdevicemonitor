@@ -90,7 +90,7 @@ void TextFileDevice::onUpdateFilter(const QString& filter)
     maybeAddCompletionAfterDelay(filter);
 }
 
-void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringRef& text)
+void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const QStringView text)
 {
     filtersValid = true;
 
@@ -98,7 +98,7 @@ void TextFileDevice::checkFilters(bool& filtersMatch, bool& filtersValid, const 
 
     for (auto it = m_filters.constBegin(); it != m_filters.constEnd(); ++it)
     {
-        const QStringRef filter(&(*it));
+        const QStringView filter(*it);
         if (!columnTextMatches(filter, textString))
         {
             filtersMatch = false;
@@ -113,14 +113,16 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
         "(?<prefix>[A-Za-z]{3} +[\\d]{1,2} [\\d:]{8}) (?<hostname>.+) ",
         QRegularExpression::InvertedGreedinessOption | QRegularExpression::DotMatchesEverythingOption
     );
+    static const QString prefixPattern("prefix");
+    static const QString hostnamePattern("hostname");
 
     bool filtersMatch = true;
     const QRegularExpressionMatch match = re.match(line);
     if (match.hasMatch())
     {
-        const QStringRef prefix = match.capturedRef("prefix");
-        const QStringRef hostname = match.capturedRef("hostname");
-        const QStringRef text = line.midRef(match.capturedEnd("hostname") + 1);
+        const QStringView prefix = match.capturedView(QStringView(prefixPattern));
+        const QStringView hostname = match.capturedView(QStringView(hostnamePattern));
+        const QStringView text = QStringView(line).mid(match.capturedEnd("hostname") + 1);
 
         checkFilters(filtersMatch, m_filtersValid, text);
 
@@ -134,10 +136,10 @@ void TextFileDevice::filterAndAddToTextEdit(const QString& line)
     }
     else
     {
-        checkFilters(filtersMatch, m_filtersValid, QStringRef(&line));
+        checkFilters(filtersMatch, m_filtersValid, QStringView(line));
         if (filtersMatch)
         {
-            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringRef(&line));
+            m_deviceWidget->addText(ColorTheme::VerbosityVerbose, QStringView(line));
             m_deviceWidget->flushText();
         }
     }

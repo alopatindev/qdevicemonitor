@@ -21,7 +21,11 @@
 
 IOSDevicesTracker::IOSDevicesTracker()
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_codecStream.setCodec("UTF-8");
+#else
+    m_codecStream.setEncoding(QStringConverter::Utf8);
+#endif
     m_codecStream.setString(&m_buffer, QIODevice::ReadWrite | QIODevice::Text);
 }
 
