@@ -42,8 +42,13 @@ If you're still experiencing issues—try all troubleshooting steps from the beg
 
 If it didn't help—try to Google it, specifying the device you use. I'm pretty sure you're running into some known issue ;)
 
-### Mac OS X: App can’t be opened because it is from an unidentified developer
-Try [this guide](http://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/)
+### macOS: App can’t be opened because it is from an unidentified developer
+Try [this guide](https://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/)
+
+### macOS: app is damaged
+```bash
+xattr -cr /Applications/qdevicemonitor.app
+```
 
 ### Windows protected your PC
 "Windows SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk"
